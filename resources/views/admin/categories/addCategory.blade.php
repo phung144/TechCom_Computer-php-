@@ -21,7 +21,7 @@
                         <div class="mb-3">
                             <label for="image" class="form-label">Image</label>
                             <input type="file" name="image" id="image" class="form-control"
-                                accept=".jpg, .jpeg, .png" required>
+                                 required>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Category</button>
                     </form>

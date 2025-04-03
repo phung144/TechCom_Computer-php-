@@ -4,6 +4,7 @@ namespace App\Http\Controllers\client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Category; // Import the Category model
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -33,7 +34,113 @@ class HomeController extends Controller
             }
         }
 
-        return view('client.blocks.main', compact('products', 'discountedProducts'));
+        $topSalesProducts = Product::orderBy('sales', 'desc')->take(12)->get();
+
+        foreach ($topSalesProducts as $product) {
+            if ($product->discount_type === 'percentage') {
+                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            } else {
+                $product->final_price = $product->price - $product->discount_value;
+            }
+        }
+
+        $categories = Category::all(); // Fetch all categories
+
+        return view('client.blocks.main', compact('products', 'discountedProducts', 'topSalesProducts', 'categories'));
+    }
+
+    public function searchCategory(Request $request)
+    {
+        $categoryId = $request->input('category_id');
+
+        // Kiểm tra nếu không có category_id
+        if (!$categoryId) {
+            return redirect()->route('client-home')->with('error', 'Danh mục không hợp lệ.');
+        }
+
+        $products = Product::where('category_id', $categoryId)->paginate(12);
+
+        foreach ($products as $product) {
+            if ($product->discount_type === 'percentage') {
+                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            } else {
+                $product->final_price = $product->price - $product->discount_value;
+            }
+        }
+
+        $discountedProducts = Product::where('category_id', $categoryId)
+            ->where('discount_value', '>', 0)
+            ->get();
+
+        foreach ($discountedProducts as $product) {
+            if ($product->discount_type === 'percentage') {
+                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            } else {
+                $product->final_price = $product->price - $product->discount_value;
+            }
+        }
+
+        $topSalesProducts = Product::where('category_id', $categoryId)
+            ->orderBy('sales', 'desc')
+            ->take(12)
+            ->get();
+
+        foreach ($topSalesProducts as $product) {
+            if ($product->discount_type === 'percentage') {
+                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            } else {
+                $product->final_price = $product->price - $product->discount_value;
+            }
+        }
+
+        $categories = Category::all(); // Fetch all categories
+
+        return view('client.blocks.main', compact('products', 'discountedProducts', 'topSalesProducts', 'categories'));
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        $products = Product::where('name', 'like', "%$query%")->paginate(12);
+
+        foreach ($products as $product) {
+            if ($product->discount_type === 'percentage') {
+                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            } else {
+                $product->final_price = $product->price - $product->discount_value;
+            }
+        }
+        
+
+        $discountedProducts = Product::where('name', 'like', "%$query%")
+            ->where('discount_value', '>', 0)
+            ->get();
+
+        foreach ($discountedProducts as $product) {
+            if ($product->discount_type === 'percentage') {
+                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            } else {
+                $product->final_price = $product->price - $product->discount_value;
+            }
+        }
+
+        $topSalesProducts = Product::where('name', 'like', "%$query%")
+            ->orderBy('sales', 'desc')
+            ->take(12)
+            ->get();
+
+        foreach ($topSalesProducts as $product) {
+            if ($product->discount_type === 'percentage') {
+                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            } else {
+                $product->final_price = $product->price - $product->discount_value;
+            }
+        }
+
+        $categories = Category::all();
+
+        return view('client.blocks.main', compact('products', 'discountedProducts', 'topSalesProducts', 'categories'));
     }
 
     /**

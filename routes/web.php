@@ -3,6 +3,8 @@
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\client\HomeController;
+use App\Http\Controllers\client\ProductDetailController;
+use App\Http\Controllers\client\SearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +27,12 @@ Route::get('/admin/home', function () { // /admin/home là đường dẫn chín
 })->name('admin-home'); //Tên route gọi đến view
 
 Route::get('/', [HomeController::class, 'index'])->name('client-home');
+
+Route::get('searchCategory', [HomeController::class, 'searchCategory'])->name('search-category');
+
+Route::get('search', [HomeController::class, 'search'])->name('search');
+
+Route::get('/product-detail/{id}', [ProductDetailController::class, 'productDetail'])->name('product.detail');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('products', ProductController::class);

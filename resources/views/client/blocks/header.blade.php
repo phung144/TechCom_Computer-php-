@@ -77,7 +77,7 @@
                         <!-- Nav -->
                         <nav class="navbar navbar-expand u-header__navbar py-0 justify-content-xl-between max-width-270 min-width-270">
                             <!-- Logo -->
-                            <a class="order-1 order-xl-0 navbar-brand u-header__navbar-brand u-header__navbar-brand-center" href="index.html" aria-label="Electro">
+                            <a class="order-1 order-xl-0 navbar-brand u-header__navbar-brand u-header__navbar-brand-center" href="index.htmlz" aria-label="Electro">
                                 <svg version="1.1" x="0px" y="0px" width="175.748px" height="42.52px" viewBox="0 0 175.748 42.52" enable-background="new 0 0 175.748 42.52" style="margin-bottom: 0;">
                                     <ellipse class="ellipse-bg" fill-rule="evenodd" clip-rule="evenodd" fill="#FDD700" cx="170.05" cy="36.341" rx="5.32" ry="5.367"></ellipse>
                                     <path fill-rule="evenodd" clip-rule="evenodd" fill="#333E48" d="M30.514,0.71c-0.034,0.003-0.066,0.008-0.056,0.056
@@ -479,21 +479,21 @@
                     <!-- End Logo-offcanvas-menu -->
                     <!-- Search Bar -->
                     <div class="col d-none d-xl-block">
-                        <form class="js-focus-state">
+                        <form class="js-focus-state" method="GET" action="{{ route('search') }}">
                             <label class="sr-only" for="searchproduct">Search</label>
                             <div class="input-group">
-                                <input type="email" class="form-control py-2 pl-5 font-size-15 border-right-0 height-40 border-width-2 rounded-left-pill border-primary" name="email" id="searchproduct-item" placeholder="Search for Products" aria-label="Search for Products" aria-describedby="searchProduct1" required>
+                                <input type="text" class="form-control py-2 pl-5 font-size-15 border-right-0 height-40 border-width-2 rounded-left-pill border-primary" name="query" id="searchproduct-item" placeholder="Search for Products" aria-label="Search for Products" aria-describedby="searchProduct1" required>
                                 <div class="input-group-append">
                                     <!-- Select -->
                                     <select class="js-select selectpicker dropdown-select custom-search-categories-select"
                                         data-style="btn height-40 text-gray-60 font-weight-normal border-top border-bottom border-left-0 rounded-0 border-primary border-width-2 pl-0 pr-5 py-2">
-                                        <option value="one" selected>All Categories</option>
+                                        <option value="all" selected>All Categories</option>
                                         <option value="two">Two</option>
                                         <option value="three">Three</option>
                                         <option value="four">Four</option>
                                     </select>
                                     <!-- End Select -->
-                                    <button class="btn btn-primary height-40 py-2 px-3 rounded-right-pill" type="button" id="searchProduct1">
+                                    <button class="btn btn-primary height-40 py-2 px-3 rounded-right-pill" type="submit" id="searchProduct1">
                                         <span class="ec ec-search font-size-24"></span>
                                     </button>
                                 </div>

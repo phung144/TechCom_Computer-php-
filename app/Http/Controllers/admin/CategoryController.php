@@ -39,7 +39,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255', // Tên danh mục là bắt buộc
             'description' => 'nullable|string', // Mô tả có thể để trống
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Ảnh phải đúng định dạng
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Ảnh phải đúng định dạng
         ]);
 
         // Tạo một danh mục mới
@@ -81,7 +81,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255', // Tên danh mục là bắt buộc
             'description' => 'nullable|string', // Mô tả có thể để trống
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Ảnh phải đúng định dạng
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Ảnh phải đúng định dạng
         ]);
 
         // Tìm danh mục theo ID
