@@ -57,7 +57,16 @@
                                     data-unfold-animation-in="fadeInRight"
                                     data-unfold-animation-out="fadeOutRight"
                                     data-unfold-duration="500">
-                                    <i class="ec ec-user mr-1"></i> Register <span class="text-gray-50">or</span> Sign in
+                                    @if(auth()->check())
+                                        <i class="ec ec-user mr-1"></i>
+                                        {{ auth()->user()->name }}
+                                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-link p-0 m-0 align-baseline text-primary">Logout</button>
+                                        </form>
+                                    @else
+                                        <i class="ec ec-user mr-1"></i><a href="{{route('register')}}"> Register</a> <span class="text-gray-50">or</span> <a href="{{route('login')}}"> Logn in</a>
+                                    @endif
                                 </a>
                                 <!-- End Account Sidebar Toggle Button -->
                             </li>
@@ -540,7 +549,7 @@
                                 <li class="col d-none d-xl-block"><a href="https://transvelo.github.io/electro-html/2.0/html/shop/wishlist.html" class="text-gray-90" data-toggle="tooltip" data-placement="top" title="Favorites"><i class="font-size-22 ec ec-favorites"></i></a></li>
                                 <li class="col d-xl-none px-2 px-sm-3"><a href="https://transvelo.github.io/electro-html/2.0/html/shop/my-account.html" class="text-gray-90" data-toggle="tooltip" data-placement="top" title="My Account"><i class="font-size-22 ec ec-user"></i></a></li>
                                 <li class="col pr-xl-0 px-2 px-sm-3">
-                                    <a href="https://transvelo.github.io/electro-html/2.0/html/shop/cart.html" class="text-gray-90 position-relative d-flex " data-toggle="tooltip" data-placement="top" title="Cart">
+                                    <a href="{{route('cart.index')}}" class="text-gray-90 position-relative d-flex " data-toggle="tooltip" data-placement="top" title="Cart">
                                         <i class="font-size-22 ec ec-shopping-bag"></i>
                                         <span class="bg-lg-down-black width-22 height-22 bg-primary position-absolute d-flex align-items-center justify-content-center rounded-circle left-12 top-8 font-weight-bold font-size-12">2</span>
                                         <span class="d-none d-xl-block font-weight-bold font-size-16 text-gray-90 ml-3">$1785.00</span>

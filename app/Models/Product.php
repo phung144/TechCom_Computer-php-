@@ -33,6 +33,13 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
+    // Định nghĩa mối quan hệ với bảng orders
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_product')
+                    ->withPivot('quantity', 'price');
+    }
+
     // Chuyển đổi các trường thành datetime
     protected $casts = [
         'discount_start' => 'datetime',

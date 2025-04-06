@@ -67,9 +67,9 @@
 
 
                 <li>
-                    <a class="sidenav-item-link" href="team.html">
+                    <a class="sidenav-item-link" href="{{ route('admin.carts.index') }}">
                         <i class="mdi mdi-account-group"></i>
-                        <span class="nav-text">Team</span>
+                        <span class="nav-text">Cart</span>
                     </a>
                 </li>
 
@@ -78,9 +78,9 @@
 
 
                 <li>
-                    <a class="sidenav-item-link" href="calendar.html">
+                    <a class="sidenav-item-link" href="{{ route('admin.orders.index') }}">
                         <i class="mdi mdi-calendar-check"></i>
-                        <span class="nav-text">Calendar</span>
+                        <span class="nav-text">Order</span>
                     </a>
                 </li>
 

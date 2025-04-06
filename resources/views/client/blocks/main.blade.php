@@ -109,7 +109,9 @@
                                         @endif
                                     </div>
                                     <div class="d-none d-xl-block prodcut-add-cart">
-                                        <a href="#" class="btn-add-cart btn-primary transition-3d-hover">
+                                        <a href="javascript:void(0);"
+                                           class="btn-add-cart btn-primary transition-3d-hover"
+                                           onclick="addToCart('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
                                             <i class="ec ec-add-to-cart"></i>
                                         </a>
                                     </div>
@@ -236,7 +238,9 @@
                                                     <!-- Add to Cart Button and Sales Count -->
                                                     <div class="d-flex justify-content-between align-items-center mt-2">
                                                         <span class="text-gray-6 font-size-13">Sold: {{ $product->sales ?? 0 }}</span>
-                                                        <a href="#" class="btn-add-cart btn-primary transition-3d-hover">
+                                                        <a href="javascript:void(0);"
+                                                           class="btn-add-cart btn-primary transition-3d-hover"
+                                                           onclick="addToCart('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
                                                             <i class="ec ec-add-to-cart"></i>
                                                         </a>
                                                     </div>
@@ -361,7 +365,9 @@
                                             <div class="final-price">{{ number_format($product->final_price, 0) }} VND</div>
                                         </div>
                                         <div class="d-none d-xl-block prodcut-add-cart">
-                                            <a href="#" class="btn-add-cart btn-primary transition-3d-hover">
+                                            <a href="javascript:void(0);"
+                                               class="btn-add-cart btn-primary transition-3d-hover"
+                                               onclick="addToCart('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
                                                 <i class="ec ec-add-to-cart"></i>
                                             </a>
                                         </div>
@@ -407,5 +413,37 @@
 </div>
 {{-- End List Best selling products --}}
 
+<script>
+    function addToCart(name, image, price, productId) {
+        fetch('{{ route('cart.add') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                name_product: name,
+                image_product: image,
+                price: price
+            })
+        })
+        .then(response => {
+            if (response.status === 401) {
+                alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.');
+                return;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 
 @endsection

@@ -11073,7 +11073,7 @@ button.bg-smoke:focus {
 }
 
 .text-center {
-  text-align: center !important;
+  text-align: center;
 }
 
 @media (min-width: 576px) {
