@@ -27,6 +27,17 @@
                     </div>
                 </div>
 
+                <!-- Thông tin user -->
+                <h3 class="mb-3">User Information</h3>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>User ID:</strong> {{ $order->user->id }}</p>
+                        <p><strong>Name:</strong> {{ $order->user->name }}</p>
+                        <p><strong>Email:</strong> {{ $order->user->email }}</p>
+                    </div>
+                </div>
+                <!-- Kết thúc thông tin user -->
+
                 <h3 class="mb-3">Update Order Status</h3>
                 <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST" class="mb-4">
                     @csrf
@@ -37,6 +48,7 @@
                             <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
                             <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Completed</option>
+
                             <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
                     </div>

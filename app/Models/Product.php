@@ -40,9 +40,21 @@ class Product extends Model
                     ->withPivot('quantity', 'price');
     }
 
+    // Định nghĩa mối quan hệ với bảng product_stocks
+    public function stocks()
+    {
+        return $this->hasMany(ProductStock::class);
+    }
+
     // Chuyển đổi các trường thành datetime
     protected $casts = [
         'discount_start' => 'datetime',
         'discount_end' => 'datetime',
     ];
+
+    public function getPriceByVariant($variant)
+    {
+        $stock = $this->stocks()->where('variant', $variant)->first();
+        return $stock ? $stock->price : $this->price; // Trả về giá từ product_stocks hoặc giá mặc định
+    }
 }

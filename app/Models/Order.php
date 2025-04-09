@@ -16,7 +16,7 @@ class Order extends Model
         'email',
         'address',
         'phone',
-        'status', // Ensure this is included
+        'status',
         'payment_method',
     ];
 
@@ -35,5 +35,10 @@ class Order extends Model
             'id',       // Local key on Order table
             'product_id' // Local key on OrderDetail table
         );
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

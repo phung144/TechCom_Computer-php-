@@ -53,13 +53,15 @@
                             <td>{{ $cart->product->name }}</td>
                             <td class="text-center">{{ number_format($cart->price, 0) }} VND</td>
                             <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <button class="btn btn-sm btn-outline-secondary js-minus" data-cart-id="{{ $cart->id }}">-</button>
-                                    <input type="number" class="form-control text-center mx-2 js-result" value="{{ $cart->quantity }}" data-cart-id="{{ $cart->id }}" style="width: 50px;" min="1" step="1">
-                                    <button class="btn btn-sm btn-outline-secondary js-plus" data-cart-id="{{ $cart->id }}">+</button>
+                                <div class="input-group justify-content-center align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary js-quantity-update" data-cart-id="{{ $cart->id }}" data-action="decrease">-</button>
+                                    <input type="text" class="form-control text-center mx-2 js-quantity-input" value="{{ $cart->quantity }}" data-cart-id="{{ $cart->id }}" style="width: 50px;" readonly>
+                                    <button class="btn btn-sm btn-outline-secondary js-quantity-update" data-cart-id="{{ $cart->id }}" data-action="increase">+</button>
                                 </div>
                             </td>
-                            <td class="text-center">{{ number_format($cart->price * $cart->quantity, 0) }} VND</td>
+                            <td class="text-center item-total" data-item-total="{{ $cart->price * $cart->quantity }}">
+                                {{ number_format($cart->price * $cart->quantity, 0) }} VND
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -144,29 +146,19 @@
             });
         });
 
-        document.querySelectorAll('.js-minus, .js-plus').forEach(button => {
+        document.querySelectorAll('.js-quantity-update').forEach(button => {
             button.addEventListener('click', function () {
                 const cartId = this.dataset.cartId;
-                const input = document.querySelector(`.js-result[data-cart-id="${cartId}"]`);
+                const action = this.dataset.action;
+                const input = document.querySelector(`.js-quantity-input[data-cart-id="${cartId}"]`);
                 let quantity = parseInt(input.value);
 
-                if (this.classList.contains('js-minus') && quantity > 1) {
+                if (action === 'decrease' && quantity > 1) {
                     quantity--;
-                } else if (this.classList.contains('js-plus')) {
+                } else if (action === 'increase') {
                     quantity++;
                 }
 
-                input.value = quantity;
-                updateCartQuantity(cartId, quantity);
-            });
-        });
-
-        document.querySelectorAll('.js-result').forEach(input => {
-            input.addEventListener('change', function () {
-                const cartId = this.dataset.cartId;
-                let quantity = parseInt(this.value);
-                if (quantity < 1) quantity = 1; // Ensure minimum quantity is 1
-                this.value = quantity;
                 updateCartQuantity(cartId, quantity);
             });
         });
@@ -184,8 +176,11 @@
             .then(data => {
                 if (data.success) {
                     const row = document.querySelector(`tr[data-cart-id="${cartId}"]`);
-                    const totalCell = row.querySelector('td:last-child');
-                    totalCell.textContent = new Intl.NumberFormat().format(data.total) + ' VND';
+                    const totalCell = row.querySelector('td.item-total');
+                    const quantityInput = row.querySelector(`.js-quantity-input[data-cart-id="${cartId}"]`);
+                    totalCell.textContent = new Intl.NumberFormat('vi-VN').format(data.item_total) + ' VND';
+                    totalCell.setAttribute('data-item-total', data.item_total);
+                    quantityInput.value = data.quantity;
                     updateCartTotal();
                 } else {
                     alert(data.message);
@@ -196,13 +191,11 @@
 
         function updateCartTotal() {
             let total = 0;
-            document.querySelectorAll('tr[data-cart-id]').forEach(row => {
-                const totalCell = row.querySelector('td:last-child');
-                if (totalCell) {
-                    total += parseInt(totalCell.textContent.replace(/\D/g, ''));
-                }
+            document.querySelectorAll('td.item-total').forEach(cell => {
+                const itemTotal = parseInt(cell.dataset.itemTotal) || 0;
+                total += itemTotal;
             });
-            document.getElementById('cart-total').textContent = new Intl.NumberFormat().format(total) + ' VND';
+            document.getElementById('cart-total').textContent = new Intl.NumberFormat('vi-VN').format(total) + ' VND';
         }
     });
 </script>

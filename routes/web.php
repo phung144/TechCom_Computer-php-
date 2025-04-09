@@ -49,6 +49,10 @@ Route::post('/carts-delete/{id}', [CartController::class, 'delete'])->name('cart
 
 Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
 
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
+Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
+
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -61,4 +65,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('carts', AdminCartController::class);
     Route::resource('orders', AdminOrderController::class);
     Route::put('orders/{id}/status', [App\Http\Controllers\admin\OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::resource('variants', App\Http\Controllers\admin\VariantController::class);
 });
+
+Route::get('/api/product-stock-price', [\App\Http\Controllers\admin\ProductController::class, 'getProductStockPrice']);

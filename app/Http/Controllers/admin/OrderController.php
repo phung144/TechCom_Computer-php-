@@ -68,6 +68,16 @@ class OrderController extends Controller
             'status' => 'required|in:pending,processing,completed,cancelled',
         ]);
         $order->update(['status' => $request->status]);
+
+        // Nếu trạng thái là "Completed", cập nhật sales cho từng sản phẩm
+        if ($order->status === 'completed') {
+            foreach ($order->orderDetails as $detail) {
+                $product = $detail->product;
+                $product->sales += $detail->quantity;
+                $product->save();
+            }
+        }
+
         return redirect()->route('admin.orders.show', $id)->with('success', 'Order status updated successfully.');
     }
 

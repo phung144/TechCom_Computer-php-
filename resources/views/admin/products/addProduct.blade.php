@@ -40,6 +40,40 @@
                             @enderror
                         </div>
                         <div class="form-group">
+                            <label for="variant">Variants</label>
+                            <select name="variant[]" id="variant" class="form-control" multiple onchange="updateVariantOptions()">
+                                @foreach ($variants as $variant)
+                                    <option value="{{ $variant->id }}" {{ in_array($variant->id, old('variant', [])) ? 'selected' : '' }}>
+                                        {{ $variant->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('variant')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                        <div id="variant-options">
+                            @if (old('variant_options'))
+                                @foreach (old('variant_options') as $variantId => $values)
+                                    <div class="form-group variant-option" data-variant-id="{{ $variantId }}">
+                                        <label for="variant_option_{{ $variantId }}">Options for Variant {{ $variantId }}</label>
+                                        <input type="text" name="variant_options[{{ $variantId }}][]" id="variant_option_{{ $variantId }}" class="form-control" value="{{ implode(',', $values) }}" placeholder="Enter options separated by commas">
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                        <div id="variant-prices">
+                            @if (old('variant_combinations'))
+                                @foreach (old('variant_combinations') as $combination => $data)
+                                    <div class="form-group variant-price">
+                                        <label for="variant_price_{{ $combination }}">Details for {{ $combination }}</label>
+                                        <input type="number" name="variant_combinations[{{ $combination }}][price]" id="variant_price_{{ $combination }}" class="form-control" step="0.01" value="{{ $data['price'] }}" placeholder="Price">
+                                        <input type="number" name="variant_combinations[{{ $combination }}][quantity]" id="variant_quantity_{{ $combination }}" class="form-control mt-2" value="{{ $data['quantity'] }}" placeholder="Quantity">
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                        <div class="form-group">
                             <label for="price">Price</label>
                             <input type="number" name="price" id="price" class="form-control" step="0.01" value="{{ old('price') }}">
                             @error('price')
@@ -105,4 +139,55 @@
             </div>
         </div>
     </div>
+    <script>
+        function updateVariantOptions() {
+            const selectedVariants = Array.from(document.getElementById('variant').selectedOptions).map(option => option.value);
+            const variantOptionsContainer = document.getElementById('variant-options');
+            variantOptionsContainer.innerHTML = '';
+
+            selectedVariants.forEach(variantId => {
+                const optionInput = document.createElement('div');
+                optionInput.classList.add('form-group', 'variant-option');
+                optionInput.setAttribute('data-variant-id', variantId);
+                optionInput.innerHTML = `
+                    <label for="variant_option_${variantId}">Options for Variant ${variantId}</label>
+                    <input type="text" name="variant_options[${variantId}][]" id="variant_option_${variantId}" class="form-control" placeholder="Enter options separated by commas">
+                `;
+                variantOptionsContainer.appendChild(optionInput);
+            });
+
+            updateVariantPrices();
+        }
+
+        function updateVariantPrices() {
+            const variantOptionsContainer = document.getElementById('variant-options');
+            const variantPricesContainer = document.getElementById('variant-prices');
+            variantPricesContainer.innerHTML = '';
+
+            const options = Array.from(variantOptionsContainer.querySelectorAll('.variant-option')).map(optionDiv => {
+                const input = optionDiv.querySelector('input');
+                const values = input.value.split(',').map(value => value.trim()).filter(value => value);
+                return values;
+            });
+
+            const combinations = generateCombinations(options);
+            combinations.forEach(combination => {
+                const combinationKey = combination.join(' - ');
+                const priceInput = document.createElement('div');
+                priceInput.classList.add('form-group', 'variant-price');
+                priceInput.innerHTML = `
+                    <label for="variant_price_${combinationKey}">Details for ${combinationKey}</label>
+                    <input type="number" name="variant_combinations[${combinationKey}][price]" id="variant_price_${combinationKey}" class="form-control" step="0.01" placeholder="Price">
+                    <input type="number" name="variant_combinations[${combinationKey}][quantity]" id="variant_quantity_${combinationKey}" class="form-control mt-2" placeholder="Quantity">
+                `;
+                variantPricesContainer.appendChild(priceInput);
+            });
+        }
+
+        function generateCombinations(arrays) {
+            if (arrays.length === 0) return [[]];
+            const restCombinations = generateCombinations(arrays.slice(1));
+            return arrays[0].flatMap(value => restCombinations.map(combination => [value, ...combination]));
+        }
+    </script>
 @endsection

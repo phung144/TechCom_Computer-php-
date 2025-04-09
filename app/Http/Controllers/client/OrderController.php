@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    public function index()
+    {
+        $userId = auth()->id();
+        $orders = Order::where('user_id', $userId)->orderBy('created_at', 'desc')->get();
+
+        return view('client.orders.main', compact('orders'));
+    }
+
     public function store(Request $request)
     {
         $userId = auth()->id();
@@ -51,5 +59,23 @@ class OrderController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Failed to place order. Please try again.');
         }
+    }
+
+    public function destroy($id)
+    {
+        $userId = auth()->id();
+        $order = Order::where('id', $id)->where('user_id', $userId)->first();
+
+        if (!$order) {
+            return redirect()->route('orders.index')->with('error', 'Order not found.');
+        }
+
+        if ($order->status === 'canceled') {
+            return redirect()->route('orders.index')->with('error', 'Order is already canceled.');
+        }
+
+        $order->update(['status' => 'canceled']);
+
+        return redirect()->route('orders.index')->with('success', 'Order has been canceled.');
     }
 }
