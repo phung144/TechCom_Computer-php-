@@ -5,7 +5,7 @@
 <!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
         <!-- Title -->
-        <title>Home-v1 | Electro - Responsive Website Template</title>
+        <title>TechCom Computer</title>
 
         <!-- Required Meta Tags Always Come First -->
         <meta charset="utf-8">

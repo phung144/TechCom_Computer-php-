@@ -23,6 +23,7 @@
                                     <td>{{ $variant->id }}</td>
                                     <td>{{ $variant->name }}</td>
                                     <td>
+                                        <a href="{{ route('admin.variants.show', $variant->id) }}" class="btn btn-sm btn-primary">Detail</a>
                                         <a href="{{ route('admin.variants.edit', $variant->id) }}" class="btn btn-sm btn-primary">Edit</a>
                                         <form action="{{ route('admin.variants.destroy', $variant->id) }}" method="POST" style="display:inline-block;">
                                             @csrf

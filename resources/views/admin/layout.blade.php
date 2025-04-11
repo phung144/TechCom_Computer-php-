@@ -30,6 +30,7 @@
     <link href="{{ asset('dist/plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link href="{{ asset('dist/plugins/toaster/toastr.min.css') }}" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- MONO CSS -->
     <link id="main-css-href" rel="stylesheet" href="{{ asset('dist/css/style.css') }}" />

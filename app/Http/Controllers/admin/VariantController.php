@@ -45,7 +45,8 @@ class VariantController extends Controller
     public function show(string $id)
     {
         $variant = Variant::findOrFail($id);
-        return view('admin.variants.showVariant', compact('variant'));
+        $variantOptions = $variant->options;
+        return view('admin.variants.showVariant', compact('variant', 'variantOptions'));
     }
 
     /**

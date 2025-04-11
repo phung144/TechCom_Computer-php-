@@ -35,7 +35,7 @@
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->description ?? 'No description available' }}</td>
                                     <td>{{ $product->category->name ?? 'N/A' }}</td>
-                                    <td>${{ number_format($product->price, 2) }}</td>
+                                    <td>{{ number_format($product->price) }} VND</td>
                                     <td>{{ $product->quantity }}</td>
                                     <td>{{ $product->sales }}</td>
                                     <td>
@@ -49,6 +49,8 @@
                                     </td>
                                     <td>{{ $product->discount_end ? $product->discount_end->format('Y-m-d') : 'N/A' }}</td>
                                     <td>
+                                        <a href="{{ route('admin.products.show', $product->id) }}"
+                                            class="btn btn-sm btn-primary">Detail</a>
                                         <a href="{{ route('admin.products.edit', $product->id) }}"
                                             class="btn btn-sm btn-primary">Edit</a>
                                         <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST"

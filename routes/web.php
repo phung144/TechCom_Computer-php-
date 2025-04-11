@@ -66,6 +66,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('orders', AdminOrderController::class);
     Route::put('orders/{id}/status', [App\Http\Controllers\admin\OrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::resource('variants', App\Http\Controllers\admin\VariantController::class);
+    Route::resource('variant-options', App\Http\Controllers\admin\VariantOptionController::class);
 });
-
-Route::get('/api/product-stock-price', [\App\Http\Controllers\admin\ProductController::class, 'getProductStockPrice']);

@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Variant extends Model
 {
-    use HasFactory;
+    protected $fillable = ['name'];
 
-    protected $table = 'variants';
-
-    protected $fillable = [
-        'name',
-    ];
-
+    public function options()
+    {
+        return $this->hasMany(VariantOption::class);
+    }
 }
