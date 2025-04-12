@@ -23,13 +23,38 @@
                                     <td>{{ $variant->id }}</td>
                                     <td>{{ $variant->name }}</td>
                                     <td>
-                                        <a href="{{ route('admin.variants.show', $variant->id) }}" class="btn btn-sm btn-primary">Detail</a>
-                                        <a href="{{ route('admin.variants.edit', $variant->id) }}" class="btn btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('admin.variants.destroy', $variant->id) }}" method="POST" style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                                        </form>
+                                        <div class="dropdown">
+                                            <a class="dropdown-toggle btn btn-sm btn-light" href="#" role="button"
+                                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                               <i class="mdi mdi-dots-vertical"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <!-- Nút Detail -->
+                                                <a href="{{ route('admin.variants.show', $variant->id) }}"
+                                                   class="dropdown-item">
+                                                   <i class="mdi mdi-eye-outline mr-2"></i> Detail
+                                                </a>
+
+                                                <!-- Nút Edit -->
+                                                <a href="{{ route('admin.variants.edit', $variant->id) }}"
+                                                   class="dropdown-item">
+                                                   <i class="mdi mdi-pencil-outline mr-2"></i> Edit
+                                                </a>
+
+                                                <!-- Phân cách -->
+                                                <div class="dropdown-divider"></div>
+
+                                                <!-- Nút Delete -->
+                                                <form action="{{ route('admin.variants.destroy', $variant->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item text-danger"
+                                                            onclick="return confirm('Are you sure to delete this variant?')">
+                                                        <i class="mdi mdi-delete-outline mr-2"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

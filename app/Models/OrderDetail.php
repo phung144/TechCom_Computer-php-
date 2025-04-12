@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +11,7 @@ class OrderDetail extends Model
     protected $fillable = [
         'order_id',
         'product_id',
+        'variant_id', // Thêm vào nếu chưa có
         'quantity',
         'price',
     ];
@@ -21,8 +21,16 @@ class OrderDetail extends Model
         return $this->belongsTo(Order::class);
     }
 
+    // Quan hệ với Product (đơn giản)
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
+        // Không thêm 'variants.options' ở đây
     }
+
+    // Quan hệ với Variant
+    public function variant()
+{
+    return $this->belongsTo(ProductVariant::class, 'variant_id')->with('options');
+}
 }

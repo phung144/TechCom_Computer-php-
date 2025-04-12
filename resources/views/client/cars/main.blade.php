@@ -18,104 +18,183 @@
     <!-- End Breadcrumb -->
 
     <div class="container">
-        <div class="mb-4 text-center">
-            <h1>Shopping Cart</h1>
+        <div class="mb-5 text-center">
+            <h1 class="display-5">Your Shopping Cart</h1>
+            <p class="text-muted">Review your items before checkout</p>
         </div>
 
         <!-- Cart Table -->
-        <div class="cart-table mb-10">
-            <table class="table table-bordered" cellspacing="0">
-                <thead class="thead-light">
-                    <tr>
-                        <th class="text-center">Remove</th>
-                        <th class="text-center">Image</th>
-                        <th>Product</th>
-                        <th class="text-center">Price</th>
-                        <th class="text-center">Quantity</th>
-                        <th class="text-center">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($carts as $cart)
+        <div class="cart-table mb-5">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="text-center" style="width: 80px;">Remove</th>
+                            <th class="text-center" style="width: 100px;">Image</th>
+                            <th>Product</th>
+                            <th>Variant</th>
+                            <th class="text-center" style="width: 120px;">Price</th>
+                            <th class="text-center" style="width: 150px;">Quantity</th>
+                            <th class="text-center" style="width: 120px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($carts as $cart)
                         <tr data-cart-id="{{ $cart->id }}">
-                            <td class="text-center">
+                            <td class="text-center align-middle">
                                 <form class="delete-cart-form" action="{{ route('cart.delete', $cart->id) }}" method="POST" data-cart-id="{{ $cart->id }}">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </form>
                             </td>
-                            <td class="text-center">
-                                <img class="img-fluid max-width-100 p-1 border"
-                                     src="{{ asset(Storage::url($cart->product->image)) }}"
-                                     alt="{{ $cart->product->name }}"
-                                     style="width: 50px;">
-                            </td>
-                            <td>{{ $cart->product->name }}</td>
-                            <td class="text-center">{{ number_format($cart->price, 0) }} VND</td>
-                            <td class="text-center">
-                                <div class="input-group justify-content-center align-items-center">
-                                    <button class="btn btn-sm btn-outline-secondary js-quantity-update" data-cart-id="{{ $cart->id }}" data-action="decrease">-</button>
-                                    <input type="text" class="form-control text-center mx-2 js-quantity-input" value="{{ $cart->quantity }}" data-cart-id="{{ $cart->id }}" style="width: 50px;" readonly>
-                                    <button class="btn btn-sm btn-outline-secondary js-quantity-update" data-cart-id="{{ $cart->id }}" data-action="increase">+</button>
+                            <td class="text-center align-middle">
+                                <div class="product-thumbnail">
+                                    <img src="{{ asset(Storage::url($cart->product->image)) }}"
+                                         alt="{{ $cart->product->name }}"
+                                         class="img-fluid rounded border">
                                 </div>
                             </td>
-                            <td class="text-center item-total" data-item-total="{{ $cart->price * $cart->quantity }}">
+                            <td class="align-middle">
+                                <h6 class="mb-0">{{ $cart->product->name }}</h6>
+                            </td>
+                            <td class="align-middle">
+                                @if($cart->variant)
+                                    <div class="variant-options">
+                                        @foreach($cart->variant->options as $option)
+                                            <span class="variant-value">({{ $option->value }})</span>
+                                            @if(!$loop->last) - @endif
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-muted">No variant</span>
+                                @endif
+                            </td>
+                            <td class="text-center align-middle">
+                                <span class="fw-bold">{{ number_format($cart->price, 0) }} VND</span>
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="d-flex justify-content-center">
+                                    <div class="quantity-control" style="max-width: 120px;">
+                                        <input type="text" class="form-control text-center js-quantity-input"
+                                               value="{{ $cart->quantity }}"
+                                               data-cart-id="{{ $cart->id }}"
+                                               readonly>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center align-middle fw-bold item-total" data-item-total="{{ $cart->price * $cart->quantity }}">
                                 {{ number_format($cart->price * $cart->quantity, 0) }} VND
                             </td>
                         </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="5" class="text-right">Total:</th>
-                        @php
-                            $total = $carts->sum(function($cart) {
-                                return $cart->price * $cart->quantity;
-                            });
-                        @endphp
-                        <td class="text-center">
-                            <strong id="cart-total">{{ number_format($total, 0) }} VND</strong>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="table-group-divider">
+                        <tr>
+                            <th colspan="6" class="text-end">Total:</th>
+                            @php
+                                $total = $carts->sum(function($cart) {
+                                    return $cart->price * $cart->quantity;
+                                });
+                            @endphp
+                            <td class="text-center">
+                                <strong id="cart-total" class="text-primary">{{ number_format($total, 0) }} VND</strong>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
         <!-- End Cart Table -->
 
         <!-- Billing Details -->
-        <div class="billing-details">
-            <div class="border-bottom mb-4">
-                <h3 class="section-title font-size-25">Billing Details</h3>
+        <div class="billing-details bg-light p-4 rounded mb-5">
+            <div class="mb-4">
+                <h3 class="h4 border-bottom pb-2">Billing Details</h3>
             </div>
             <form id="order-form" action="{{ route('order.store') }}" method="POST">
                 @csrf
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <label for="full_name">Full Name <span class="text-danger">*</span></label>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="full_name" class="form-label">Full Name <span class="text-danger">*</span></label>
                         <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Jack Wayley" required>
                     </div>
-                    <div class="col-md-6 mb-4">
-                        <label for="address">Address <span class="text-danger">*</span></label>
+                    <div class="col-md-6">
+                        <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
                         <input type="text" id="address" name="address" class="form-control" placeholder="470 Lucy Forks, London" required>
                     </div>
-                    <div class="col-md-6 mb-4">
-                        <label for="email">Email Address <span class="text-danger">*</span></label>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
                         <input type="email" id="email" name="email" class="form-control" placeholder="jackwayley@gmail.com" required>
                     </div>
-                    <div class="col-md-6 mb-4">
-                        <label for="phone">Phone</label>
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">Phone</label>
                         <input type="text" id="phone" name="phone" class="form-control" placeholder="+1 (062) 109-9222">
                     </div>
-                </div>
-
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Đặt hàng</button>
+                    <div class="col-12 text-center mt-3">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-shopping-bag me-2"></i> Place Order
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
         <!-- End Billing Details -->
     </div>
 </main>
+
+<style>
+    /* Custom CSS for better visual */
+    .cart-page {
+        padding-bottom: 3rem;
+    }
+
+    .product-thumbnail {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-thumbnail img {
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .quantity-control {
+        max-width: 120px;
+    }
+
+    .table th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table tfoot th {
+        font-size: 1rem;
+    }
+
+    .billing-details {
+        background-color: #f8f9fa;
+        border: 1px solid #eee;
+    }
+
+    .variant-options {
+        line-height: 1.3;
+    }
+
+    @media (max-width: 767.98px) {
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -146,56 +225,12 @@
             });
         });
 
-        document.querySelectorAll('.js-quantity-update').forEach(button => {
-            button.addEventListener('click', function () {
-                const cartId = this.dataset.cartId;
-                const action = this.dataset.action;
-                const input = document.querySelector(`.js-quantity-input[data-cart-id="${cartId}"]`);
-                let quantity = parseInt(input.value);
-
-                if (action === 'decrease' && quantity > 1) {
-                    quantity--;
-                } else if (action === 'increase') {
-                    quantity++;
-                }
-
-                updateCartQuantity(cartId, quantity);
-            });
-        });
-
-        function updateCartQuantity(cartId, quantity) {
-            fetch('{{ route('cart.update') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ cart_id: cartId, quantity: quantity })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const row = document.querySelector(`tr[data-cart-id="${cartId}"]`);
-                    const totalCell = row.querySelector('td.item-total');
-                    const quantityInput = row.querySelector(`.js-quantity-input[data-cart-id="${cartId}"]`);
-                    totalCell.textContent = new Intl.NumberFormat('vi-VN').format(data.item_total) + ' VND';
-                    totalCell.setAttribute('data-item-total', data.item_total);
-                    quantityInput.value = data.quantity;
-                    updateCartTotal();
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
         function updateCartTotal() {
             let total = 0;
-            document.querySelectorAll('td.item-total').forEach(cell => {
-                const itemTotal = parseInt(cell.dataset.itemTotal) || 0;
-                total += itemTotal;
+            document.querySelectorAll('.item-total').forEach(el => {
+                total += parseFloat(el.dataset.itemTotal);
             });
-            document.getElementById('cart-total').textContent = new Intl.NumberFormat('vi-VN').format(total) + ' VND';
+            document.getElementById('cart-total').textContent = total.toLocaleString() + ' VND';
         }
     });
 </script>

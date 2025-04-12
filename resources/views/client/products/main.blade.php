@@ -49,7 +49,12 @@
                 <div class="variant-grid">
                     @foreach ($variants as $variant)
                         <div class="variant-box {{ $loop->first ? 'selected' : '' }}" data-variant-id="{{ $variant->id }}">
-                            <div><strong>{{ $variant->combination_code }}</strong></div>
+                            <div class="variant-values">
+                                @foreach($variant->options as $option)
+                                    <span class="variant-value">({{ $option->value }})</span>
+                                    @if(!$loop->last) - @endif
+                                @endforeach
+                            </div>
                             <div class="price">{{ number_format($variant->price) }} VND</div>
                         </div>
                     @endforeach
@@ -105,58 +110,31 @@
 <!-- CSS cho biến thể -->
 <style>
     .variant-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 10px;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
 
-    .variant-box {
-        width: 180px;
-        padding: 14px 10px;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        background-color: #fff;
-        text-align: center;
-        transition: all 0.3s ease;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        cursor: pointer;
-        font-family: 'Segoe UI', sans-serif;
-    }
+.variant-box {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
 
-    .variant-box:hover {
-        border-color: #ccc;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+.variant-box.selected {
+    border-color: #a49e20;
+    background-color: #f8f9fa;
+}
 
-    .variant-box.selected {
-        border: 2px solid #d32f2f;
-        position: relative;
-        box-shadow: 0 3px 10px rgba(211, 47, 47, 0.2);
-    }
-
-    .variant-box.selected::after {
-        content: "✔";
-        position: absolute;
-        top: 6px;
-        right: 8px;
-        background-color: #d32f2f;
-        color: white;
-        font-size: 12px;
-        padding: 2px 5px;
-        border-radius: 6px;
-    }
-
-    .variant-box strong {
-        font-size: 16px;
-        display: block;
-        margin-bottom: 6px;
-        color: #333;
-    }
+.variant-box:hover {
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
 
     .variant-box .price {
-        font-size: 20px;
-        font-weight: bold;
+        font-size: 15px;
         color: #d32f2f;
     }
 </style>

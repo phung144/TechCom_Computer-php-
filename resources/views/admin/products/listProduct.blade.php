@@ -49,17 +49,31 @@
                                     </td>
                                     <td>{{ $product->discount_end ? $product->discount_end->format('Y-m-d') : 'N/A' }}</td>
                                     <td>
-                                        <a href="{{ route('admin.products.show', $product->id) }}"
-                                            class="btn btn-sm btn-primary">Detail</a>
-                                        <a href="{{ route('admin.products.edit', $product->id) }}"
-                                            class="btn btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST"
-                                            style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
-                                        </form>
+                                        <div class="dropdown">
+                                            <a class="dropdown-toggle btn btn-sm btn-light" href="#" role="button"
+                                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                               <i class="mdi mdi-dots-vertical"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a href="{{ route('admin.products.show', $product->id) }}"
+                                                   class="dropdown-item">
+                                                   <i class="mdi mdi-eye-outline mr-2"></i> Detail
+                                                </a>
+                                                <a href="{{ route('admin.products.edit', $product->id) }}"
+                                                   class="dropdown-item">
+                                                   <i class="mdi mdi-pencil-outline mr-2"></i> Edit
+                                                </a>
+                                                <div class="dropdown-divider"></div>
+                                                <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item text-danger"
+                                                            onclick="return confirm('Are you sure you want to delete this product?')">
+                                                        <i class="mdi mdi-delete-outline mr-2"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

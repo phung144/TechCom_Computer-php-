@@ -34,15 +34,26 @@
                                     <td>{{ $category->id }}</td>
                                     <td>{{ $category->description ?? 'No description available' }}</td>
                                     <td>
-                                        <a href="{{ route('admin.categories.edit', $category->id) }}"
-                                            class="btn btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST"
-                                            style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
-                                        </form>
+                                        <div class="dropdown">
+                                            <a class="dropdown-toggle btn btn-sm btn-light" href="#" role="button"
+                                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                               <i class="mdi mdi-dots-vertical"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a href="{{ route('admin.categories.edit', $category->id) }}"
+                                                   class="dropdown-item">
+                                                   <i class="mdi mdi-pencil mr-2"></i> Edit
+                                                </a>
+                                                <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item text-danger"
+                                                            onclick="return confirm('Are you sure?')">
+                                                        <i class="mdi mdi-delete mr-2"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

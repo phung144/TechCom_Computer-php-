@@ -13,8 +13,8 @@ class CartController extends Controller
      */
     public function index()
 {
-    // $carts = Cart::with(['user', 'product', 'variant'])->get();
-    return view('admin.carts.listCart');
+    $carts = Cart::all();
+    return view('admin.carts.listCart', compact('carts'));
 }
 
     /**
