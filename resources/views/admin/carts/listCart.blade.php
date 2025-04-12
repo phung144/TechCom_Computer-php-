@@ -22,8 +22,8 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {{-- @foreach ($products as $product)
+                    {{-- <tbody>
+                        @foreach ($products as $product)
                             <tr>
                                 <td class="py-0">
                                     <img src="{{ asset('storage/' . $product->image) }}" alt="Product Image"
@@ -57,8 +57,8 @@
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach --}}
-                    </tbody>
+                        @endforeach
+                    </tbody> --}}
                 </table>
             </div>
         </div>

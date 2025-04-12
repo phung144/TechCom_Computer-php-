@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\client;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\Variant;
 
 class CartController extends Controller
 {
@@ -19,21 +21,29 @@ class CartController extends Controller
         return view('client.car.show', ['id' => $id]);
     }
 
-    public function addToCart(Request $request)
-    {
-        if (!auth()->check()) {
-            return response()->json(['message' => 'Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.'], 401);
-        }
+    // Trong CartController.php
+public function addToCart(Request $request)
+{
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'variant_id' => 'required|exists:product_variants,id', // Sửa lại bảng
+        'quantity' => 'required|integer|min:1',
+    ]);
 
-        $cart = new Cart();
-        $cart->user_id = auth()->user()->id;
-        $cart->product_id = $request->product_id;
-        $cart->price = $request->price;
-        $cart->quantity = 1; // Default quantity
-        $cart->save();
+    // Sửa thành ProductVariant
+    $productVariant = ProductVariant::findOrFail($request->variant_id);
 
-        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng thành công!']);
-    }
+    Cart::create([
+        'user_id' => auth()->id(),
+        'product_id' => $request->product_id,
+        'variant_id' => $request->variant_id,
+        'quantity' => $request->quantity,
+        'price' => $productVariant->price, // Lấy giá từ ProductVariant
+    ]);
+
+    return redirect()->back()->with('success', '🛒 Sản phẩm đã được thêm vào giỏ hàng!');
+}
+
 
     public function updateQuantity(Request $request)
     {

@@ -16,6 +16,7 @@ class ProductDetailController extends Controller
         // Tính giá sau khi giảm
         $discountedPrice = $product->price * (1 - $product->discount_value / 100);  //Giảm giá sản phẩm detaildetail
         $originalPrice = $product->price; //Giảm giá sản phẩm Related product
+        $variants = $product->variants; // Lấy các biến thể từ bảng product_variants
 
         // Lấy 12 sản phẩm bán chạy cùng danh mục
         $relatedProducts = Product::where('category_id', $product->category_id)
@@ -24,6 +25,6 @@ class ProductDetailController extends Controller
             ->get();
 
         // Truyền dữ liệu qua view
-        return view('client.products.main', compact('product', 'relatedProducts', 'discountedPrice', 'originalPrice'));
+        return view('client.products.main', compact('product', 'relatedProducts', 'discountedPrice', 'originalPrice', 'variants'));
     }
 }

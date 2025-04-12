@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -11,9 +12,10 @@ class CartController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        return view(view: 'admin.carts.listCart');
-    }
+{
+    // $carts = Cart::with(['user', 'product', 'variant'])->get();
+    return view('admin.carts.listCart');
+}
 
     /**
      * Show the form for creating a new resource.

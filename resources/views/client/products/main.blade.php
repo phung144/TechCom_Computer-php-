@@ -7,76 +7,94 @@
     <div class="mb-xl-14 mb-6">
         <div class="row">
             <div class="col-md-5 mb-4 mb-md-0">
-                <div>
-                    <img class="img-fluid" src="{{ Storage::url($product->image) }}" width="90%" alt="Image Description">
-                </div>
+                <img class="img-fluid" src="{{ Storage::url($product->image) }}" width="90%" alt="Image Description">
             </div>
             <div class="col-md-7 mb-md-6 mb-lg-0 mt-6">
-                <div class="mb-2">
-                    <div class="border-bottom mb-3 pb-md-1 pb-3">
-                        <a href="#" class="font-size-12 text-gray-5 mb-2 d-inline-block">Laptops {{ $product->category->name }}</a>
-                        <h2 class="font-size-25 text-lh-1dot2">{{ $product->name }}</h2>
-                        <div class="mb-2">
-                            <a class="d-inline-flex align-items-center small font-size-15 text-lh-1" href="#">
-                                <div class="text-warning mr-2">
-                                    <small class="fas fa-star"></small>
-                                    <small class="fas fa-star"></small>
-                                    <small class="fas fa-star"></small>
-                                    <small class="fas fa-star"></small>
-                                    <small class="far fa-star text-muted"></small>
-                                </div>
-                                <span class="text-secondary font-size-13">(3 customer reviews)</span>
-                            </a>
-                        </div>
-                        <div class="d-md-flex align-items-center">
-                            <div class="ml-md-3 text-gray-9 font-size-14">Availability: <span class="text-green font-weigh-bold">{{ $product->quantity }} in stock</span></div>
-                        </div>
-                    </div>
+                <div class="border-bottom mb-3 pb-md-1 pb-3">
+                    <a href="#" class="font-size-12 text-gray-5 mb-2 d-inline-block">Laptops {{ $product->category->name }}</a>
+                    <h2 class="font-size-25 text-lh-1dot2">{{ $product->name }}</h2>
                     <div class="mb-2">
-                        <ul class="font-size-14 pl-3 ml-1 text-gray-110">
-                            {{ $product->description }}
-                        </ul>
-                    </div>
-                    <div class="mb-4">
-                        <div class="d-flex align-items-baseline">
-                            <ins class="font-size-36 text-decoration-none text-red mr-3">
-                                {{ number_format($discountedPrice, 3) }} VND
-                            </ins>
-                            @if($discountedPrice < $originalPrice)
-                                <del class="font-size-16 text-gray-6">{{ number_format($originalPrice, 3) }} VND</del>
-                            @endif
+                        <div class="text-warning mr-2">
+                            <small class="fas fa-star"></small>
+                            <small class="fas fa-star"></small>
+                            <small class="fas fa-star"></small>
+                            <small class="fas fa-star"></small>
+                            <small class="far fa-star text-muted"></small>
                         </div>
+                        <span class="text-secondary font-size-13">(3 customer reviews)</span>
                     </div>
-                    <div class="d-md-flex align-items-end mb-3">
-                        <div class="max-width-150 mb-4 mb-md-0">
-                            <h6 class="font-size-14">Quantity</h6>
-                            <!-- Quantity -->
-                            <div class="border rounded-pill py-2 px-3 border-color-1">
-                                <div class="js-quantity row align-items-center">
-                                    <div class="col">
-                                        <input class="js-result form-control h-auto border-0 rounded p-0 shadow-none" type="text" value="1">
-                                    </div>
-                                    <div class="col-auto pr-1">
-                                        <a class="js-minus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
-                                            <small class="fas fa-minus btn-icon__inner"></small>
-                                        </a>
-                                        <a class="js-plus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
-                                            <small class="fas fa-plus btn-icon__inner"></small>
-                                        </a>
-                                    </div>
-                                </div>
+                    <div class="ml-md-3 text-gray-9 font-size-14">Availability:
+                        <span class="text-green font-weigh-bold">{{ $product->quantity }} in stock</span>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <ul class="font-size-14 pl-3 ml-1 text-gray-110">
+                        {{ $product->description }}
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex align-items-baseline">
+                        <ins class="font-size-36 text-decoration-none text-red mr-3">
+                            <span id="variant-price">{{ number_format($variants->first()->price) }} VND</span>
+                        </ins>
+                        @if($discountedPrice < $originalPrice)
+                            <del class="font-size-16 text-gray-6">{{ number_format($originalPrice) }} VND</del>
+                        @endif
+                    </div>
+                </div>
+
+                <h3>Chọn cấu hình:</h3>
+                <div class="variant-grid">
+                    @foreach ($variants as $variant)
+                        <div class="variant-box {{ $loop->first ? 'selected' : '' }}" data-variant-id="{{ $variant->id }}">
+                            <div><strong>{{ $variant->combination_code }}</strong></div>
+                            <div class="price">{{ number_format($variant->price) }} VND</div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="max-width-150 my-4">
+                    <h6 class="font-size-14">Số lượng</h6>
+                    <div class="border rounded-pill py-2 px-3 border-color-1">
+                        <div class="js-quantity row align-items-center">
+                            <div class="col">
+                                <input class="js-result form-control h-auto border-0 rounded p-0 shadow-none" type="text" value="1">
                             </div>
-                            <!-- End Quantity -->
+                            <div class="col-auto pr-1">
+                                <a class="js-minus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
+                                    <small class="fas fa-minus btn-icon__inner"></small>
+                                </a>
+                                <a class="js-plus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
+                                    <small class="fas fa-plus btn-icon__inner"></small>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="d-flex mt-3">
-                        <a href="#" class="btn px-5 btn-primary-dark transition-3d-hover mr-2">
-                            <i class="ec ec-add-to-cart mr-2 font-size-20"></i> Add to Cart
-                        </a>
-                        <a href="#" class="btn px-5 btn-success transition-3d-hover">
-                            <i class="ec ec-credit-card mr-2 font-size-20"></i> Mua ngay
-                        </a>
+                </div>
+
+                <form action="{{ route('cart.add') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <input type="hidden" name="variant_id" id="variant-id-input" value="{{ $variants->first()->id }}">
+                    <input type="hidden" name="quantity" id="quantity-input" value="1">
+
+                    <button type="submit" class="btn px-5 btn-primary-dark transition-3d-hover mr-2">
+                        <i class="ec ec-add-to-cart mr-2 font-size-20"></i> Add to Cart
+                    </button>
+                </form>
+
+                @if(session('success'))
+                    <div class="alert alert-success mt-3">
+                        {{ session('success') }}
                     </div>
+                @endif
+
+                <div class="d-flex mt-3">
+                    <a href="#" class="btn px-5 btn-success transition-3d-hover">
+                        <i class="ec ec-credit-card mr-2 font-size-20"></i> Mua ngay
+                    </a>
                 </div>
             </div>
         </div>
@@ -84,55 +102,102 @@
 </div>
 {{-- End Product Detail --}}
 
+<!-- CSS cho biến thể -->
+<style>
+    .variant-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 10px;
+    }
 
-<!-- Related products -->
-<div class="mb-6">
-    <div class="d-flex justify-content-between align-items-center border-bottom border-color-1 flex-lg-nowrap flex-wrap mb-4">
-        <h3 class="section-title mb-0 pb-2 font-size-22">Related products</h3>
-    </div>
-    <ul class="row list-unstyled products-group no-gutters">
-        @foreach($relatedProducts as $relatedProduct)
-        <li class="col-6 col-md-3 col-xl-2gdot4-only col-wd-2 product-item">
-            <div class="product-item__outer h-100">
-                <div class="product-item__inner px-xl-4 p-3">
-                    <div class="product-item__body pb-xl-2 position-relative">
-                        <div class="mb-2">
-                            <a href="#" class="font-size-12 text-gray-5">{{ $relatedProduct->category->name }}</a>
-                        </div>
-                        <div class="mb-2 position-relative">
-                            @if($relatedProduct->discount_value > 0)
-                            <span class="badge badge-danger position-absolute top-0 left-0 font-size-12 p-2">
-                                Giảm {{ floor($relatedProduct->discount_value) }}%
-                            </span>
-                            @endif
-                            <a href="{{ route('product.detail', $relatedProduct->id) }}" class="d-block text-center">
-                                <img class="img-fluid" src="{{ Storage::url($relatedProduct->image) }}" alt="{{ $relatedProduct->name }}">
-                            </a>
-                        </div>
-                        <h5 class="mb-1 product-item__title">
-                            <a href="{{ route('product.detail', $relatedProduct->id) }}" class="text-blue font-weight-bold">{{ $relatedProduct->name }}</a>
-                        </h5>
+    .variant-box {
+        width: 180px;
+        padding: 14px 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        background-color: #fff;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        cursor: pointer;
+        font-family: 'Segoe UI', sans-serif;
+    }
 
-                        <div class="flex-center-between mb-1">
-                            <div class="prodcut-price d-flex flex-column align-items-start position-relative">
-                                @php
-                                    $discountedPrice = $relatedProduct->price - ($relatedProduct->price * $relatedProduct->discount / 100);
-                                @endphp
-                                <del class="font-size-12 text-gray-6">{{ number_format($relatedProduct->price, 3) }} VND</del>
-                                <ins class="font-size-16 text-red text-decoration-none mt-1">{{ number_format($discountedPrice, 3) }} VND</ins>
-                            </div>
-                            <div class="d-none d-xl-block prodcut-add-cart">
-                                <a href="#" class="btn-add-cart btn-warning transition-3d-hover">
-                                    <i class="ec ec-add-to-cart"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </li>
-        @endforeach
-    </ul>
-</div>
-<!-- End Related products -->
+    .variant-box:hover {
+        border-color: #ccc;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .variant-box.selected {
+        border: 2px solid #d32f2f;
+        position: relative;
+        box-shadow: 0 3px 10px rgba(211, 47, 47, 0.2);
+    }
+
+    .variant-box.selected::after {
+        content: "✔";
+        position: absolute;
+        top: 6px;
+        right: 8px;
+        background-color: #d32f2f;
+        color: white;
+        font-size: 12px;
+        padding: 2px 5px;
+        border-radius: 6px;
+    }
+
+    .variant-box strong {
+        font-size: 16px;
+        display: block;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    .variant-box .price {
+        font-size: 20px;
+        font-weight: bold;
+        color: #d32f2f;
+    }
+</style>
+
+<!-- JS -->
+<script>
+    document.querySelectorAll('.variant-box').forEach(box => {
+        box.addEventListener('click', function () {
+            // Xóa lớp 'selected' khỏi tất cả các variant-box
+            document.querySelectorAll('.variant-box').forEach(b => b.classList.remove('selected'));
+            // Thêm lớp 'selected' vào variant được chọn
+            this.classList.add('selected');
+
+            // Lấy giá của variant được chọn và cập nhật giá trên giao diện
+            let variantPrice = this.querySelector('.price').textContent.trim();
+            document.getElementById('variant-price').textContent = variantPrice;
+
+            // Lấy ID variant và đưa vào input hidden
+            document.getElementById('variant-id-input').value = this.getAttribute('data-variant-id');
+        });
+    });
+
+    // Cập nhật số lượng mỗi khi thay đổi
+    document.querySelector('.js-plus').addEventListener('click', () => {
+        let input = document.querySelector('.js-result');
+        input.value = parseInt(input.value) + 1;
+        document.getElementById('quantity-input').value = input.value;
+    });
+
+    document.querySelector('.js-minus').addEventListener('click', () => {
+        let input = document.querySelector('.js-result');
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+            document.getElementById('quantity-input').value = input.value;
+        }
+    });
+
+    // Nếu người dùng gõ trực tiếp vào input
+    document.querySelector('.js-result').addEventListener('input', (e) => {
+        document.getElementById('quantity-input').value = e.target.value;
+    });
+</script>
+
 @endsection
