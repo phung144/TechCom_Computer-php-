@@ -4,6 +4,7 @@ use App\Http\Controllers\admin\CartController as AdminCartController;
 use App\Http\Controllers\admin\OrderController as AdminOrderController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\VariantOptionProductController;
 use App\Http\Controllers\client\CartController;
 use App\Http\Controllers\client\HomeController;
 use App\Http\Controllers\client\ProductDetailController;
@@ -67,4 +68,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('orders/{id}/status', [App\Http\Controllers\admin\OrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::resource('variants', App\Http\Controllers\admin\VariantController::class);
     Route::resource('variant-options', App\Http\Controllers\admin\VariantOptionController::class);
+    Route::prefix('products/{product}')->group(function () {
+        Route::get('variants/create', [VariantOptionProductController::class, 'create'])->name('products.variants.create');
+        Route::post('variants', [VariantOptionProductController::class, 'store'])->name('products.variants.store');
+    });
+
+
 });
