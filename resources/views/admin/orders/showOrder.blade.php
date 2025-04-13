@@ -122,6 +122,7 @@
                                     <th class="text-center" style="width: 100px;">Qty</th>
                                     <th class="text-center" style="width: 120px;">Price</th>
                                     <th class="text-center" style="width: 120px;">Total</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -129,7 +130,7 @@
                                     <tr>
                                         <td class="text-center">
                                             <div class="product-img">
-                                                @if($detail->product->image)
+                                                @if($detail->product && $detail->product->image) <!-- Thêm kiểm tra $detail->product -->
                                                     <img src="{{ asset('storage/' . $detail->product->image) }}"
                                                          alt="{{ $detail->product->name }}">
                                                 @else
@@ -142,14 +143,16 @@
                                         <td>
                                             <div class="product-details">
                                                 <div class="product-name">
-                                                    {{ $detail->product->name }}
-                                                    <span class="product-id">#{{ $detail->product->id }}</span>
+                                                    {{ $detail->product->name ?? 'Product deleted' }} <!-- Xử lý khi product bị xóa -->
+                                                    <span class="product-id">#{{ $detail->product->id ?? '' }}</span>
                                                 </div>
                                                 @if($detail->variant && $detail->variant->options->isNotEmpty())
                                                     <div class="variant-options">
                                                         @foreach($detail->variant->options as $option)
                                                             <span class="variant-badge">
-                                                                <span class="option-name">{{ $option->variant->name }}:</span>
+                                                                @if($option->variant) <!-- Kiểm tra relation variant -->
+                                                                    <span class="option-name">{{ $option->variant->name }}:</span>
+                                                                @endif
                                                                 <span class="option-value">{{ $option->value }}</span>
                                                             </span>
                                                         @endforeach
@@ -160,8 +163,8 @@
                                             </div>
                                         </td>
                                         <td class="text-center">{{ $detail->quantity }}</td>
-                                        <td class="text-center">${{ number_format($detail->price, 2) }}</td>
-                                        <td class="text-center text-success">${{ number_format($detail->price * $detail->quantity, 2) }}</td>
+                                        <td class="text-center">{{ number_format($detail->price) }} VND</td>
+                                        <td class="text-center text-success">{{ number_format($detail->price * $detail->quantity) }} VND</td>
                                     </tr>
                                 @endforeach
                             </tbody>

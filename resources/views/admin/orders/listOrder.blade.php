@@ -69,10 +69,11 @@
                                                         <div class="order-product-name" title="{{ $orderDetail->product->name ?? 'N/A' }}">
                                                             {{ $orderDetail->product->name ?? 'N/A' }}
                                                         </div>
-                                                        @if($orderDetail->product->variants->isNotEmpty())
+                                                        @if($orderDetail->variant) <!-- Kiểm tra nếu có variant -->
                                                             <div class="order-product-variant">
-                                                                @foreach($orderDetail->product->variants->first()->options as $option)
+                                                                @foreach($orderDetail->variant->options as $option)
                                                                     <span class="variant-option">{{ $option->value }}</span>
+                                                                    @if(!$loop->last) - @endif <!-- Thêm dấu gạch ngang nếu không phải option cuối cùng -->
                                                                 @endforeach
                                                             </div>
                                                         @else

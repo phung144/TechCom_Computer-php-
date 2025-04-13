@@ -59,6 +59,9 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::delete('/orders/{order}/force-delete', [OrderController::class, 'forceDeleteOrder'])
+    ->name('orders.forceDelete');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('products', ProductController::class);
