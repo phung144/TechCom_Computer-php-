@@ -117,7 +117,7 @@
                     <!-- End Logo-offcanvas-menu -->
                     <!-- Search Bar -->
                     <div class="col d-none d-xl-block">
-                        <form class="js-focus-state" method="GET" action="{{ route('home.search') }}">
+                        <form class="js-focus-state" method="GET" action="{{ route('shop.search') }}">
                             <label class="sr-only" for="searchproduct">Search</label>
                             <div class="input-group">
                                 <input type="text" class="form-control py-2 pl-5 font-size-15 border-right-0 height-40 border-width-2 rounded-left-pill border-primary" name="query" id="searchproduct-item" placeholder="Search for Products" aria-label="Search for Products" aria-describedby="searchProduct1" required>

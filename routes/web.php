@@ -11,6 +11,7 @@ use App\Http\Controllers\client\ProductDetailController;
 use App\Http\Controllers\client\SearchController;
 use App\Http\Controllers\client\OrderController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\shop\ShopController as ShopShopController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,10 +34,19 @@ Route::get('/admin/home', function () { // /admin/home là đường dẫn chín
 })->name('admin-home'); //Tên route gọi đến view
 
 Route::get('/', [HomeController::class, 'index'])->name('client-home');
+Route::get('/shop', [ShopShopController::class, 'index'])->name('shop-home');
+Route::get('category/{id}', [ShopShopController::class, 'getProductsByCategory'])
+     ->name('category.products');
 
 Route::get('searchCategory', [HomeController::class, 'searchCategory'])->name('search-category');
 
-Route::get('search', [HomeController::class, 'search'])->name('search');
+// Tìm kiếm trang chủ (ví dụ: sản phẩm nổi bật)
+Route::get('search', [HomeController::class, 'search'])
+    ->name('home.search');
+
+// Tìm kiếm trong shop (toàn bộ sản phẩm)
+Route::get('shop/search', [ShopShopController::class, 'search'])
+    ->name('shop.search');
 
 Route::get('/product-detail/{id}', [ProductDetailController::class, 'productDetail'])->name('product.detail');
 

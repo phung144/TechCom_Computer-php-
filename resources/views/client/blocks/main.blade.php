@@ -76,7 +76,15 @@
                 <div class="col-md-6 col-lg-4 col-wd-3 product-item remove-divider">
                     <div class="product-item__outer h-100 w-100 prodcut-box-shadow">
                         <div class="product-item__inner bg-white p-3">
+                            @if($product->category)
+                                <div class="mb-1"> <!-- Giảm margin-bottom -->
+                                    <a href="" class="font-size-11 text-gray-5"> <!-- Giảm font-size -->
+                                        {{ $product->category->name }}
+                                    </a>
+                                </div>
+                                @endif
                             <div class="product-item__body pb-xl-2 position-relative">
+
                                 {{-- Discount Badge --}}
                                 @if($product->discount_value > 0)
                                     <div class="discount-badge position-absolute top-0 left-0 bg-danger text-white px-2 py-1">
