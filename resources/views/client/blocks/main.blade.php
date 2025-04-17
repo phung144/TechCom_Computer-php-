@@ -133,7 +133,10 @@
                                     <a href="#" class="text-gray-6 font-size-13">
                                         <i class="ec ec-compare mr-1 font-size-15"></i> Compare
                                     </a>
-                                    <a href="#" class="text-gray-6 font-size-13">
+                                    <a href="{{ route('wishlist.add') }}" class="text-gray-6 font-size-13"
+                                    class="btn-add-cart btn-primary transition-3d-hover"
+                                           onclick="addToWishlist('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->id }})">
+                                        
                                         <i class="ec ec-favorites mr-1 font-size-15"></i> Add to Wishlist
                                     </a>
                                 </div>
@@ -422,8 +425,8 @@
 {{-- End List Best selling products --}}
 
 <script>
-    function addToCart(name, image, price, productId) {
-        fetch('{{ route('cart.add') }}', {
+    function addToWishlist(name, image, price, productId) {
+        fetch('{{ route('wishlist.add') }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -433,7 +436,7 @@
                 product_id: productId,
                 name_product: name,
                 image_product: image,
-                price: price
+                
             })
         })
         .then(response => {

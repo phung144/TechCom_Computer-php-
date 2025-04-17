@@ -165,6 +165,22 @@
                                     </div>
                                     <!-- End Input -->
                                 </li>
+                                <li class="col d-none d-xl-block">
+                                <a href="@auth {{ route('wishlist.index') }} @else {{ route('login') }} @endauth"
+                                       class="text-gray-90 position-relative d-flex"
+                                       data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Wishlist">
+                                        <i class="fas fa-heart font-size-22"></i> <!-- icon mới -->
+                                        <span class="bg-lg-down-black width-22 height-22 bg-primary position-absolute d-flex align-items-center justify-content-center rounded-circle left-12 top-8 font-weight-bold font-size-12">
+                                            @auth
+                                                {{ \App\Models\Wishlist::where('user_id', auth()->id())->count() }}
+                                            @else
+                                                0
+                                            @endauth
+                                        </span>
+                                    </a>
+                                </li>
                                 <!-- End Search -->
                                 <li class="col d-none d-xl-block">
                                     <a href="@auth {{ route('orders.index') }} @else {{ route('login') }} @endauth"
