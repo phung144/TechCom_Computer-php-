@@ -64,6 +64,8 @@ Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 
 Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
+Route::post('comment', [ProductDetailController::class,'comment'])->name('comment');
+
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

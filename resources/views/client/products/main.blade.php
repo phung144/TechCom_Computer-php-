@@ -103,6 +103,39 @@
                 </div>
             </div>
         </div>
+
+        <div class="comment-section">
+            <h2>Bình luận</h2>
+            @if (Auth::check())
+                <div class="comment-box">
+                    <form action="{{ route('comment') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <textarea name="comment" placeholder="Nhập bình luận của bạn..."></textarea>
+                        <button>Gửi</button>
+                    </form>
+                </div>
+            @else
+                <div class="comment-box">
+                    Vui lòng đăng nhập để bình luận.
+                </div>
+            @endif
+            <div class="comment-list">
+                @if (isset($comment) && count($comment) > 0)
+                    @foreach ($comment as $item)
+                        <div class="comment">
+                            <div class="author">{{ $item->user->name }}</div>
+                            <div class="content">{{ $item->comment }}</div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="comment">
+                        Chưa có bình luận nào cả.
+                    </div>
+                @endif
+                
+            </div>
+        </div><br>
     </div>
 </div>
 {{-- End Product Detail --}}
@@ -136,6 +169,76 @@
     .variant-box .price {
         font-size: 15px;
         color: #d32f2f;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+
+    .comment-section {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .comment-section h2 {
+      margin-bottom: 20px;
+    }
+
+    .comment-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-size: 14px;
+    }
+
+    .comment-box button {
+      width: 100px;
+      padding: 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      align-self: flex-end;
+    }
+
+    .comment-box button:hover {
+      background-color: #2980b9;
+    }
+
+    .comment-list {
+      margin-top: 30px;
+    }
+
+    .comment {
+      background: #f1f1f1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .comment .author {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .comment .content {
+      font-size: 14px;
     }
 </style>
 
