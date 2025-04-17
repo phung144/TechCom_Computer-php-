@@ -89,6 +89,19 @@
                         <i class="ec ec-add-to-cart mr-2 font-size-20"></i> Add to Cart
                     </button>
                 </form>
+               <div class ="d-flex mt-3">
+               <form action="{{ route('wishlist.add') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <input type="hidden" name="quantity" id="quantity-input" value="1">
+                    
+
+                    <button type="submit" class="btn px-5 btn-primary-dark transition-3d-hover mr-2">
+                        <i class="ec ec-favorites mr-2 font-size-20"></i> Add to Wishlist
+                    </button>
+                </form>
+               </div>
+               
 
                 @if(session('success'))
                     <div class="alert alert-success mt-3">

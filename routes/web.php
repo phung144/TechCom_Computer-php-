@@ -6,6 +6,7 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\VariantOptionProductController;
 use App\Http\Controllers\client\CartController;
+use App\Http\Controllers\client\WishlistController;
 use App\Http\Controllers\client\HomeController;
 use App\Http\Controllers\client\ProductDetailController;
 use App\Http\Controllers\client\SearchController;
@@ -57,6 +58,11 @@ Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add')
 Route::post('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update');
 
 Route::post('/carts-delete/{id}', [CartController::class, 'delete'])->name('cart.delete');
+
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
+Route::post('/wishlist/update', [WishlistController::class, 'update'])->name('wishlist.update');
+Route::delete('/wishlist/delete/{id}', [WishlistController::class, 'delete'])->name('wishlist.delete');
 
 Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
 
