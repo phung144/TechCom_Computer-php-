@@ -112,33 +112,25 @@
                                         </span>
                                         @if($product->discount_value > 0)
                                             <span class="text-gray-500 text-decoration-line-through font-size-14 ml-2">
-                                                {{ number_format($product->price, 0) }} VND
+                                                {{ number_format($product->display_price, 0) }} VND
                                             </span>
                                         @endif
                                     </div>
                                     <div class="d-none d-xl-block prodcut-add-cart">
                                         <a href="javascript:void(0);"
-                                           class="btn-add-cart btn-primary transition-3d-hover"
-                                           onclick="addToCart('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
-                                            <i class="ec ec-add-to-cart"></i>
+                                           class="btn-add-cart btn-danger transition-3d-hover"
+                                           onclick="addToWishlist('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
+                                           <i class="ec ec-favorites" style="font-size: 18px;"></i>
                                         </a>
                                     </div>
                                 </div>
-                                <div class="mt-2">
-                                    <span class="text-gray-6 font-size-13">Sold: {{ $product->sales ?? 0 }}</span>
-                                </div>
+
                             </div>
                             <div class="product-item__footer">
                                 <div class="border-top pt-2 flex-center-between flex-wrap">
-                                    <a href="#" class="text-gray-6 font-size-13">
-                                        <i class="ec ec-compare mr-1 font-size-15"></i> Compare
-                                    </a>
-                                    <a href="{{ route('wishlist.add') }}" class="text-gray-6 font-size-13"
-                                    class="btn-add-cart btn-primary transition-3d-hover"
-                                           onclick="addToWishlist('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->id }})">
-                                        
-                                        <i class="ec ec-favorites mr-1 font-size-15"></i> Add to Wishlist
-                                    </a>
+                                    <div class="mt-2">
+                                        <span class="text-gray-6 font-size-13">Sold: {{ $product->sales ?? 0 }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -239,7 +231,7 @@
                                                     <div class="prodcut-price-sale">
                                                         @if($product->discount_value > 0)
                                                             <span class="original-price">
-                                                                {{ number_format($product->price, 0) }} VND
+                                                                {{ number_format($product->display_price, 0) }} VND
                                                             </span>
                                                         @endif
                                                         <span class="final-price">
@@ -250,9 +242,9 @@
                                                     <div class="d-flex justify-content-between align-items-center mt-2">
                                                         <span class="text-gray-6 font-size-13">Sold: {{ $product->sales ?? 0 }}</span>
                                                         <a href="javascript:void(0);"
-                                                           class="btn-add-cart btn-primary transition-3d-hover"
+                                                           class="btn-add-cart btn-danger transition-3d-hover"
                                                            onclick="addToCart('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
-                                                            <i class="ec ec-add-to-cart"></i>
+                                                           <i class="ec ec-favorites" style="font-size: 18px;"></i>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -371,24 +363,25 @@
                                     <div class="flex-center-between mb-3">
                                         <div class="prodcut-price best-selling-price">
                                             @if($product->discount_value > 0)
-                                                <div class="original-price">{{ number_format($product->price, 0) }} VND</div>
+                                                <div class="original-price">{{ number_format($product->display_price, 0) }} VND</div>
                                             @endif
                                             <div class="final-price">{{ number_format($product->final_price, 0) }} VND</div>
                                         </div>
                                         <div class="d-none d-xl-block prodcut-add-cart">
                                             <a href="javascript:void(0);"
-                                               class="btn-add-cart btn-primary transition-3d-hover"
+                                               class="btn-add-cart btn-danger transition-3d-hover"
                                                onclick="addToCart('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
-                                                <i class="ec ec-add-to-cart"></i>
+                                               <i class="ec ec-favorites" style="font-size: 18px;"></i>
                                             </a>
                                         </div>
                                     </div>
                                     <div class="product-item__footer">
-                                        <div class="border-top pt-2 flex-center-between flex-wrap">
-                                            <span class="text-gray-6 font-size-13">Sold: {{ $product->sales }}</span>
-                                            <a href="#" class="text-gray-6 font-size-13">
+                                        <div class="border-top pt-2 d-flex justify-content-end">
+
+                                            {{-- <a href="#" class="text-gray-6 font-size-13">
                                                 <i class="ec ec-favorites mr-1 font-size-15"></i> Wishlist
-                                            </a>
+                                            </a> --}}
+                                            <span class="text-gray-6 font-size-13 ">Sold: {{ $product->sales }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -436,7 +429,7 @@
                 product_id: productId,
                 name_product: name,
                 image_product: image,
-                
+
             })
         })
         .then(response => {

@@ -16,15 +16,31 @@ class AuthController extends Controller
     }
 
     public function register(Request $request)
-    {
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+{
+    // Validate dữ liệu đầu vào
+    // $request->validate([
+    //     'name' => 'required|string|max:255',
+    //     'email' => 'required|string|email|max:255|unique:users',
+    //     'password' => 'required|string|min:6|confirmed',
+    //     'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Tối đa 2MB
+    // ]);
 
-        return redirect()->route('login')->with('success', 'Registration successful!');
+    // Xử lý upload ảnh
+    $imagePath = null;
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('profile_images', 'public');
     }
+
+    // Tạo user mới
+    User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'image' => $imagePath, // Lưu đường dẫn ảnh
+    ]);
+
+    return redirect()->route('login')->with('success', 'Đăng ký thành công!');
+}
 
     public function showLoginForm()
     {

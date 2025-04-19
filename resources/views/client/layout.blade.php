@@ -31,6 +31,9 @@
         <!-- CSS Electro Template -->
         <link rel="stylesheet" href="{{ asset('client/assets/css/theme.css') }}">
         <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+            <!-- SweetAlert2 CSS -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     </head>
 
     <body>

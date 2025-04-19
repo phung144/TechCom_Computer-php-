@@ -49,4 +49,10 @@ class Product extends Model
         'discount_start' => 'datetime',
         'discount_end' => 'datetime',
     ];
+
+    // In Product.php model
+public function getCheapestVariant()
+{
+    return $this->variants()->orderBy('price', 'asc')->first();
+}
 }

@@ -8,7 +8,7 @@
                 <h2>Register</h2>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ route('register.post') }}">
+                <form method="POST" action="{{ route('register.post') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="name" class="font-weight-bold">Name:</label>
@@ -25,6 +25,11 @@
                     <div class="form-group">
                         <label for="password_confirmation" class="font-weight-bold">Confirm Password:</label>
                         <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Confirm your password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="image" class="font-weight-bold">Profile Image:</label>
+                        <input type="file" id="image" name="image" class="form-control-file">
+                        <small class="text-muted">Upload your profile picture (optional)</small>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Register</button>
                 </form>

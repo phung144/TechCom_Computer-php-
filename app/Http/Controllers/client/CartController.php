@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\Product;
 use App\Models\Variant;
 
 class CartController extends Controller
@@ -22,27 +23,40 @@ class CartController extends Controller
     }
 
     // Trong CartController.php
-public function addToCart(Request $request)
-{
-    $request->validate([
-        'product_id' => 'required|exists:products,id',
-        'variant_id' => 'required|exists:product_variants,id', // Sửa lại bảng
-        'quantity' => 'required|integer|min:1',
-    ]);
+    public function addToCart(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'variant_id' => 'required|exists:product_variants,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
 
-    // Sửa thành ProductVariant
-    $productVariant = ProductVariant::findOrFail($request->variant_id);
+        // Lấy thông tin sản phẩm và biến thể
+        $product = Product::findOrFail($request->product_id);
+        $productVariant = ProductVariant::findOrFail($request->variant_id);
 
-    Cart::create([
-        'user_id' => auth()->id(),
-        'product_id' => $request->product_id,
-        'variant_id' => $request->variant_id,
-        'quantity' => $request->quantity,
-        'price' => $productVariant->price, // Lấy giá từ ProductVariant
-    ]);
+        // Tính giá sau giảm giá
+        $finalPrice = $productVariant->price; // Giá gốc của biến thể
 
-    return redirect()->back()->with('success', '🛒 Sản phẩm đã được thêm vào giỏ hàng!');
-}
+        if ($product->discount_value > 0) {
+            if ($product->discount_type === 'percentage') {
+                $finalPrice = $productVariant->price * (1 - $product->discount_value / 100);
+            } else {
+                $finalPrice = $productVariant->price - $product->discount_value;
+            }
+        }
+
+        // Lưu vào giỏ hàng với giá đã giảm
+        Cart::create([
+            'user_id' => auth()->id(),
+            'product_id' => $request->product_id,
+            'variant_id' => $request->variant_id,
+            'quantity' => $request->quantity,
+            'price' => $finalPrice, // Giá sau giảm giá
+        ]);
+
+        return redirect()->back()->with('success', 'Sản phẩm đã được thêm vào giỏ hàng! 🛒');
+    }
 
 
     public function updateQuantity(Request $request)

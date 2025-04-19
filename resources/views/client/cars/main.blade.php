@@ -2,6 +2,23 @@
 
 @section('main')
 <main id="content" role="main" class="cart-page">
+    {{-- Thông báo add to cart thành công --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 2000, // Tự động đóng sau 2 giây
+                timerProgressBar: true,
+                position: 'top-end',
+                toast: true,
+                background: '#f8f9fa',
+                iconColor: '#28a745'
+            });
+        </script>
+    @endif
     <!-- Breadcrumb -->
     <div class="bg-gray-13 bg-md-transparent">
         <div class="container">

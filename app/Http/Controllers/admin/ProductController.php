@@ -112,14 +112,14 @@ public function update(Request $request, string $id)
     $validatedData = $request->validate([
         'name' => 'required|string|max:255',
         'category_id' => 'required|exists:categories,id',
-        'quantity' => 'required|integer|min:0',
+        'quantity' => 'nullable|integer|min:0',
         'sales' => 'nullable|integer|min:0',
         'description' => 'nullable|string',
-        'price' => 'required|numeric|min:0',
-        // 'discount_start' => 'nullable|date',
-        // 'discount_end' => 'nullable|date|after_or_equal:discount_start',
-        // 'discount_type' => 'nullable|in:percent,fixed',
-        // 'discount_value' => 'nullable|numeric|min:0',
+        'price' => 'nullable|numeric|min:0',
+        'discount_start' => 'nullable|date',
+        'discount_end' => 'nullable|date|after_or_equal:discount_start',
+        'discount_type' => 'nullable|in:percentage,fixed',
+        'discount_value' => 'nullable|numeric|min:0',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
     ]);
 

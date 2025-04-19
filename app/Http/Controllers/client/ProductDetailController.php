@@ -6,18 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Models\Product; // Import the Product model
-use App\Models\Category; 
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;// Import the Category model
 
 class ProductDetailController extends Controller
 {
     public function productDetail(Request $request, $id)
     {
-        $product = Product::findOrFail($id); // Lấy sản phẩm theo ID
+        // $product = Product::findOrFail($id); // Lấy sản phẩm theo ID
 
-        // Tính giá sau khi giảm
-        $discountedPrice = $product->price * (1 - $product->discount_value / 100);  //Giảm giá sản phẩm detaildetail
-        $originalPrice = $product->price; //Giảm giá sản phẩm Related product
+        // // Tính giá sau khi giảm
+        // $discountedPrice = $product->price * (1 - $product->discount_value / 100);  //Giảm giá sản phẩm detaildetail
+        // $originalPrice = $product->price; //Giảm giá sản phẩm Related product
+
+        $product = Product::with(['variants.options', 'category'])->findOrFail($id);
+        $variants = $product->variants;
+
+        // Tính giá sau discount
+        $originalPrice = $product->price;
+        $discountedPrice = $product->discount > 0
+        ? $originalPrice * (1 - $product->discount/100)
+        : $originalPrice;
         $variants = $product->variants; // Lấy các biến thể từ bảng product_variants
 
         // Lấy 12 sản phẩm bán chạy cùng danh mục
@@ -26,9 +35,12 @@ class ProductDetailController extends Controller
             ->take(12)
             ->get();
 
-        $comment = Comment::where('product_id', $id)->get();
+            $comments = Comment::with('user')
+            ->where('product_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(3); // Hoặc ->get() nếu không cần phân trang
         // Truyền dữ liệu qua view
-        return view('client.products.main', compact('product', 'relatedProducts', 'discountedPrice', 'originalPrice', 'variants', 'comment'));
+        return view('client.products.main', compact('product', 'relatedProducts', 'discountedPrice', 'originalPrice', 'variants', 'comments'));
     }
 
     public function comment(Request $request) {

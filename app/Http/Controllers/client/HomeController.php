@@ -14,33 +14,78 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $products = Product::paginate(12);
+        $products = Product::with('variants')->paginate(12);
 
         foreach ($products as $product) {
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            $cheapestVariant = $product->getCheapestVariant();
+
+            if ($cheapestVariant) {
+                $product->display_price = $cheapestVariant->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $cheapestVariant->price - $product->discount_value;
+                }
             } else {
-                $product->final_price = $product->price - $product->discount_value;
+                // Fallback to product price if no variants exist
+                $product->display_price = $product->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $product->price - $product->discount_value;
+                }
             }
         }
 
         $discountedProducts = Product::where('discount_value', '>', 0)->get();
 
         foreach ($discountedProducts as $product) {
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            $cheapestVariant = $product->getCheapestVariant();
+
+            if ($cheapestVariant) {
+                $product->display_price = $cheapestVariant->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $cheapestVariant->price - $product->discount_value;
+                }
             } else {
-                $product->final_price = $product->price - $product->discount_value;
+                // Fallback to product price if no variants exist
+                $product->display_price = $product->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $product->price - $product->discount_value;
+                }
             }
         }
 
         $topSalesProducts = Product::orderBy('sales', 'desc')->take(12)->get();
 
         foreach ($topSalesProducts as $product) {
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            $cheapestVariant = $product->getCheapestVariant();
+
+            if ($cheapestVariant) {
+                $product->display_price = $cheapestVariant->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $cheapestVariant->price - $product->discount_value;
+                }
             } else {
-                $product->final_price = $product->price - $product->discount_value;
+                // Fallback to product price if no variants exist
+                $product->display_price = $product->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $product->price - $product->discount_value;
+                }
             }
         }
 
@@ -61,10 +106,25 @@ class HomeController extends Controller
         $products = Product::where('category_id', $categoryId)->paginate(12);
 
         foreach ($products as $product) {
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            $cheapestVariant = $product->getCheapestVariant();
+
+            if ($cheapestVariant) {
+                $product->display_price = $cheapestVariant->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $cheapestVariant->price - $product->discount_value;
+                }
             } else {
-                $product->final_price = $product->price - $product->discount_value;
+                // Fallback to product price if no variants exist
+                $product->display_price = $product->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $product->price - $product->discount_value;
+                }
             }
         }
 
@@ -73,10 +133,25 @@ class HomeController extends Controller
             ->get();
 
         foreach ($discountedProducts as $product) {
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            $cheapestVariant = $product->getCheapestVariant();
+
+            if ($cheapestVariant) {
+                $product->display_price = $cheapestVariant->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $cheapestVariant->price - $product->discount_value;
+                }
             } else {
-                $product->final_price = $product->price - $product->discount_value;
+                // Fallback to product price if no variants exist
+                $product->display_price = $product->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $product->price - $product->discount_value;
+                }
             }
         }
 
@@ -86,10 +161,25 @@ class HomeController extends Controller
             ->get();
 
         foreach ($topSalesProducts as $product) {
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            $cheapestVariant = $product->getCheapestVariant();
+
+            if ($cheapestVariant) {
+                $product->display_price = $cheapestVariant->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $cheapestVariant->price - $product->discount_value;
+                }
             } else {
-                $product->final_price = $product->price - $product->discount_value;
+                // Fallback to product price if no variants exist
+                $product->display_price = $product->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $product->price - $product->discount_value;
+                }
             }
         }
 
@@ -105,23 +195,53 @@ class HomeController extends Controller
         $products = Product::where('name', 'like', "%$query%")->paginate(12);
 
         foreach ($products as $product) {
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            $cheapestVariant = $product->getCheapestVariant();
+
+            if ($cheapestVariant) {
+                $product->display_price = $cheapestVariant->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $cheapestVariant->price - $product->discount_value;
+                }
             } else {
-                $product->final_price = $product->price - $product->discount_value;
+                // Fallback to product price if no variants exist
+                $product->display_price = $product->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $product->price - $product->discount_value;
+                }
             }
         }
-        
+
 
         $discountedProducts = Product::where('name', 'like', "%$query%")
             ->where('discount_value', '>', 0)
             ->get();
 
         foreach ($discountedProducts as $product) {
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            $cheapestVariant = $product->getCheapestVariant();
+
+            if ($cheapestVariant) {
+                $product->display_price = $cheapestVariant->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $cheapestVariant->price - $product->discount_value;
+                }
             } else {
-                $product->final_price = $product->price - $product->discount_value;
+                // Fallback to product price if no variants exist
+                $product->display_price = $product->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $product->price - $product->discount_value;
+                }
             }
         }
 
@@ -131,10 +251,25 @@ class HomeController extends Controller
             ->get();
 
         foreach ($topSalesProducts as $product) {
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            $cheapestVariant = $product->getCheapestVariant();
+
+            if ($cheapestVariant) {
+                $product->display_price = $cheapestVariant->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $cheapestVariant->price - $product->discount_value;
+                }
             } else {
-                $product->final_price = $product->price - $product->discount_value;
+                // Fallback to product price if no variants exist
+                $product->display_price = $product->price;
+
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+                } else {
+                    $product->final_price = $product->price - $product->discount_value;
+                }
             }
         }
 

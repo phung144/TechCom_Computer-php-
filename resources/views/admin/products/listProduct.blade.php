@@ -40,7 +40,7 @@
                                     <td>{{ $product->sales }}</td>
                                     <td>
                                         @if ($product->discount_type && $product->discount_value)
-                                            {{ $product->discount_type === 'percentage' ? $product->discount_value . '%' : '$' . number_format($product->discount_value, 2) }}
+                                            {{ $product->discount_type === 'percentage' ? $product->discount_value . '%' : '$' . number_format($product->discount_value) }}
                                         @else
                                             No Discount
                                         @endif

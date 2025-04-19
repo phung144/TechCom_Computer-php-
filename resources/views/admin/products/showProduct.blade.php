@@ -30,7 +30,7 @@
                         </tr>
                         <tr>
                             <th>Price</th>
-                            <td>${{ number_format($product->price, 2) }}</td>
+                            <td>{{ number_format($product->price) }} VND</td>
                         </tr>
                         <tr>
                             <th>Quantity</th>
