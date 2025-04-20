@@ -20,50 +20,92 @@
     <div class="container">
         <div class="mb-5 text-center">
             <h1 class="display-5">Your Wishlist</h1>
-            <p class="text-muted">Products you love</p>
+            <p class="text-muted">{{ $wishlists->count() }} products you love</p>
         </div>
 
-        <!-- Wishlist Table -->
-        <div class="wishlist-table mb-5">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="text-center" style="width: 80px;">Remove</th>
-                            <th class="text-center" style="width: 100px;">Image</th>
-                            <th>Product</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($wishlists as $wishlist)
-                        <tr data-wishlist-id="{{ $wishlist->id }}">
-                            <td class="text-center align-middle">
-                                <form class="delete-wishlist-form" action="{{ route('wishlist.delete', $wishlist->id) }}" method="POST" data-wishlist-id="{{ $wishlist->id }}">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
-                            </td>
-                            <td class="text-center align-middle">
-                                <div class="product-thumbnail">
-                                    <img src="{{ asset(Storage::url($wishlist->product->image)) }}"
-                                         alt="{{ $wishlist->product->name }}"
-                                         class="img-fluid rounded border">
-                                </div>
-                            </td>
-                            <td class="align-middle">
-                                <h6 class="mb-0">{{ $wishlist->product->name }}</h6>
-                            </td>
-                           
-                            
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        @if($wishlists->isEmpty())
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="far fa-heart fa-4x text-muted"></i>
+                </div>
+                <h4 class="mb-3">Your wishlist is empty</h4>
+                <a href="{{ route('client-home') }}" class="btn btn-primary">Continue Shopping</a>
             </div>
-        </div>
-        <!-- End Wishlist Table -->
+        @else
+            <!-- Wishlist Table -->
+            <div class="wishlist-table mb-5">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="text-center" style="width: 80px;">Remove</th>
+                                <th class="text-center" style="width: 100px;">Image</th>
+                                <th>Product</th>
+                                <th class="text-right">Price</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($wishlists as $wishlist)
+                            <tr data-wishlist-id="{{ $wishlist->id }}">
+                                <td class="text-center align-middle">
+                                    <form onclick="return confirm('Bạn có chắc muốn xóa không ?')" action="{{ route('wishlist.delete', $wishlist->id) }}" method="POST" data-cart-id="{{ $wishlist->id }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <a href="{{ route('product.detail', $wishlist->product->id) }}">
+                                        <div class="product-thumbnail">
+                                            <img src="{{ asset(Storage::url($wishlist->product->image)) }}"
+                                                 alt="{{ $wishlist->product->name }}"
+                                                 class="img-fluid rounded border">
+                                        </div>
+                                    </a>
+                                </td>
+                                <td class="align-middle">
+                                    <h6 class="mb-1">
+                                        <a href="{{ route('product.detail', $wishlist->product->id) }}" class="text-dark">
+                                            {{ $wishlist->product->name }}
+                                        </a>
+                                    </h6>
+                                    @if($wishlist->variant)
+                                        <div class="text-muted small variant-options">
+                                            @foreach($wishlist->variant->options as $option)
+                                                <span class="d-block">{{ $option->variant->name }}: {{ $option->value }}</span>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </td>
+                                <td class="text-right align-middle">
+                                    <div class="product-price">
+                                        @if($wishlist->variant)
+                                            <span class="text-danger font-weight-bold">
+                                                {{ number_format($wishlist->variant->price) }} VND
+                                            </span>
+                                        @else
+                                            <span class="text-danger font-weight-bold">
+                                                {{ number_format($wishlist->product->price) }} VND
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <a href="{{ route('product.detail', $wishlist->product->id) }}" class="btn btn-sm btn-primary">
+                                        View Product
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- End Wishlist Table -->
+        @endif
     </div>
 </main>
 
@@ -84,6 +126,11 @@
     .product-thumbnail img {
         max-height: 100%;
         object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .product-thumbnail:hover img {
+        transform: scale(1.05);
     }
 
     .table th {
@@ -97,41 +144,21 @@
         line-height: 1.3;
     }
 
+    .empty-wishlist {
+        padding: 4rem 0;
+    }
+
     @media (max-width: 767.98px) {
         .table-responsive {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
+
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            display: none;
+        }
     }
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.delete-wishlist-form').forEach(form => {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const wishlistId = this.dataset.wishlistId;
-                if (confirm('Are you sure you want to remove this product from your wishlist?')) {
-                    fetch(this.action, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({ wishlist_id: wishlistId })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            document.querySelector(`tr[data-wishlist-id="${wishlistId}"]`).remove();
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-                }
-            });
-        });
-    });
-</script>
 @endsection

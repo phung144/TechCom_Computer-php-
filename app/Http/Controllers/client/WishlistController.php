@@ -9,11 +9,15 @@ use App\Models\Wishlist;
 class WishlistController extends Controller
 {
     // Hiển thị danh sách sản phẩm yêu thích của người dùng
-    public function index()
-    {
-        $wishlists = Wishlist::where('user_id', auth()->id())->get();
-        return view('client.wishlist.main', compact('wishlists'));
-    }
+    // WishlistController.php
+public function index()
+{
+    $wishlists = Wishlist::with(['product', 'variant.options.variant'])
+        ->where('user_id', auth()->id())
+        ->get();
+
+    return view('client.wishlist.main', compact('wishlists'));
+}
 
     // Hiển thị chi tiết một sản phẩm trong danh sách yêu thích
     public function show($id)
@@ -73,8 +77,8 @@ class WishlistController extends Controller
         $wishlistItem = Wishlist::find($id);
         if ($wishlistItem) {
             $wishlistItem->delete();
-            return response()->json(['success' => true, 'message' => 'Sản phẩm đã được xóa khỏi danh sách yêu thích.']);
+
         }
-        return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm trong danh sách.']);
+        return redirect()->back()->with('success', '✅ Đã xóa sản phẩm khỏi wishlist thành công!');
     }
 }
