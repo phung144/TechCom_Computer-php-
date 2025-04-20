@@ -23,20 +23,32 @@ class WishlistController extends Controller
 
     // Thêm sản phẩm vào danh sách yêu thích
     public function addToWishlist(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
+{
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'quantity' => 'sometimes|integer|min:1',
+    ]);
 
-        Wishlist::create([
-            'user_id' => auth()->id(),
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-        ]);
-
-        return redirect()->back()->with('success', '🛒 Sản phẩm đã được thêm vào danh sách yêu thích!');
+    if (!auth()->check()) {
+        return redirect()->route('login')->with('error', '🔒 Vui lòng đăng nhập để sử dụng tính năng này');
     }
+
+    $existing = Wishlist::where('user_id', auth()->id())
+                       ->where('product_id', $request->product_id)
+                       ->first();
+
+    if ($existing) {
+        return back()->with('info', 'ℹ Sản phẩm đã có trong wishlist');
+    }
+
+    Wishlist::create([
+        'user_id' => auth()->id(),
+        'product_id' => $request->product_id,
+        'quantity' => $request->quantity ?? 1,
+    ]);
+
+    return back()->with('success', '✅ Đã thêm vào wishlist thành công!');
+}
 
     // Cập nhật số lượng sản phẩm trong danh sách yêu thích
     public function updateQuantity(Request $request)

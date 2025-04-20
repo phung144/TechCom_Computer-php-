@@ -2,6 +2,71 @@
 
 @section('main')
 
+{{-- Thông báo SweetAlert2 được thiết kế lại --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Hàm hiển thị thông báo thành công với icon checkmark
+    function showSuccessAlert(message) {
+        Swal.fire({
+            icon: 'success',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            toast: true,
+            background: '#f0fff4',  // Màu nền xanh nhạt
+            iconColor: '#38a169',   // Màu xanh lá đậm
+            color: '#2f855a'       // Màu chữ xanh đậm
+        });
+    }
+
+    // Hàm hiển thị thông báo lỗi với icon chấm than
+    function showErrorAlert(message) {
+        Swal.fire({
+            icon: 'error',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            toast: true,
+            background: '#fff5f5',  // Màu nền đỏ nhạt
+            iconColor: '#e53e3e',    // Màu đỏ
+            color: '#c53030'        // Màu chữ đỏ đậm
+        });
+    }
+
+    // Hàm hiển thị thông báo thông tin
+    function showInfoAlert(message) {
+        Swal.fire({
+            icon: 'info',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            toast: true,
+            background: '#ebf8ff',  // Màu nền xanh dương nhạt
+            iconColor: '#3182ce',   // Màu xanh dương
+            color: '#2c5282'       // Màu chữ xanh đậm
+        });
+    }
+
+    // Xử lý thông báo từ session
+    @if(session('success'))
+        showSuccessAlert('{{ session('success') }}');
+    @endif
+
+    @if(session('error'))
+        showErrorAlert('{{ session('error') }}');
+    @endif
+
+    @if(session('info'))
+        showInfoAlert('{{ session('info') }}');
+    @endif
+</script>
+
 {{-- List Category button --}}
 <div>
     <div class="brand-wrapper">
@@ -77,14 +142,13 @@
                     <div class="product-item__outer h-100 w-100 prodcut-box-shadow">
                         <div class="product-item__inner bg-white p-3">
                             @if($product->category)
-                                <div class="mb-1"> <!-- Giảm margin-bottom -->
-                                    <a href="" class="font-size-11 text-gray-5"> <!-- Giảm font-size -->
+                                <div class="mb-1">
+                                    <a href="" class="font-size-11 text-gray-5">
                                         {{ $product->category->name }}
                                     </a>
                                 </div>
-                                @endif
+                            @endif
                             <div class="product-item__body pb-xl-2 position-relative">
-
                                 {{-- Discount Badge --}}
                                 @if($product->discount_value > 0)
                                     <div class="discount-badge position-absolute top-0 left-0 bg-danger text-white px-2 py-1">
@@ -117,14 +181,17 @@
                                         @endif
                                     </div>
                                     <div class="d-none d-xl-block prodcut-add-cart">
-                                        <a href="javascript:void(0);"
-                                           class="btn-add-cart btn-danger transition-3d-hover"
-                                           onclick="addToWishlist('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
-                                           <i class="ec ec-favorites" style="font-size: 18px;"></i>
-                                        </a>
+                                        <form action="{{ route('wishlist.add') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn-add-cart btn-danger transition-3d-hover"
+                                                    style="border: none; outline: none; background: transparent; padding: 0;">
+                                                <i class="ec ec-favorites" style="font-size: 25px; color: #ff3a3a;"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
-
                             </div>
                             <div class="product-item__footer">
                                 <div class="border-top pt-2 flex-center-between flex-wrap">
@@ -241,11 +308,17 @@
                                                     <!-- Add to Cart Button and Sales Count -->
                                                     <div class="d-flex justify-content-between align-items-center mt-2">
                                                         <span class="text-gray-6 font-size-13">Sold: {{ $product->sales ?? 0 }}</span>
-                                                        <a href="javascript:void(0);"
-                                                           class="btn-add-cart btn-danger transition-3d-hover"
-                                                           onclick="addToCart('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
-                                                           <i class="ec ec-favorites" style="font-size: 18px;"></i>
-                                                        </a>
+                                                        <div class="d-none d-xl-block prodcut-add-cart">
+                                                            <form action="{{ route('wishlist.add') }}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                                <input type="hidden" name="quantity" value="1">
+                                                                <button type="submit" class="btn-add-cart btn-danger transition-3d-hover"
+                                                                        style="border: none; outline: none; background: transparent; padding: 0;">
+                                                                    <i class="ec ec-favorites" style="font-size: 20px; color: #ff3a3a;"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -368,11 +441,17 @@
                                             <div class="final-price">{{ number_format($product->final_price, 0) }} VND</div>
                                         </div>
                                         <div class="d-none d-xl-block prodcut-add-cart">
-                                            <a href="javascript:void(0);"
-                                               class="btn-add-cart btn-danger transition-3d-hover"
-                                               onclick="addToCart('{{ $product->name }}', '{{ asset(Storage::url($product->image)) }}', {{ $product->final_price }}, {{ $product->id }})">
-                                               <i class="ec ec-favorites" style="font-size: 18px;"></i>
-                                            </a>
+                                            <div class="d-none d-xl-block prodcut-add-cart">
+                                                <form action="{{ route('wishlist.add') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                    <input type="hidden" name="quantity" value="1">
+                                                    <button type="submit" class="btn-add-cart btn-danger transition-3d-hover"
+                                                            style="border: none; outline: none; background: transparent; padding: 0;">
+                                                        <i class="ec ec-favorites" style="font-size: 25px; color: #ff3a3a;"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="product-item__footer">
