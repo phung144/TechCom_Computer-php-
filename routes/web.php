@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\CartController as AdminCartController;
 use App\Http\Controllers\admin\OrderController as AdminOrderController;
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\Admin\LoginAdminController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\VariantOptionProductController;
 use App\Http\Controllers\client\CartController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\client\SearchController;
 use App\Http\Controllers\client\OrderController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\shop\ShopController as ShopShopController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,9 +32,6 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/admin/home', function () { // /admin/home là đường dẫn chính xác đến view
-    return view('admin.index');
-})->name('admin-home'); //Tên route gọi đến view
 
 Route::get('/', [HomeController::class, 'index'])->name('client-home');
 Route::get('/shop', [ShopShopController::class, 'index'])->name('shop-home');
@@ -81,7 +80,19 @@ Route::delete('/orders/{order}/force-delete', [OrderController::class, 'forceDel
     ->name('orders.forceDelete');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
-Route::prefix('admin')->name('admin.')->group(function () {
+
+    // Route::get('/admin/home', function () { // /admin/home là đường dẫn chính xác đến view
+    //     return view('admin.index');
+    // })->name('admin-home'); //Tên route gọi đến view
+
+    Route::get('/login-admin', [LoginAdminController::class, 'showLoginForm'])->name('login.admin');
+    Route::post('/login-admin', [LoginAdminController::class, 'postLogin'])->name('login.admin.post');
+    Route::get('/logout-admin', function () {
+        Auth::logout();
+        return redirect()->route('login.admin');
+    })->name('logout.admin');
+Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+    Route::get('/', [App\Http\Controllers\admin\DashboardController::class, 'index'])->name('home');
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('carts', AdminCartController::class);

@@ -12,87 +12,55 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $products = Product::with('variants')->paginate(12);
+   public function index()
+{
+    $products = Product::with('variants')->paginate(12);
 
-        foreach ($products as $product) {
-            $cheapestVariant = $product->getCheapestVariant();
-
-            if ($cheapestVariant) {
-                $product->display_price = $cheapestVariant->price;
-
-                if ($product->discount_type === 'percentage') {
-                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
-                } else {
-                    $product->final_price = $cheapestVariant->price - $product->discount_value;
-                }
-            } else {
-                // Fallback to product price if no variants exist
-                $product->display_price = $product->price;
-
-                if ($product->discount_type === 'percentage') {
-                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
-                } else {
-                    $product->final_price = $product->price - $product->discount_value;
-                }
-            }
-        }
-
-        $discountedProducts = Product::where('discount_value', '>', 0)->get();
-
-        foreach ($discountedProducts as $product) {
-            $cheapestVariant = $product->getCheapestVariant();
-
-            if ($cheapestVariant) {
-                $product->display_price = $cheapestVariant->price;
-
-                if ($product->discount_type === 'percentage') {
-                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
-                } else {
-                    $product->final_price = $cheapestVariant->price - $product->discount_value;
-                }
-            } else {
-                // Fallback to product price if no variants exist
-                $product->display_price = $product->price;
-
-                if ($product->discount_type === 'percentage') {
-                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
-                } else {
-                    $product->final_price = $product->price - $product->discount_value;
-                }
-            }
-        }
-
-        $topSalesProducts = Product::orderBy('sales', 'desc')->take(12)->get();
-
-        foreach ($topSalesProducts as $product) {
-            $cheapestVariant = $product->getCheapestVariant();
-
-            if ($cheapestVariant) {
-                $product->display_price = $cheapestVariant->price;
-
-                if ($product->discount_type === 'percentage') {
-                    $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
-                } else {
-                    $product->final_price = $cheapestVariant->price - $product->discount_value;
-                }
-            } else {
-                // Fallback to product price if no variants exist
-                $product->display_price = $product->price;
-
-                if ($product->discount_type === 'percentage') {
-                    $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
-                } else {
-                    $product->final_price = $product->price - $product->discount_value;
-                }
-            }
-        }
-
-        $categories = Category::all(); // Fetch all categories
-
-        return view('client.blocks.main', compact('products', 'discountedProducts', 'topSalesProducts', 'categories'));
+    foreach ($products as $product) {
+        $this->prepareProductPrice($product);
     }
+
+    $discountedProducts = Product::with('variants')->where('discount_value', '>', 0)->get();
+
+    foreach ($discountedProducts as $product) {
+        $this->prepareProductPrice($product);
+    }
+
+    $topSalesProducts = Product::with('variants')->orderBy('sales', 'desc')->take(12)->get();
+
+    foreach ($topSalesProducts as $product) {
+        $this->prepareProductPrice($product);
+    }
+
+    $categories = Category::all();
+
+    return view('client.blocks.main', compact('products', 'discountedProducts', 'topSalesProducts', 'categories'));
+}
+
+private function prepareProductPrice($product)
+{
+    $cheapestVariant = $product->getCheapestVariant();
+
+    if ($cheapestVariant) {
+        $product->display_price = $cheapestVariant->price;
+        $product->cheapest_variant = $cheapestVariant;
+
+        if ($product->discount_type === 'percentage') {
+            $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+        } else {
+            $product->final_price = $cheapestVariant->price - $product->discount_value;
+        }
+    } else {
+        $product->display_price = $product->price;
+
+        if ($product->discount_type === 'percentage') {
+            $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+        } else {
+            $product->final_price = $product->price - $product->discount_value;
+        }
+    }
+}
+
 
     public function searchCategory(Request $request)
     {

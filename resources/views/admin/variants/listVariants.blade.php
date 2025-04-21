@@ -9,7 +9,7 @@
                     <a href="{{ route('admin.variants.create') }}" class="btn btn-primary">Add Variant</a>
                 </div>
                 <div class="card-body">
-                    <table class="table table-hover">
+                    <table id="productsTable" class="table table-hover table-product" style="width:100%">
                         <thead>
                             <tr>
                                 <th>ID</th>

@@ -127,6 +127,7 @@
 {{-- End List Category button --}}
 
 {{-- List Product --}}
+{{-- List Product --}}
 <div class="products-group-8-1 space-1 bg-gray-7 mb-6">
     <h2 class="sr-only">Products Grid</h2>
     <div class="container">
@@ -140,7 +141,7 @@
             @foreach($products as $product)
                 <div class="col-md-6 col-lg-4 col-wd-3 product-item remove-divider">
                     <div class="product-item__outer h-100 w-100 prodcut-box-shadow">
-                        <div class="product-item__inner bg-white p-3">
+                        <div class="product-item__inner bg-white p-3 position-relative">
                             @if($product->category)
                                 <div class="mb-1">
                                     <a href="" class="font-size-11 text-gray-5">
@@ -148,27 +149,47 @@
                                     </a>
                                 </div>
                             @endif
-                            <div class="product-item__body pb-xl-2 position-relative">
-                                {{-- Discount Badge --}}
-                                @if($product->discount_value > 0)
-                                    <div class="discount-badge position-absolute top-0 left-0 bg-danger text-white px-2 py-1">
-                                        @if($product->discount_type === 'percentage')
-                                            Giảm {{ intval($product->discount_value) }}%
-                                        @else
-                                            Giảm {{ number_format($product->discount_value, 0) }}.000 VND
-                                        @endif
+                            <div class="product-item__body pb-xl-2">
+                                <div class="product-thumbnail position-relative">
+                                    <div class="mb-2">
+                                        <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="d-block text-center">
+                                            <img class="img-fluid product-image" src="{{ asset(Storage::url($product->image)) }}" alt="{{ $product->name }}" style="transition: transform 0.3s;">
+                                        </a>
                                     </div>
-                                @endif
-
-                                <div class="mb-2">
-                                    <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="d-block text-center">
-                                        <img class="img-fluid" src="{{ asset(Storage::url($product->image)) }}" alt="{{ $product->name }}">
-                                    </a>
+                                    @if($product->discount_value > 0)
+                                        <div class="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 py-1 z-10">
+                                            @if($product->discount_type === 'percentage')
+                                                Giảm {{ intval($product->discount_value) }}%
+                                            @else
+                                                Giảm {{ number_format($product->discount_value, 0) }}.000 VND
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
+
+
+                                <!-- Product Rating -->
+                                <div class="mb-1">
+                                    <div class="d-flex align-items-center">
+                                        <div class="star-rating">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= $product->average_rating)
+                                                    <i class="ec ec-star active"></i>
+                                                @else
+                                                    <i class="ec ec-star"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                        <span class="font-size-13 text-gray-5 ml-1">({{ $product->reviews_count }})</span>
+                                    </div>
+                                </div>
+
                                 <h5 class="mb-1 product-item__title">
                                     <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="text-blue font-weight-bold">{{ $product->name }}</a>
                                 </h5>
-                                <p class="text-gray-6 font-size-13 description-clamp">{{ $product->description }}</p>
+
+                                <p class="text-gray-6 font-size-13 description-clamp" title="{{ $product->description }}">{{ $product->description }}</p>
+
                                 <div class="flex-center-between mb-1">
                                     <div class="prodcut-price">
                                         <span class="text-danger font-size-16 font-weight-bold">
@@ -180,24 +201,45 @@
                                             </span>
                                         @endif
                                     </div>
-                                    <div class="d-none d-xl-block prodcut-add-cart">
-                                        <form action="{{ route('wishlist.add') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                            <input type="hidden" name="quantity" value="1">
-                                            <button type="submit" class="btn-add-cart btn-danger transition-3d-hover"
-                                                    style="border: none; outline: none; background: transparent; padding: 0;">
-                                                <i class="ec ec-favorites" style="font-size: 25px; color: #ff3a3a;"></i>
-                                            </button>
-                                        </form>
-                                    </div>
                                 </div>
+
+                                <!-- Action Buttons -->
+                                <div class="d-flex justify-content-between">
+                                    <div class="mb-2">
+                                        @if(isset($product->cheapest_variant) && $product->cheapest_variant->quantity > 0)
+                                            <span class="font-size-13">
+                                                Còn hàng ({{ $product->cheapest_variant->quantity }})
+                                            </span>
+                                        @else
+                                            <span class="font-size-13">Tạm hết hàng</span>
+                                        @endif
+                                    </div>
+
+
+                                    <form action="{{ route('wishlist.add') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn-add-cart btn-danger transition-3d-hover"
+                                                style="border: none; outline: none; background: transparent; padding: 0;">
+                                            <i class="ec ec-favorites" style="font-size: 25px; color: #ff3a3a;"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
+
                             </div>
+
                             <div class="product-item__footer">
                                 <div class="border-top pt-2 flex-center-between flex-wrap">
                                     <div class="mt-2">
-                                        <span class="text-gray-6 font-size-13">Sold: {{ $product->sales ?? 0 }}</span>
+                                        <span class="text-gray-6 font-size-13">Đã bán: {{ $product->sales ?? 0 }}</span>
                                     </div>
+                                    @if($product->compare_price)
+                                        <div class="mt-2">
+                                            <span class="text-gray-6 font-size-13">So sánh giá: {{ number_format($product->compare_price, 0) }} VND</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -205,49 +247,36 @@
                 </div>
             @endforeach
         </div>
-
-        {{-- Css xóa chữ "Showing 1 to 12 of 14 results" ở nút chuyển trang --}}
-        <div class="mt-4 d-flex justify-content-center">
-            <ul class="pagination">
-                {{-- Previous Page Link --}}
-                @if ($products->onFirstPage())
-                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                @else
-                    <li class="page-item"><a class="page-link" href="{{ $products->previousPageUrl() }}" rel="prev">&laquo;</a></li>
-                @endif
-
-                {{-- Pagination Elements --}}
-                @foreach ($products->links()->elements as $element)
-                    {{-- "Three Dots" Separator --}}
-                    @if (is_string($element))
-                        <li class="page-item disabled"><span class="page-link">{{ $element }}</span></li>
-                    @endif
-
-                    {{-- Array Of Links --}}
-                    @if (is_array($element))
-                        @foreach ($element as $page => $url)
-                            @if ($page == $products->currentPage())
-                                <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
-                            @else
-                                <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
-                            @endif
-                        @endforeach
-                    @endif
-                @endforeach
-
-                {{-- Next Page Link --}}
-                @if ($products->hasMorePages())
-                    <li class="page-item"><a class="page-link" href="{{ $products->nextPageUrl() }}" rel="next">&raquo;</a></li>
-                @else
-                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                @endif
-            </ul>
+        <div class="mt-3 d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+                {{ $products->onEachSide(1)->links('pagination::bootstrap-4') }}
+            </nav>
         </div>
-        {{-- End Css --}}
-
-
     </div>
 </div>
+
+<style>
+    .product-item {
+        transition: all 0.3s ease;
+    }
+    .product-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .product-image:hover {
+        transform: scale(1.05);
+    }
+    .description-clamp {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .star-rating .active {
+        color: #FFC107;
+    }
+</style>
 <!-- End List Product -->
 
 {{-- List Product Sale --}}
@@ -422,11 +451,23 @@
                     <div class="col-md-4 product-item product-item__card pb-2 mb-2 pb-md-0 mb-md-0">
                         <div class="product-item__outer h-100 w-100">
                             <div class="product-item__inner p-md-3 row no-gutters">
-                                <div class="col col-lg-auto product-media-left">
+                                <div class="position-relative">
+                                    {{-- Badge giảm giá --}}
+                                    @if($product->discount_value > 0)
+                                        <div class="discount-badge position-absolute top-0 left-0 bg-danger text-white px-2 py-1" style="font-size: 12px; z-index: 2;">
+                                            @if($product->discount_type === 'percentage')
+                                                Giảm {{ intval($product->discount_value) }}%
+                                            @else
+                                                Giảm {{ number_format($product->discount_value, 0) }}.000 VND
+                                            @endif
+                                        </div>
+                                    @endif
+
                                     <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="max-width-150 d-block">
                                         <img class="img-fluid" src="{{ asset(Storage::url($product->image)) }}" alt="{{ $product->name }}">
                                     </a>
                                 </div>
+
                                 <div class="col product-item__body pl-2 pl-lg-3">
                                     <div class="mb-4">
                                         <h5 class="product-item__title">
@@ -455,14 +496,21 @@
                                         </div>
                                     </div>
                                     <div class="product-item__footer">
-                                        <div class="border-top pt-2 d-flex justify-content-end">
+                                        <div class="border-top pt-2 d-flex justify-content-between">
+                                            {{-- Trái --}}
+                                            @if(isset($product->cheapest_variant) && $product->cheapest_variant->quantity > 0)
+                                                <span class="text-gray-6 font-size-13">
+                                                    Còn hàng ({{ $product->cheapest_variant->quantity }})
+                                                </span>
+                                            @else
+                                                <span class="text-gray-6 font-size-13">Tạm hết hàng</span>
+                                            @endif
 
-                                            {{-- <a href="#" class="text-gray-6 font-size-13">
-                                                <i class="ec ec-favorites mr-1 font-size-15"></i> Wishlist
-                                            </a> --}}
-                                            <span class="text-gray-6 font-size-13 ">Sold: {{ $product->sales }}</span>
+                                            {{-- Phải --}}
+                                            <span class="text-gray-6 font-size-13">Sold: {{ $product->sales }}</span>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>

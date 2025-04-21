@@ -40,7 +40,7 @@ class VariantOptionController extends Controller
     \App\Models\VariantOption::create($validatedData);
 
     // Chuyển hướng với thông báo thành công
-    return redirect()->route('admin.variants.index')->with('success', 'Variant option added successfully!');
+    return redirect()->route('admin.variants.index')->with('success', 'Variant option created successfully!');
 }
 
 

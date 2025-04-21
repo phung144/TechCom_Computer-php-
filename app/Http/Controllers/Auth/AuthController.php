@@ -17,12 +17,12 @@ class AuthController extends Controller
 
     public function register(Request $request)
 {
-    // Validate dữ liệu đầu vào
+    // Validate dữ liệu đầu vào (nếu cần)
     // $request->validate([
     //     'name' => 'required|string|max:255',
     //     'email' => 'required|string|email|max:255|unique:users',
     //     'password' => 'required|string|min:6|confirmed',
-    //     'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Tối đa 2MB
+    //     'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     // ]);
 
     // Xử lý upload ảnh
@@ -31,12 +31,13 @@ class AuthController extends Controller
         $imagePath = $request->file('image')->store('profile_images', 'public');
     }
 
-    // Tạo user mới
+    // Tạo user mới với role mặc định là 'user'
     User::create([
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-        'image' => $imagePath, // Lưu đường dẫn ảnh
+        'image' => $imagePath,
+        'role' => 'user', // Thêm trường role với giá trị mặc định
     ]);
 
     return redirect()->route('login')->with('success', 'Đăng ký thành công!');

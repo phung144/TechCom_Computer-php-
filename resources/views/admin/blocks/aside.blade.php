@@ -14,7 +14,7 @@
 
 
 
-                <li class="active">
+                {{-- <li class="active">
                     <a class="sidenav-item-link" href="index.html">
                         <i class="mdi mdi-briefcase-account-outline"></i>
                         <span class="nav-text">Business Dashboard</span>
@@ -30,7 +30,7 @@
                         <i class="mdi mdi-chart-line"></i>
                         <span class="nav-text">Analytics Dashboard</span>
                     </a>
-                </li>
+                </li> --}}
 
 
 

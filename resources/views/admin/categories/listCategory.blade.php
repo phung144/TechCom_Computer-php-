@@ -1,6 +1,7 @@
 @extends('admin.layout')
 
 @section('main')
+@php use Illuminate\Support\Str; @endphp
     <div class="row">
         <div class="col-12">
             <div class="card card-default">
@@ -32,7 +33,7 @@
                                     </td>
                                     <td>{{ $category->name }}</td>
                                     <td>{{ $category->id }}</td>
-                                    <td>{{ $category->description ?? 'No description available' }}</td>
+                                    <td>{{ Str::limit($category->description, 250, '...') ?? 'No description available' }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <a class="dropdown-toggle btn btn-sm btn-light" href="#" role="button"

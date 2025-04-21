@@ -353,7 +353,7 @@
                         </li>
 
                         <li class="dropdown-footer">
-                            <a class="dropdown-link-item" href="sign-in.html"> <i class="mdi mdi-logout"></i> Log Out
+                            <a class="dropdown-link-item" href="{{route('logout.admin')}}"> <i class="mdi mdi-logout"></i> Log Out
                             </a>
                         </li>
                     </ul>

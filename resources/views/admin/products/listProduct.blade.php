@@ -1,6 +1,7 @@
 @extends('admin.layout')
 
 @section('main')
+@php use Illuminate\Support\Str; @endphp
     <div class="row">
         <div class="col-12">
             <div class="card card-default">
@@ -32,8 +33,8 @@
                                         <img src="{{ asset('storage/' . $product->image) }}" alt="Product Image"
                                             width="50">
                                     </td>
-                                    <td>{{ $product->name }}</td>
-                                    <td>{{ $product->description ?? 'No description available' }}</td>
+                                    <td>{{ Str::limit($product->name, 50, '...')}}</td>
+                                    <td>{{ Str::limit($product->description, 50, '...') ?? 'No description available' }}</td>
                                     <td>{{ $product->category->name ?? 'N/A' }}</td>
                                     <td>{{ number_format($product->price) }} VND</td>
                                     <td>{{ $product->quantity }}</td>

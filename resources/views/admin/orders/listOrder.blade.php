@@ -8,7 +8,7 @@
                     <h2>Orders List</h2>
                 </div>
                 <div class="card-body">
-                    <table id="ordersTable" class="table table-hover" style="width:100%">
+                    <table id="productsTable" class="table table-hover" style="width:100%">
                         <thead>
                             <tr>
                                 <th>ID</th>
