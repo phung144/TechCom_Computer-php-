@@ -70,129 +70,144 @@
     <!-- End Shop-control-bar -->
     <!-- Shop Body -->
     <!-- Tab Content -->
-    <div class="tab-content" id="pills-tabContent">
-        <div class="tab-pane fade pt-2 show active" id="pills-one-example1" role="tabpanel" aria-labelledby="pills-one-example1-tab" data-target-group="groups">
-            <ul class="row list-unstyled products-group no-gutters">
-                @foreach($products as $product)
-                <li class="col-6 col-md-3 product-item position-relative"> <!-- Added position-relative -->
-                    <div class="product-item__outer h-100 w-100">
-                        <div class="product-item__inner px-xl-3 p-2">
-                            <div class="product-item__body pb-xl-2">
-                                <!-- Discount Badge - Moved below category -->
-                                @if($product->discount_value > 0)
-                                    <div class="discount-badge position-absolute mt-3" style="top: 25px; left: 10px; background-color: #ff4444; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px; z-index: 1;">
-                                        @if($product->discount_type === 'percentage')
-                                            Giảm {{ intval($product->discount_value) }}%
-                                        @else
-                                            Giảm {{ number_format($product->discount_value, 0) }}đ
-                                        @endif
-                                    </div>
-                                @endif
+    {{-- List Product --}}
+{{-- List Product --}}
+<div class="products-group-8-1 space-1 bg-gray-7 mb-6">
+    <h2 class="sr-only">Products Grid</h2>
+    <div class="container">
+        <!-- List Product Title -->
+        <div class="d-flex justify-content-between border-bottom border-color-1 flex-md-nowrap flex-wrap border-sm-bottom-0">
+            <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">List Products</h3>
+        </div>
+        <!-- End List Product Title -->
 
-                                @if($product->category)
+        <div class="row no-gutters">
+            @foreach($products as $product)
+                <div class="col-md-6 col-lg-4 col-wd-3 product-item remove-divider">
+                    <div class="product-item__outer h-100 w-100 prodcut-box-shadow">
+                        <div class="product-item__inner bg-white p-3 position-relative">
+                            @if($product->category)
                                 <div class="mb-1">
                                     <a href="" class="font-size-11 text-gray-5">
                                         {{ $product->category->name }}
                                     </a>
                                 </div>
-                                @endif
-
-                                <div class="mb-1 product-image-container position-relative"> <!-- Added container for image -->
-                                    <a href="" class="d-block text-center">
-                                        <img class="img-fluid" src="{{Storage::url($product->image)}}" alt="{{ $product->name }}">
-                                    </a>
+                            @endif
+                            <div class="product-item__body pb-xl-2">
+                                <div class="product-thumbnail position-relative">
+                                    <div class="mb-2">
+                                        <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="d-block text-center">
+                                            <img class="img-fluid product-image" src="{{ asset(Storage::url($product->image)) }}" alt="{{ $product->name }}" style="transition: transform 0.3s;">
+                                        </a>
+                                    </div>
+                                    @if($product->discount_value > 0)
+                                        <div class="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 py-1 z-10">
+                                            @if($product->discount_type === 'percentage')
+                                                Giảm {{ intval($product->discount_value) }}%
+                                            @else
+                                                Giảm {{ number_format($product->discount_value, 0) }}.000 VND
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
 
+
+                                <br>
+
                                 <h5 class="mb-1 product-item__title">
-                                    <a href="" class="text-blue font-weight-bold font-size-14">
-                                        {{ Str::limit($product->name, 50) }} <!-- Added limit to product name -->
-                                    </a>
+                                    <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="text-blue font-weight-bold">{{ $product->name }}</a>
                                 </h5>
+
+                                <p class="text-gray-6 font-size-13 description-clamp" title="{{ $product->description }}">{{ $product->description }}</p>
 
                                 <div class="flex-center-between mb-1">
                                     <div class="prodcut-price">
+                                        <span class="text-danger font-size-16 font-weight-bold">
+                                            {{ number_format($product->final_price, 0) }} VND
+                                        </span>
                                         @if($product->discount_value > 0)
-                                            <div class="text-gray-100 font-size-13"><del>{{ number_format($product->price, 0) }}đ</del></div>
-                                            <div class="text-danger font-size-14">{{ number_format($product->final_price, 0) }}đ</div>
-                                        @else
-                                            <div class="text-gray-100 font-size-14">{{ number_format($product->price, 0) }}đ</div>
+                                            <span class="text-gray-500 text-decoration-line-through font-size-14 ml-2">
+                                                {{ number_format($product->display_price, 0) }} VND
+                                            </span>
                                         @endif
                                     </div>
-                                    <div class="d-none d-xl-block prodcut-add-cart">
-                                        <a href="" class="btn-add-cart btn-primary transition-3d-hover">
-                                            <i class="ec ec-add-to-cart"></i>
-                                        </a>
-                                    </div>
                                 </div>
+
+                                <!-- Action Buttons -->
+                                <div class="d-flex justify-content-between">
+                                    <div class="mb-2">
+                                        @if(isset($product->cheapest_variant) && $product->cheapest_variant->quantity > 0)
+                                            <span class="font-size-13">
+                                                Còn hàng ({{ $product->cheapest_variant->quantity }})
+                                            </span>
+                                        @else
+                                            <span class="font-size-13">Tạm hết hàng</span>
+                                        @endif
+                                    </div>
+
+
+                                    <form action="{{ route('wishlist.add') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn-add-cart btn-danger transition-3d-hover"
+                                                style="border: none; outline: none; background: transparent; padding: 0;">
+                                            <i class="ec ec-favorites" style="font-size: 25px; color: #ff3a3a;"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
+
                             </div>
 
                             <div class="product-item__footer">
-                                <div class="border-top pt-1 flex-center-between flex-wrap">
-                                    <a href="compare.html" class="text-gray-6 font-size-12">
-                                        <i class="ec ec-compare mr-1 font-size-13"></i> Compare
-                                    </a>
-                                    <a href="wishlist.html" class="text-gray-6 font-size-12">
-                                        <i class="ec ec-favorites mr-1 font-size-13"></i> Wishlist
-                                    </a>
+                                <div class="border-top pt-2 flex-center-between flex-wrap">
+                                    <div class="mt-2">
+                                        <span class="text-gray-6 font-size-13">Đã bán: {{ $product->sales ?? 0 }}</span>
+                                    </div>
+                                    @if($product->compare_price)
+                                        <div class="mt-2">
+                                            <span class="text-gray-6 font-size-13">So sánh giá: {{ number_format($product->compare_price, 0) }} VND</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
-                </li>
-                @endforeach
-            </ul>
-
-            <!-- Pagination -->
-            <div class="mt-3 d-flex justify-content-center">
-                <nav aria-label="Page navigation">
-                    {{ $products->onEachSide(1)->links('pagination::bootstrap-4') }}
-                </nav>
-            </div>
+                </div>
+            @endforeach
+        </div>
+        <div class="mt-3 d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+                {{ $products->onEachSide(1)->links('pagination::bootstrap-4') }}
+            </nav>
         </div>
     </div>
+</div>
 
-    <style>
-        /* Add this to your CSS file */
-        .product-item {
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        .discount-badge {
-            position: absolute;
-            top: 25px;
-            left: 10px;
-            background-color: #ff4444;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 11px;
-            z-index: 1;
-        }
-
-        .product-image-container {
-            overflow: hidden;
-        }
-
-        .product-image-container img {
-            transition: transform 0.3s ease;
-        }
-
-        .product-item:hover .product-image-container img {
-            transform: scale(1.05);
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .pagination .page-link {
-            color: #007bff;
-            margin: 0 3px;
-            border-radius: 4px !important;
-        }
-    </style>
+<style>
+    .product-item {
+        transition: all 0.3s ease;
+    }
+    .product-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .product-image:hover {
+        transform: scale(1.05);
+    }
+    .description-clamp {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .star-rating .active {
+        color: #FFC107;
+    }
+</style>
+<!-- End List Product -->
 </div>
 
 @endsection

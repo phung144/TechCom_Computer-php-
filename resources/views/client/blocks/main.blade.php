@@ -166,24 +166,7 @@
                                         </div>
                                     @endif
                                 </div>
-
-
-                                <!-- Product Rating -->
-                                <div class="mb-1">
-                                    <div class="d-flex align-items-center">
-                                        <div class="star-rating">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                @if($i <= $product->average_rating)
-                                                    <i class="ec ec-star active"></i>
-                                                @else
-                                                    <i class="ec ec-star"></i>
-                                                @endif
-                                            @endfor
-                                        </div>
-                                        <span class="font-size-13 text-gray-5 ml-1">({{ $product->reviews_count }})</span>
-                                    </div>
-                                </div>
-
+                                <br>
                                 <h5 class="mb-1 product-item__title">
                                     <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="text-blue font-weight-bold">{{ $product->name }}</a>
                                 </h5>

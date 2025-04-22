@@ -62,7 +62,12 @@
 
             <div class="container">
                 <div class="row mb-8">
-                    @include('shop.blocks.sidebar', ['categories' => $categories ?? []]) <!-- Truyền biến vào -->
+                    @include('shop.blocks.sidebar', [
+                    'categories' => $categories ?? [],
+                    'products' => $onSaleProducts,
+                    'topSalesProducts' => $topSalesProducts
+                ])
+
                     @yield('main')
                 </div>
             </div>

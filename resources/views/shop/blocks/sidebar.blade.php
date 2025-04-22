@@ -1,194 +1,192 @@
 <div class="d-none d-xl-block col-xl-3 col-wd-2gdot5">
     <div class="mb-6 border border-width-2 border-color-3 borders-radius-6">
-        <!-- List -->
-        <ul id="sidebarNav" class="list-unstyled mb-0 sidebar-navbar view-all">
-            <li><div class="dropdown-title">List Categories</div></li>
+        <!-- List Categories -->
+        <ul id="sidebarNav" class="list-unstyled mb-0 sidebar-navbar">
+            <li class="mb-3">
+                <div class="font-weight-bold text-uppercase font-size-16 pb-2 border-bottom border-primary border-width-2 d-inline-block">
+                    Product Categories
+                </div>
+            </li>
 
             @foreach($categories as $category)
-            <li>
-                <a href="{{route('category.products', $category->id)}}" >
-                    {{ $category->name }}
-                </a>
-            </li>
+                <li class="mb-2">
+                    <a href="{{ route('category.products', $category->id) }}"
+                       class="d-block py-2 px-3 text-dark text-decoration-none rounded hover-category">
+                        <span class="d-flex align-items-center">
+                            <span class="flex-grow-1">{{ $category->name }}</span>
+                            <i class="fas fa-angle-right ml-2 text-muted"></i>
+                        </span>
+                    </a>
+                </li>
             @endforeach
         </ul>
-        <!-- End List -->
+
+        <style>
+            .hover-category {
+                transition: all 0.3s ease;
+                border-left: 3px solid transparent;
+            }
+
+            .hover-category:hover {
+                background-color: rgba(0, 123, 255, 0.08);
+                color: #007bff !important;
+                transform: translateX(5px);
+                border-left-color: #007bff;
+                text-decoration: none;
+            }
+
+            .sidebar-navbar {
+                background: #fff;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            }
+
+            .border-width-2 {
+                border-width: 2px !important;
+            }
+        </style>
+        <!-- End List Categories -->
     </div>
-    <div class="mb-6">
-        <div class="border-bottom border-color-1 mb-5">
-            <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Filters</h3>
-        </div>
-        <div class="border-bottom pb-4 mb-4">
-            <h4 class="font-size-14 mb-3 font-weight-bold">Brands</h4>
 
-            <!-- Checkboxes -->
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="brandAdidas">
-                    <label class="custom-control-label" for="brandAdidas">Adidas
-                        <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span>
-                    </label>
-                </div>
-            </div>
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="brandNewBalance">
-                    <label class="custom-control-label" for="brandNewBalance">New Balance
-                        <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span>
-                    </label>
-                </div>
-            </div>
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="brandNike">
-                    <label class="custom-control-label" for="brandNike">Nike
-                        <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span>
-                    </label>
-                </div>
-            </div>
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="brandFredPerry">
-                    <label class="custom-control-label" for="brandFredPerry">Fred Perry
-                        <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span>
-                    </label>
-                </div>
-            </div>
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="brandTnf">
-                    <label class="custom-control-label" for="brandTnf">The North Face
-                        <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span>
-                    </label>
-                </div>
-            </div>
-            <!-- End Checkboxes -->
-
-            <!-- View More - Collapse -->
-            <div class="collapse" id="collapseBrand">
-                <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="brandGucci">
-                        <label class="custom-control-label" for="brandGucci">Gucci
-                            <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="brandMango">
-                        <label class="custom-control-label" for="brandMango">Mango
-                            <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <!-- End View More - Collapse -->
-
-            <!-- Link -->
-            <a class="link link-collapse small font-size-13 text-gray-27 d-inline-flex mt-2" data-toggle="collapse" href="#collapseBrand" role="button" aria-expanded="false" aria-controls="collapseBrand">
-                <span class="link__icon text-gray-27 bg-white">
-                    <span class="link__icon-inner">+</span>
-                </span>
-                <span class="link-collapse__default">Show more</span>
-                <span class="link-collapse__active">Show less</span>
-            </a>
-            <!-- End Link -->
-        </div>
-        <div class="border-bottom pb-4 mb-4">
-            <h4 class="font-size-14 mb-3 font-weight-bold">Color</h4>
-
-            <!-- Checkboxes -->
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="categoryTshirt">
-                    <label class="custom-control-label" for="categoryTshirt">Black <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span></label>
-                </div>
-            </div>
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="categoryShoes">
-                    <label class="custom-control-label" for="categoryShoes">Black Leather <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span></label>
-                </div>
-            </div>
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="categoryAccessories">
-                    <label class="custom-control-label" for="categoryAccessories">Black with Red <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span></label>
-                </div>
-            </div>
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="categoryTops">
-                    <label class="custom-control-label" for="categoryTops">Gold <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span></label>
-                </div>
-            </div>
-            <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="categoryBottom">
-                    <label class="custom-control-label" for="categoryBottom">Spacegrey <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span></label>
-                </div>
-            </div>
-            <!-- End Checkboxes -->
-
-            <!-- View More - Collapse -->
-            <div class="collapse" id="collapseColor">
-                <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="categoryShorts">
-                        <label class="custom-control-label" for="categoryShorts">Turquoise <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span></label>
-                    </div>
-                </div>
-                <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="categoryHats">
-                        <label class="custom-control-label" for="categoryHats">White <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span></label>
-                    </div>
-                </div>
-                <div class="form-group d-flex align-items-center justify-content-between mb-2 pb-1">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="categorySocks">
-                        <label class="custom-control-label" for="categorySocks">White with Gold <span class="text-gray-25 font-size-12 font-weight-normal"> (56)</span></label>
-                    </div>
-                </div>
-            </div>
-            <!-- End View More - Collapse -->
-
-            <!-- Link -->
-            <a class="link link-collapse small font-size-13 text-gray-27 d-inline-flex mt-2" data-toggle="collapse" href="#collapseColor" role="button" aria-expanded="false" aria-controls="collapseColor">
-                <span class="link__icon text-gray-27 bg-white">
-                    <span class="link__icon-inner">+</span>
-                </span>
-                <span class="link-collapse__default">Show more</span>
-                <span class="link-collapse__active">Show less</span>
-            </a>
-            <!-- End Link -->
-        </div>
-        <div class="range-slider">
-            <h4 class="font-size-14 mb-3 font-weight-bold">Price</h4>
-            <!-- Range Slider -->
-            <input class="js-range-slider" type="text"
-            data-extra-classes="u-range-slider u-range-slider-indicator u-range-slider-grid"
-            data-type="double"
-            data-grid="false"
-            data-hide-from-to="true"
-            data-prefix="$"
-            data-min="0"
-            data-max="3456"
-            data-from="0"
-            data-to="3456"
-            data-result-min="#rangeSliderExample3MinResult"
-            data-result-max="#rangeSliderExample3MaxResult">
-            <!-- End Range Slider -->
-            <div class="mt-1 text-gray-111 d-flex mb-4">
-                <span class="mr-0dot5">Price: </span>
-                <span>$</span>
-                <span id="rangeSliderExample3MinResult" class=""></span>
-                <span class="mx-0dot5"> — </span>
-                <span>$</span>
-                <span id="rangeSliderExample3MaxResult" class=""></span>
-            </div>
-            <button type="submit" class="btn px-4 btn-primary-dark-w py-2 rounded-lg">Filter</button>
-        </div>
+    <!-- On Sales Products -->
+<div class="mb-8">
+    <div class="border-bottom border-color-1 mb-5">
+        <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">On Sales Products</h3>
     </div>
+    <ul class="list-unstyled">
+        @foreach ($products as $product)
+            @php
+                // Tính giá thấp nhất của biến thể
+                $originalPrice = $product->variants->min('price'); // Lấy giá thấp nhất từ các biến thể
+                $finalPrice = $originalPrice;
+
+                // Kiểm tra nếu có giảm giá
+                if ($product->discount_type === 'percentage') {
+                    $finalPrice = $originalPrice - ($originalPrice * $product->discount_value / 100);
+                } elseif ($product->discount_type === 'fixed') {
+                    $finalPrice = $originalPrice - $product->discount_value;
+                }
+            @endphp
+
+            <li class="mb-4 product-item-hover">
+                <div class="row">
+                    <div class="col-auto">
+                        <a href="{{ route('product.detail', $product->id) }}" class="d-block width-75">
+                            <img class="img-fluid product-image-hover" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                        </a>
+                    </div>
+                    <div class="col">
+                        <h3 class="text-lh-1dot2 font-size-14 mb-0 product-title-hover" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                            <a href="{{ route('product.detail', $product->id) }}" class="text-dark hover-primary">{{ $product->name }}</a>
+                        </h3>
+
+                        <div class="font-weight-bold">
+                            @if ($finalPrice < $originalPrice)
+                                <del class="font-size-11 text-gray-9 d-block">${{ number_format($originalPrice, 2) }}</del>
+                            @endif
+                            <ins class="font-size-15 text-red text-decoration-none d-block hover-red">${{ number_format($finalPrice, 2) }}</ins>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        @endforeach
+    </ul>
 </div>
+<!-- End On Sales Products -->
+
+
+    <!-- Best Selling Products -->
+<div class="mb-8">
+    <div class="border-bottom border-color-1 mb-5">
+        <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Best Selling Products</h3>
+    </div>
+    <ul class="list-unstyled">
+        @foreach ($topSalesProducts as $product)
+            @php
+                // Lấy giá thấp nhất của biến thể
+                $originalPrice = $product->variants->min('price'); // Lấy giá thấp nhất từ các biến thể
+                $finalPrice = $originalPrice;
+
+                // Kiểm tra nếu có giảm giá
+                if ($product->discount_type === 'percentage') {
+                    $finalPrice = $originalPrice - ($originalPrice * $product->discount_value / 100);
+                } elseif ($product->discount_type === 'fixed') {
+                    $finalPrice = $originalPrice - $product->discount_value;
+                }
+            @endphp
+
+            <li class="mb-4 product-item-hover">
+                <div class="row">
+                    <div class="col-auto">
+                        <a href="{{ route('product.detail', $product->id) }}" class="d-block width-75">
+                            <img class="img-fluid product-image-hover" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                        </a>
+                    </div>
+                    <div class="col">
+                        <h3 class="text-lh-1dot2 font-size-14 mb-0 product-title-hover" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; height: 2.6em;">
+                            <a href="{{ route('product.detail', $product->id) }}" class="text-dark hover-primary">
+                                {{ $product->name }}
+                            </a>
+                        </h3>
+
+                        <div class="font-weight-bold">
+                            @if ($finalPrice < $originalPrice)
+                                <del class="font-size-11 text-gray-9 d-block">${{ number_format($originalPrice, 2) }}</del>
+                            @endif
+                            <ins class="font-size-15 text-red text-decoration-none d-block hover-red">
+                                ${{ number_format($finalPrice, 2) }}
+                            </ins>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        @endforeach
+    </ul>
+</div>
+<!-- End Best Selling Products -->
+
+
+</div>
+
+<!-- Styles -->
+<style>
+    /* Hiệu ứng hover cho toàn bộ item sản phẩm */
+    .product-item-hover:hover {
+        transform: translateY(-3px);
+        transition: all 0.3s ease;
+    }
+
+    /* Hiệu ứng hover cho ảnh sản phẩm */
+    .product-image-hover {
+        transition: all 0.3s ease;
+    }
+
+    .product-image-hover:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+
+    /* Hiệu ứng hover cho tiêu đề sản phẩm */
+    .hover-primary:hover {
+        color: #007bff !important; /* Màu primary */
+        text-decoration: none;
+    }
+
+    /* Hiệu ứng hover cho giá */
+    .hover-red:hover {
+        color: #dc3545 !important; /* Màu đỏ đậm hơn */
+    }
+
+    /* Hiệu ứng tổng thể khi hover vào item */
+    .product-item-hover {
+        transition: all 0.3s ease;
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+    .product-item-hover:hover {
+        background-color: #f8f9fa; /* Màu nền nhạt khi hover */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+</style>
