@@ -23,15 +23,25 @@
                                     data-unfold-animation-out="fadeOutRight"
                                     data-unfold-duration="500">
                                     @if(auth()->check())
-                                        <i class="ec ec-user mr-1"></i>
-                                        {{ auth()->user()->name }}
-                                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                                            @csrf
-                                            <button type="submit" class="btn btn-link p-0 m-0 align-baseline text-primary">Logout</button>
-                                        </form>
-                                    @else
-                                        <i class="ec ec-user mr-1"></i><a href="{{route('register')}}"> Register</a> <span class="text-gray-50">or</span> <a href="{{route('login')}}"> Logn in</a>
+                                    <i class="ec ec-user mr-1"></i>
+                                    {{ auth()->user()->name }}
+
+                                    @if(auth()->user()->role === 'admin')  {{-- Kiểm tra role admin --}}
+                                        <a href="{{ route('admin.home') }}" class="btn btn-link p-0 m-0 align-baseline text-primary ml-2">
+                                            Admin Dashboard
+                                        </a>
                                     @endif
+
+                                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline text-primary">Logout</button>
+                                    </form>
+                                @else
+                                    <i class="ec ec-user mr-1"></i>
+                                    <a href="{{ route('register') }}">Register</a>
+                                    <span class="text-gray-50">or</span>
+                                    <a href="{{ route('login') }}">Login</a>
+                                @endif
                                 </a>
                                 <!-- End Account Sidebar Toggle Button -->
                             </li>
@@ -166,6 +176,23 @@
                                     <!-- End Input -->
                                 </li>
                                 <!-- End Search -->
+
+                                <li class="col d-none d-xl-block">
+                                    <a href="@auth {{ route('wishlist.index') }} @else {{ route('login') }} @endauth"
+                                           class="text-gray-90 position-relative d-flex"
+                                           data-toggle="tooltip"
+                                           data-placement="top"
+                                           title="Wishlist">
+                                            <i class="fas fa-heart font-size-22"></i> <!-- icon mới -->
+                                            <span class="bg-lg-down-black width-22 height-22 bg-primary position-absolute d-flex align-items-center justify-content-center rounded-circle left-12 top-8 font-weight-bold font-size-12">
+                                                @auth
+                                                    {{ \App\Models\Wishlist::where('user_id', auth()->id())->count() }}
+                                                @else
+                                                    0
+                                                @endauth
+                                            </span>
+                                        </a>
+                                    </li>
                                 <li class="col d-none d-xl-block">
                                     <a href="@auth {{ route('orders.index') }} @else {{ route('login') }} @endauth"
                                        class="text-gray-90 position-relative d-flex"

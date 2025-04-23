@@ -2,6 +2,71 @@
 
 @section('main')
 
+{{-- Thông báo SweetAlert2 được thiết kế lại --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Hàm hiển thị thông báo thành công với icon checkmark
+    function showSuccessAlert(message) {
+        Swal.fire({
+            icon: 'success',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            toast: true,
+            background: '#f0fff4',  // Màu nền xanh nhạt
+            iconColor: '#38a169',   // Màu xanh lá đậm
+            color: '#2f855a'       // Màu chữ xanh đậm
+        });
+    }
+
+    // Hàm hiển thị thông báo lỗi với icon chấm than
+    function showErrorAlert(message) {
+        Swal.fire({
+            icon: 'error',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            toast: true,
+            background: '#fff5f5',  // Màu nền đỏ nhạt
+            iconColor: '#e53e3e',    // Màu đỏ
+            color: '#c53030'        // Màu chữ đỏ đậm
+        });
+    }
+
+    // Hàm hiển thị thông báo thông tin
+    function showInfoAlert(message) {
+        Swal.fire({
+            icon: 'info',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            toast: true,
+            background: '#ebf8ff',  // Màu nền xanh dương nhạt
+            iconColor: '#3182ce',   // Màu xanh dương
+            color: '#2c5282'       // Màu chữ xanh đậm
+        });
+    }
+
+    // Xử lý thông báo từ session
+    @if(session('success'))
+        showSuccessAlert('{{ session('success') }}');
+    @endif
+
+    @if(session('error'))
+        showErrorAlert('{{ session('error') }}');
+    @endif
+
+    @if(session('info'))
+        showInfoAlert('{{ session('info') }}');
+    @endif
+</script>
+
 <div class="col-xl-9 col-wd-9gdot5">
     <!-- Shop-control-bar Title -->
     {{-- <div class="flex-center-between mb-3">

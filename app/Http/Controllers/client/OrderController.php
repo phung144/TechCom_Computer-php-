@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use App\Models\Order; // Đảm bảo model Order được import
+use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -24,50 +27,96 @@ class OrderController extends Controller
     return view('client.orders.main', compact('orders'));
 }
 
-    public function store(Request $request)
+public function store(Request $request)
 {
     $userId = auth()->id();
-    // Sử dụng model Cart thay vì DB::table để có thể sử dụng relationships
-    $carts = Cart::with(['product', 'variant'])->where('user_id', $userId)->get();
+
+    // Validate dữ liệu đầu vào
+    $validated = $request->validate([
+        'full_name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'address' => 'required|string|max:500',
+        'phone' => 'required|string|max:20',
+    ]);
+
+    // Lấy giỏ hàng với lock để tránh xung đột
+    $carts = Cart::with([
+            'product' => function($q) {
+                $q->lockForUpdate();
+            },
+            'variant' => function($q) {
+                $q->lockForUpdate()->with('options');
+            }
+        ])
+        ->where('user_id', $userId)
+        ->get();
 
     if ($carts->isEmpty()) {
-        return redirect()->back()->with('error', 'Your cart is empty.');
+        return back()->with('error', 'Giỏ hàng trống');
     }
 
-    $total = $carts->sum(function($cart) {
-        return $cart->price * $cart->quantity;
+    // Kiểm tra tồn kho với transaction riêng
+    DB::transaction(function () use ($carts) {
+        foreach ($carts as $cart) {
+            $available = $cart->variant ? $cart->variant->quantity : $cart->product->quantity;
+            if ($available < $cart->quantity) {
+                throw new \Exception("{$cart->product->name} chỉ còn {$available} sản phẩm");
+            }
+        }
     });
 
-    DB::beginTransaction();
+    // Tạo đơn hàng với transaction chính
     try {
+        DB::beginTransaction();
+
         $order = Order::create([
             'user_id' => $userId,
-            'total' => $total,
-            'full_name' => $request->input('full_name'),
-            'email' => $request->input('email'),
-            'address' => $request->input('address'),
-            'phone' => $request->input('phone'),
+            'total' => $carts->sum(fn($cart) => $cart->price * $cart->quantity),
+            ...$validated,
             'status' => 'pending',
-            'payment_method' => 'cash_on_delivery',
+            'payment_method' => 'cash_on_delivery'
         ]);
 
         foreach ($carts as $cart) {
+            $variantOptions = $cart->variant ?
+                $cart->variant->options->pluck('value')->implode(', ') : null;
+
             $order->orderDetails()->create([
                 'product_id' => $cart->product_id,
-                'variant_id' => $cart->variant_id, // Thêm variant_id vào đây
+                'variant_id' => $cart->variant_id,
                 'quantity' => $cart->quantity,
                 'price' => $cart->price,
+                'variant_options' => $variantOptions
             ]);
+
+            // Cập nhật tồn kho trực tiếp qua query builder
+            if ($cart->variant_id) {
+                ProductVariant::where('id', $cart->variant_id)
+                    ->decrement('quantity', $cart->quantity);
+            } else {
+                Product::where('id', $cart->product_id)
+                    ->decrement('quantity', $cart->quantity);
+            }
         }
 
-        // Sử dụng model Cart để xóa
+        // Xóa giỏ hàng
         Cart::where('user_id', $userId)->delete();
 
         DB::commit();
-        return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
+
+        return redirect()->route('orders.show', $order->id)
+               ->with('success', 'Đặt hàng thành công!');
+
     } catch (\Exception $e) {
         DB::rollBack();
-        return redirect()->back()->with('error', 'Failed to place order. Please try again.');
+        Log::error('Order failed', [
+            'user' => $userId,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'carts' => $carts->toArray()
+        ]);
+
+        return back()->with('error', 'Lỗi đặt hàng: '.$e->getMessage());
     }
 }
 

@@ -20,25 +20,23 @@ class Order extends Model
         'payment_method',
     ];
 
+    // Quan hệ chính với OrderDetail
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);
     }
 
-    public function products()
-    {
-        return $this->hasManyThrough(
-            Product::class,
-            OrderDetail::class,
-            'order_id', // Foreign key on OrderDetail table
-            'id',       // Foreign key on Product table
-            'id',       // Local key on Order table
-            'product_id' // Local key on OrderDetail table
-        );
-    }
-
+    // Quan hệ với User
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Có thể thêm phương thức helper nếu cần
+    public function getProductNamesAttribute()
+    {
+        return $this->orderDetails->map(function($detail) {
+            return $detail->product->name;
+        })->implode(', ');
     }
 }
