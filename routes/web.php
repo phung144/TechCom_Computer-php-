@@ -13,6 +13,7 @@ use App\Http\Controllers\client\ProductDetailController;
 use App\Http\Controllers\client\SearchController;
 use App\Http\Controllers\client\OrderController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\client\OrderNowController;
 use App\Http\Controllers\shop\ShopController as ShopShopController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -65,6 +66,7 @@ Route::delete('/wishlist/delete/{id}', [WishlistController::class, 'delete'])->n
 
 Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
 
+
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 
 Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
@@ -80,6 +82,10 @@ Route::delete('/orders/{order}/force-delete', [OrderController::class, 'forceDel
     ->name('orders.forceDelete');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/order-now', [OrderNowController::class, 'index'])->name('orderNow.index');
+        Route::post('/order-now/store', [OrderNowController::class, 'store'])->name('orderNow.store');
+    });
 
     // Route::get('/admin/home', function () { // /admin/home là đường dẫn chính xác đến view
     //     return view('admin.index');

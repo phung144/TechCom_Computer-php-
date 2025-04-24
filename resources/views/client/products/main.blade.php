@@ -146,9 +146,24 @@
                         </button>
                     </form>
 
-                    <a href="#" class="btn btn-success transition-3d-hover mb-2">
-                        <i class="ec ec-credit-card mr-2 font-size-20"></i> Mua ngay
-                    </a>
+                    @auth
+    <!-- Form mua ngay cho user đã đăng nhập -->
+    <form action="{{ route('orderNow.index') }}" method="GET" class="d-inline">
+        <input type="hidden" name="product_id" value="{{ $product->id }}">
+        <input type="hidden" name="variant_id" id="buy-now-variant-id" value="{{ $variants->first()->id }}">
+        <input type="hidden" name="quantity" id="buy-now-quantity" value="1">
+
+        <button type="submit" class="btn btn-success transition-3d-hover mb-2">
+            <i class="ec ec-credit-card mr-2 font-size-20"></i> Order Now
+        </button>
+    </form>
+                    @else
+                        <!-- Link đăng nhập cho user chưa đăng nhập -->
+                        <a href="{{ route('login', ['redirect_to' => url()->current()]) }}"
+                        class="btn btn-success transition-3d-hover mb-2">
+                        <i class="ec ec-credit-card mr-2 font-size-20"></i> Login to Order
+                        </a>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -353,37 +368,47 @@
             }
         </style>
 
-        {{-- Js variant --}}
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 1. Xử lý click chọn variant
+        {{-- JS xử lý biến thể và số lượng sản phẩm --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // =============================================
+        // PHẦN 1: XỬ LÝ CHỌN BIẾN THỂ SẢN PHẨM
+        // =============================================
+
+        // Lấy tất cả các ô biến thể
         const variantBoxes = document.querySelectorAll('.variant-box');
 
+        // Xử lý khi click chọn một biến thể
         variantBoxes.forEach(box => {
             box.addEventListener('click', function() {
-                // Xóa selected khỏi tất cả
+                // 1. Xóa lớp 'selected' khỏi tất cả các biến thể
                 variantBoxes.forEach(b => b.classList.remove('selected'));
 
-                // Thêm selected vào box được click
+                // 2. Thêm lớp 'selected' vào biến thể được chọn
                 this.classList.add('selected');
 
-                // Lấy thông tin từ data attributes
-                const variantId = this.dataset.variantId;
-                const variantPrice = parseFloat(this.dataset.variantPrice);
-                const discountPercent = parseFloat(this.dataset.discountPercent);
-                const variantQuantity = parseInt(this.dataset.variantQuantity);
+                // 3. Lấy thông tin từ data attributes của biến thể được chọn
+                const variantId = this.dataset.variantId;          // ID biến thể
+                const variantPrice = parseFloat(this.dataset.variantPrice); // Giá gốc
+                const discountPercent = parseFloat(this.dataset.discountPercent); // % giảm giá
+                const variantQuantity = parseInt(this.dataset.variantQuantity); // Số lượng tồn kho
 
-                // Tính giá sau discount
+                // 4. Tính toán giá sau khi giảm (nếu có)
                 const finalPrice = discountPercent > 0
                     ? variantPrice * (1 - discountPercent/100)
                     : variantPrice;
 
-                // Cập nhật giao diện
+                // 5. Cập nhật thông tin lên giao diện
+                // - Giá hiển thị
                 document.getElementById('variant-price').textContent = finalPrice.toLocaleString('vi-VN');
+                // - Số lượng tồn kho
                 document.getElementById('variant-quantity').textContent = variantQuantity;
+                // - ID biến thể cho form thêm vào giỏ hàng
                 document.getElementById('variant-id-input').value = variantId;
+                // - ID biến thể cho form mua ngay
+                document.getElementById('buy-now-variant-id').value = variantId;
 
-                // Cập nhật giá cũ (original price)
+                // 6. Xử lý hiển thị giá gốc và % giảm giá (nếu có)
                 const originalPriceContainer = document.getElementById('original-price-container');
                 const originalPriceElement = document.getElementById('original-price');
                 const discountPercentElement = document.getElementById('discount-percent');
@@ -396,67 +421,90 @@
                     originalPriceContainer.style.display = 'none';
                 }
 
-                // Cập nhật giá trị max cho input quantity
+                // 7. Cập nhật số lượng tối đa có thể mua (bằng số lượng tồn kho)
                 const quantityInput = document.querySelector('.js-result');
                 if (quantityInput) {
                     quantityInput.max = variantQuantity;
+
+                    // Nếu số lượng hiện tại > tồn kho, điều chỉnh lại
+                    if (parseInt(quantityInput.value) > variantQuantity) {
+                        quantityInput.value = variantQuantity;
+                        document.getElementById('quantity-input').value = variantQuantity;
+                        document.getElementById('buy-now-quantity').value = variantQuantity;
+                    }
                 }
             });
         });
 
-            // 2. Xử lý tăng giảm quantity
-            const quantityInput = document.querySelector('.js-result');
-            const quantityHiddenInput = document.getElementById('quantity-input');
+        // =============================================
+        // PHẦN 2: XỬ LÝ THAY ĐỔI SỐ LƯỢNG SẢN PHẨM
+        // =============================================
 
-            // Nút tăng
-            document.querySelector('.js-plus').addEventListener('click', function(e) {
-                e.preventDefault();
-                let currentValue = parseInt(quantityInput.value);
-                const maxQuantity = parseInt(document.querySelector('.variant-box.selected')?.dataset.variantQuantity || 999);
+        // Các phần tử liên quan đến số lượng
+        const quantityInput = document.querySelector('.js-result'); // Ô input hiển thị
+        const quantityHiddenInput = document.getElementById('quantity-input'); // Input ẩn cho giỏ hàng
+        const buyNowQuantityInput = document.getElementById('buy-now-quantity'); // Input ẩn cho mua ngay
 
-                if (currentValue < maxQuantity) {
-                    currentValue++;
-                    quantityInput.value = currentValue;
-                    quantityHiddenInput.value = currentValue;
-                } else {
-                    alert('Số lượng không được vượt quá tồn kho');
-                }
-            });
+        // Nút TĂNG số lượng
+        document.querySelector('.js-plus').addEventListener('click', function(e) {
+            e.preventDefault();
+            let currentValue = parseInt(quantityInput.value);
+            // Lấy số lượng tối đa từ biến thể đang chọn
+            const maxQuantity = parseInt(document.querySelector('.variant-box.selected')?.dataset.variantQuantity || 999);
 
-            // Nút giảm
-            document.querySelector('.js-minus').addEventListener('click', function(e) {
-                e.preventDefault();
-                let currentValue = parseInt(quantityInput.value);
+            if (currentValue < maxQuantity) {
+                currentValue++;
+                // Cập nhật giá trị cho tất cả các input liên quan
+                quantityInput.value = currentValue;
+                quantityHiddenInput.value = currentValue;
+                buyNowQuantityInput.value = currentValue;
+            } else {
+                alert('Số lượng không được vượt quá tồn kho');
+            }
+        });
 
-                if (currentValue > 1) {
-                    currentValue--;
-                    quantityInput.value = currentValue;
-                    quantityHiddenInput.value = currentValue;
-                }
-            });
+        // Nút GIẢM số lượng
+        document.querySelector('.js-minus').addEventListener('click', function(e) {
+            e.preventDefault();
+            let currentValue = parseInt(quantityInput.value);
 
-            // Xử lý nhập trực tiếp
-            quantityInput.addEventListener('change', function() {
-                let value = parseInt(this.value) || 1;
-                const maxQuantity = parseInt(document.querySelector('.variant-box.selected')?.dataset.variantQuantity || 999);
+            if (currentValue > 1) {
+                currentValue--;
+                // Cập nhật giá trị cho tất cả các input liên quan
+                quantityInput.value = currentValue;
+                quantityHiddenInput.value = currentValue;
+                buyNowQuantityInput.value = currentValue;
+            }
+        });
 
-                if (value > maxQuantity) {
-                    value = maxQuantity;
-                    alert('Số lượng không được vượt quá tồn kho');
-                } else if (value < 1) {
-                    value = 1;
-                }
+        // Xử lý khi nhập số lượng trực tiếp
+        quantityInput.addEventListener('change', function() {
+            let value = parseInt(this.value) || 1;
+            // Lấy số lượng tối đa từ biến thể đang chọn
+            const maxQuantity = parseInt(document.querySelector('.variant-box.selected')?.dataset.variantQuantity || 999);
 
-                this.value = value;
-                quantityHiddenInput.value = value;
-            });
-
-            // Tự động chọn variant đầu tiên khi load trang
-            if (variantBoxes.length > 0) {
-                variantBoxes[0].click();
+            // Kiểm tra giá trị hợp lệ
+            if (value > maxQuantity) {
+                value = maxQuantity;
+                alert('Số lượng không được vượt quá tồn kho');
+            } else if (value < 1) {
+                value = 1;
             }
 
-
+            // Cập nhật giá trị cho tất cả các input liên quan
+            this.value = value;
+            quantityHiddenInput.value = value;
+            buyNowQuantityInput.value = value;
         });
-        </script>
+
+        // =============================================
+        // KHỞI TẠO BAN ĐẦU
+        // =============================================
+
+        // Tự động chọn biến thể đầu tiên khi trang được tải
+        if (variantBoxes.length > 0) {
+            variantBoxes[0].click();
+        }
+    });
+    </script>
 @endsection
