@@ -11,6 +11,10 @@ use App\Models\Variant;
 
 class CartController extends Controller
 {
+    public function __construct()
+{
+    $this->middleware('auth');
+}
     public function index()
     {
         $carts = Cart::all()->where('user_id', auth()->id());

@@ -199,17 +199,105 @@
                                     </div>
 
 
-                                    <form action="{{ route('wishlist.add') }}" method="POST">
+                                    <form action="{{ route('wishlist.add') }}" method="POST" id="wishlist-form">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                                         <input type="hidden" name="quantity" value="1">
-                                        <button type="submit" class="btn-add-cart btn-danger transition-3d-hover"
+                                        <button type="button" onclick="handleWishlist()" class="btn-add-cart btn-danger transition-3d-hover"
                                                 style="border: none; outline: none; background: transparent; padding: 0;">
                                             <i class="ec ec-favorites" style="font-size: 25px; color: #ff3a3a;"></i>
                                         </button>
                                     </form>
+
+                                    <script>
+                                    function handleWishlist() {
+                                        @auth
+                                            // Nếu đã đăng nhập, submit form bình thường
+                                            document.getElementById('wishlist-form').submit();
+                                        @else
+                                        Swal.fire({
+                                            title: 'Ready to Checkout?',
+                                            html: `
+                                                <div class="text-center py-3">
+                                                    <i class="fas fa-shopping-bag fa-3x text-primary mb-3"></i>
+                                                    <p class="mb-2">Sign in to complete your purchase</p>
+                                                    <small class="text-muted">Enjoy faster checkout and order tracking</small>
+                                                </div>
+                                            `,
+                                            showCancelButton: true,
+                                            confirmButtonText: '<i class="fas fa-sign-in-alt mr-2"></i> Login Now',
+                                            cancelButtonText: 'Continue Shopping',
+                                            buttonsStyling: false,
+                                            customClass: {
+                                                confirmButton: 'btn btn-primary px-4 py-2 mx-2',
+                                                cancelButton: 'btn btn-light px-4 py-2 mx-2',
+                                                popup: 'rounded-lg'
+                                            },
+                                            showClass: {
+                                                popup: 'animate__animated animate__zoomIn'
+                                            }
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "{{ route('login', ['redirect_to' => url()->current()]) }}";
+                                            }
+                                        });
+                                        @endauth
+                                    }
+                                    </script>
                                 </div>
 
+                                {{-- CSS form can phai dang nhap de su dung tinh nang --}}
+                                <style>
+                                    /* Gradient Button */
+.btn-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+}
+
+/* Dark Theme */
+.btn-dark-primary {
+    background: #4f46e5;
+    color: white;
+}
+
+.btn-dark-link {
+    color: #94a3b8;
+}
+
+/* Simple Buttons */
+.btn-simple-primary {
+    background: transparent;
+    color: #3b82f6;
+    border: 1px solid #3b82f6;
+}
+
+.btn-simple {
+    background: transparent;
+    color: #64748b;
+}
+
+/* Rounded Buttons */
+.btn-rounded {
+    border-radius: 50px;
+}
+
+/* Animations */
+.animated-pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.border-radius-12 {
+    border-radius: 12px !important;
+}
+                                </style>
 
                             </div>
 

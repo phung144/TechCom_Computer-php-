@@ -53,7 +53,7 @@ Route::get('/product-detail/{id}', [ProductDetailController::class, 'productDeta
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 
-Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+
 
 Route::post('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update');
 
@@ -85,6 +85,8 @@ Route::delete('/orders/{order}/force-delete', [OrderController::class, 'forceDel
     Route::middleware(['auth'])->group(function () {
         Route::get('/order-now', [OrderNowController::class, 'index'])->name('orderNow.index');
         Route::post('/order-now/store', [OrderNowController::class, 'store'])->name('orderNow.store');
+        Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+        Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
     });
 
     // Route::get('/admin/home', function () { // /admin/home là đường dẫn chính xác đến view

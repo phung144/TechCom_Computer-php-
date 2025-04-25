@@ -66,7 +66,14 @@ public function login(Request $request)
     ]);
 
     if (Auth::attempt($credentials)) {
-        // Redirect về trang intended (trang chi tiết sản phẩm) hoặc trang chủ
+        $request->session()->regenerate();
+
+        // Nếu có redirect_to trong URL, ưu tiên dùng nó
+        if ($request->has('redirect_to')) {
+            return redirect($request->input('redirect_to'))->with('success', 'Đăng nhập thành công!');
+        }
+
+        // Ngược lại dùng intended (nếu có)
         return redirect()->intended(route('client-home'))->with('success', 'Đăng nhập thành công!');
     }
 
@@ -74,6 +81,7 @@ public function login(Request $request)
         'email' => 'Thông tin đăng nhập không chính xác',
     ])->onlyInput('email');
 }
+
 
     public function logout()
     {

@@ -33,10 +33,6 @@ public function index()
         'quantity' => 'sometimes|integer|min:1',
     ]);
 
-    if (!auth()->check()) {
-        return redirect()->route('login')->with('error', '🔒 Vui lòng đăng nhập để sử dụng tính năng này');
-    }
-
     $existing = Wishlist::where('user_id', auth()->id())
                        ->where('product_id', $request->product_id)
                        ->first();
