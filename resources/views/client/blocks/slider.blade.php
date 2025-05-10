@@ -2,42 +2,26 @@
     <!-- Slider 1 bên trái -->
     <div id="leftBanner" class="carousel slide" style="width: 45%; margin-right: 10px; border-radius: 10px; overflow: hidden;">
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="{{ asset('client/assets/img/slider1/anh1.webp') }}" class="d-block w-100" alt="Banner 1">
+            @foreach(\App\Models\Banner::where('position',1)->get() as $index => $banner)
+            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                <a href="{{ $banner->link }}">
+                    <img src="{{ asset('storage/' . $banner->image) }}" class="d-block w-100" alt="{{ $banner->title }}">
+                </a>
             </div>
-            <div class="carousel-item">
-                <img src="{{ asset('client/assets/img/slider1/anh2.webp') }}" class="d-block w-100" alt="Banner 2">
-            </div>
-            <div class="carousel-item">
-                <img src="{{ asset('client/assets/img/slider1/anh3.webp') }}" class="d-block w-100" alt="Banner 3">
-            </div>
-            <div class="carousel-item">
-                <img src="{{ asset('client/assets/img/slider1/anh4.webp') }}" class="d-block w-100" alt="Banner 2">
-            </div>
-            <div class="carousel-item">
-                <img src="{{ asset('client/assets/img/slider1/anh5.webp') }}" class="d-block w-100" alt="Banner 3">
-            </div>
+        @endforeach
         </div>
     </div>
 
     <!-- Slider 2 bên phải -->
     <div id="rightBanner" class="carousel slide" style="width: 45%; margin-left: 10px; border-radius: 10px; overflow: hidden;">
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="{{ asset('client/assets/img/slider2/anh6.webp') }}" class="d-block w-100" alt="Banner 1">
+            @foreach(\App\Models\Banner::where('position',2)->get() as $index => $banner)
+            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                <a href="{{ $banner->link }}">
+                <img src="{{ asset('storage/' . $banner->image) }}" class="d-block w-100" alt="{{ $banner->title }}">
+            </a>
             </div>
-            <div class="carousel-item">
-                <img src="{{ asset('client/assets/img/slider2/anh7.webp') }}" class="d-block w-100" alt="Banner 2">
-            </div>
-            <div class="carousel-item">
-                <img src="{{ asset('client/assets/img/slider2/anh8.webp') }}" class="d-block w-100" alt="Banner 3">
-            </div>
-            <div class="carousel-item">
-                <img src="{{ asset('client/assets/img/slider2/anh9.webp') }}" class="d-block w-100" alt="Banner 2">
-            </div>
-            <div class="carousel-item">
-                <img src="{{ asset('client/assets/img/slider2/anh10.webp') }}" class="d-block w-100" alt="Banner 3">
-            </div>
+        @endforeach
         </div>
     </div>
 </div>

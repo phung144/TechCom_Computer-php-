@@ -81,7 +81,7 @@
                             <div class="form-group">
                                 <label for="price">Base Price (VND)</label>
                                 <input type="number" name="price" id="price" class="form-control"
-                                       value="{{ old('price') }}" step="1000" min="0">
+                                       value="{{ old('price') }}" min="0">
                                 @error('price')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
@@ -104,6 +104,19 @@
                             @error('image')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="photos">Product Images</label>
+                            <input type="file" name="photos[]" id="photos" class="form-control-file" multiple>
+                            @error('photos')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                            @if ($errors->has('photos.*'))
+                                @foreach ($errors->get('photos.*') as $error)
+                                    <small class="text-danger">{{ $error[0] }}</small><br>
+                                @endforeach
+                            @endif
                         </div>
 
                         <!-- Phần giảm giá (Discount) -->

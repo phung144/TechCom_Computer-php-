@@ -112,6 +112,6 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('variants/create', [VariantOptionProductController::class, 'create'])->name('products.variants.create');
         Route::post('variants', [VariantOptionProductController::class, 'store'])->name('products.variants.store');
     });
-
-
+    Route::resource('banners', App\Http\Controllers\admin\BannerController::class);
+    Route::patch('banners/{banner}/toggle-status', [App\Http\Controllers\admin\BannerController::class, 'toggleStatus'])->name('banners.toggleStatus');
 });

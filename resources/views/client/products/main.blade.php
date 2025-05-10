@@ -23,7 +23,21 @@
     <div class="mb-xl-14 mb-6">
         <div class="row">
             <div class="col-md-5 mb-4 mb-md-0">
-                <img class="img-fluid" src="{{ Storage::url($product->image) }}" width="90%" alt="Image Description">
+                <img class="img-fluid main-image" src="{{ Storage::url($product->image) }}" alt="Image Description">
+                <!-- Additional product photos -->
+                @if(!empty($product->photos) && is_array($product->photos))
+                    <div class="mt-3 d-flex flex-wrap">
+                        <!-- Include the main image as the first thumbnail -->
+                        <div class="mr-2 mb-2">
+                            <img src="{{ Storage::url($product->image) }}" alt="Main Photo" class="img-thumbnail thumbnail-hover" style="cursor: pointer;" onclick="document.querySelector('.main-image').src='{{ Storage::url($product->image) }}'">
+                        </div>
+                        @foreach($product->photos as $photo)
+                            <div class="mr-2 mb-2">
+                                <img src="{{ Storage::url($photo) }}" alt="Additional Photo" class="img-thumbnail thumbnail-hover" style="cursor: pointer;" onclick="document.querySelector('.main-image').src='{{ Storage::url($photo) }}'">
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
             <div class="col-md-7 mb-md-6 mb-lg-0 mt-6">
                 <!-- Phần thông tin sản phẩm -->
@@ -439,6 +453,26 @@
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 14px;
+        }
+
+        /* Add hover effect for thumbnails */
+        .thumbnail-hover {
+            width: 100px; /* Fixed width for thumbnails */
+            height: auto; /* Maintain aspect ratio */
+            object-fit: cover;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .thumbnail-hover:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Use the main image's dimensions as the standard */
+        .main-image {
+            width: 100%; /* Adjust to fit the container */
+            height: auto; /* Maintain aspect ratio */
+            max-width: 500px; /* Optional: Limit maximum size */
         }
     </style>
 

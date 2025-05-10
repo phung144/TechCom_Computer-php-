@@ -20,6 +20,7 @@ class Product extends Model
         'sales',
         'description',
         'image',
+        'photos',
         'price',
         'discount_start',
         'discount_end',
@@ -41,18 +42,20 @@ class Product extends Model
     }
 
     public function variants()
-{
-    return $this->hasMany(ProductVariant::class);
-}
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
     // Chuyển đổi các trường thành datetime
     protected $casts = [
         'discount_start' => 'datetime',
         'discount_end' => 'datetime',
+        'photos' => 'array',
     ];
 
     // In Product.php model
-public function getCheapestVariant()
-{
-    return $this->variants()->orderBy('price', 'asc')->first();
-}
+    public function getCheapestVariant()
+    {
+        return $this->variants()->orderBy('price', 'asc')->first();
+    }
 }

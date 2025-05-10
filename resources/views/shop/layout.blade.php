@@ -64,8 +64,8 @@
                 <div class="row mb-8">
                     @include('shop.blocks.sidebar', [
                     'categories' => $categories ?? [],
-                    'products' => $onSaleProducts,
-                    'topSalesProducts' => $topSalesProducts
+                    'products' => $onSaleProducts ?? [],
+                    'topSalesProducts' => $topSalesProducts ?? [],
                 ])
 
                     @yield('main')

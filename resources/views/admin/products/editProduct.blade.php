@@ -102,6 +102,32 @@
                         @endif
                     </div>
 
+                    <div class="form-group">
+                        <label for="photos">Product Images</label>
+                        <input type="file" name="photos[]" id="photos" class="form-control-file" multiple>
+                        @error('photos')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                        @if ($errors->has('photos.*'))
+                            @foreach ($errors->get('photos.*') as $error)
+                                <small class="text-danger">{{ $error[0] }}</small><br>
+                            @endforeach
+                        @endif
+                        @if($products->photos)
+                            <div class="mt-2">
+                                @foreach($products->photos as $photo)
+                                    <div class="d-inline-block position-relative mr-2">
+                                        <img src="{{ asset('storage/' . $photo) }}" alt="Product Image" class="img-thumbnail" width="150">
+                                        <div class="form-check mt-2">
+                                            <input type="checkbox" name="remove_photos[]" value="{{ $photo }}" class="form-check-input">
+                                            <label class="form-check-label text-danger">Remove</label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+
                     <div class="card mb-4">
                         <div class="card-header bg-light">
                             <h5 class="mb-0">Discount Settings</h5>
