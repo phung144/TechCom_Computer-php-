@@ -3,15 +3,16 @@
         <!-- List Categories -->
         <ul id="sidebarNav" class="list-unstyled mb-0 sidebar-navbar">
             <li class="mb-3">
-                <div class="font-weight-bold text-uppercase font-size-16 pb-2 border-bottom border-primary border-width-2 d-inline-block">
+                <div
+                    class="font-weight-bold text-uppercase font-size-16 pb-2 border-bottom border-primary border-width-2 d-inline-block">
                     Product Categories
                 </div>
             </li>
 
-            @foreach($categories as $category)
+            @foreach ($categories as $category)
                 <li class="mb-2">
                     <a href="{{ route('category.products', $category->id) }}"
-                       class="d-block py-2 px-3 text-dark text-decoration-none rounded hover-category">
+                        class="d-block py-2 px-3 text-dark text-decoration-none rounded hover-category">
                         <span class="d-flex align-items-center">
                             <span class="flex-grow-1">{{ $category->name }}</span>
                             <i class="fas fa-angle-right ml-2 text-muted"></i>
@@ -50,101 +51,112 @@
     </div>
 
     <!-- On Sales Products -->
-<div class="mb-8">
-    <div class="border-bottom border-color-1 mb-5">
-        <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">On Sales Products</h3>
-    </div>
-    <ul class="list-unstyled">
-        @foreach ($products as $product)
+    <div class="mb-8">
+        <div class="border-bottom border-color-1 mb-5">
+            <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">On Sales Products</h3>
+        </div>
+        <ul class="list-unstyled">
             @php
+                $onSaleProducts = \App\Models\Product::where('discount_value', '>', 0)
+                    ->orderByDesc('discount_value')
+                    ->take(5)
+                    ->get();
                 // Tính giá thấp nhất của biến thể
                 $originalPrice = $product->variants->min('price'); // Lấy giá thấp nhất từ các biến thể
                 $finalPrice = $originalPrice;
 
                 // Kiểm tra nếu có giảm giá
                 if ($product->discount_type === 'percentage') {
-                    $finalPrice = $originalPrice - ($originalPrice * $product->discount_value / 100);
+                    $finalPrice = $originalPrice - ($originalPrice * $product->discount_value) / 100;
                 } elseif ($product->discount_type === 'fixed') {
                     $finalPrice = $originalPrice - $product->discount_value;
                 }
             @endphp
+            @foreach ($onSaleProducts as $product)
+                <li class="mb-4 product-item-hover">
+                    <div class="row">
+                        <div class="col-auto">
+                            <a href="{{ route('product.detail', $product->id) }}" class="d-block width-75">
+                                <img class="img-fluid product-image-hover"
+                                    src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                            </a>
+                        </div>
+                        <div class="col">
+                            <h3 class="text-lh-1dot2 font-size-14 mb-0 product-title-hover"
+                                style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                                <a href="{{ route('product.detail', $product->id) }}"
+                                    class="text-dark hover-primary">{{ $product->name }}</a>
+                            </h3>
 
-            <li class="mb-4 product-item-hover">
-                <div class="row">
-                    <div class="col-auto">
-                        <a href="{{ route('product.detail', $product->id) }}" class="d-block width-75">
-                            <img class="img-fluid product-image-hover" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
-                        </a>
-                    </div>
-                    <div class="col">
-                        <h3 class="text-lh-1dot2 font-size-14 mb-0 product-title-hover" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
-                            <a href="{{ route('product.detail', $product->id) }}" class="text-dark hover-primary">{{ $product->name }}</a>
-                        </h3>
-
-                        <div class="font-weight-bold">
-                            @if ($finalPrice < $originalPrice)
-                                <del class="font-size-11 text-gray-9 d-block">${{ number_format($originalPrice, 2) }}</del>
-                            @endif
-                            <ins class="font-size-15 text-red text-decoration-none d-block hover-red">${{ number_format($finalPrice, 2) }}</ins>
+                            <div class="font-weight-bold">
+                                @if ($finalPrice < $originalPrice)
+                                    <del
+                                        class="font-size-11 text-gray-9 d-block">${{ number_format($originalPrice, 2) }}</del>
+                                @endif
+                                <ins
+                                    class="font-size-15 text-red text-decoration-none d-block hover-red">${{ number_format($finalPrice, 2) }}</ins>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
-        @endforeach
-    </ul>
-</div>
-<!-- End On Sales Products -->
+                </li>
+            @endforeach
+        </ul>
+    </div>
+    <!-- End On Sales Products -->
 
 
     <!-- Best Selling Products -->
-<div class="mb-8">
-    <div class="border-bottom border-color-1 mb-5">
-        <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Best Selling Products</h3>
-    </div>
-    <ul class="list-unstyled">
-        @foreach ($topSalesProducts as $product)
+    <div class="mb-8">
+        <div class="border-bottom border-color-1 mb-5">
+            <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Best Selling Products</h3>
+        </div>
+        <ul class="list-unstyled">
             @php
+                $topSalesProducts = \App\Models\Product::orderByDesc('sales')->take(5)->get();
                 // Lấy giá thấp nhất của biến thể
                 $originalPrice = $product->variants->min('price'); // Lấy giá thấp nhất từ các biến thể
                 $finalPrice = $originalPrice;
 
                 // Kiểm tra nếu có giảm giá
                 if ($product->discount_type === 'percentage') {
-                    $finalPrice = $originalPrice - ($originalPrice * $product->discount_value / 100);
+                    $finalPrice = $originalPrice - ($originalPrice * $product->discount_value) / 100;
                 } elseif ($product->discount_type === 'fixed') {
                     $finalPrice = $originalPrice - $product->discount_value;
                 }
             @endphp
-
-            <li class="mb-4 product-item-hover">
-                <div class="row">
-                    <div class="col-auto">
-                        <a href="{{ route('product.detail', $product->id) }}" class="d-block width-75">
-                            <img class="img-fluid product-image-hover" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
-                        </a>
-                    </div>
-                    <div class="col">
-                        <h3 class="text-lh-1dot2 font-size-14 mb-0 product-title-hover" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; height: 2.6em;">
-                            <a href="{{ route('product.detail', $product->id) }}" class="text-dark hover-primary">
-                                {{ $product->name }}
+            @foreach ($topSalesProducts as $product)
+                <li class="mb-4 product-item-hover">
+                    <div class="row">
+                        <div class="col-auto">
+                            <a href="{{ route('product.detail', $product->id) }}" class="d-block width-75">
+                                <img class="img-fluid product-image-hover"
+                                    src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
                             </a>
-                        </h3>
+                        </div>
+                        <div class="col">
+                            <h3 class="text-lh-1dot2 font-size-14 mb-0 product-title-hover"
+                                style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; height: 2.6em;">
+                                <a href="{{ route('product.detail', $product->id) }}" class="text-dark hover-primary">
+                                    {{ $product->name }}
+                                </a>
+                            </h3>
 
-                        <div class="font-weight-bold">
-                            @if ($finalPrice < $originalPrice)
-                                <del class="font-size-11 text-gray-9 d-block">${{ number_format($originalPrice, 2) }}</del>
-                            @endif
-                            <ins class="font-size-15 text-red text-decoration-none d-block hover-red">
-                                ${{ number_format($finalPrice, 2) }}
-                            </ins>
+                            <div class="font-weight-bold">
+                                @if ($finalPrice < $originalPrice)
+                                    <del
+                                        class="font-size-11 text-gray-9 d-block">${{ number_format($originalPrice, 2) }}</del>
+                                @endif
+                                <ins class="font-size-15 text-red text-decoration-none d-block hover-red">
+                                    ${{ number_format($finalPrice, 2) }}
+                                </ins>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
-        @endforeach
-    </ul>
-</div>
-<!-- End Best Selling Products -->
+                </li>
+            @endforeach
+        </ul>
+    </div>
+    <!-- End Best Selling Products -->
 
 
 </div>
@@ -169,13 +181,15 @@
 
     /* Hiệu ứng hover cho tiêu đề sản phẩm */
     .hover-primary:hover {
-        color: #007bff !important; /* Màu primary */
+        color: #007bff !important;
+        /* Màu primary */
         text-decoration: none;
     }
 
     /* Hiệu ứng hover cho giá */
     .hover-red:hover {
-        color: #dc3545 !important; /* Màu đỏ đậm hơn */
+        color: #dc3545 !important;
+        /* Màu đỏ đậm hơn */
     }
 
     /* Hiệu ứng tổng thể khi hover vào item */
@@ -186,7 +200,8 @@
     }
 
     .product-item-hover:hover {
-        background-color: #f8f9fa; /* Màu nền nhạt khi hover */
+        background-color: #f8f9fa;
+        /* Màu nền nhạt khi hover */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 </style>
