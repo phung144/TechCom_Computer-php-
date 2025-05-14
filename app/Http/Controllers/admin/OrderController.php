@@ -70,24 +70,45 @@ class OrderController extends Controller
      * Update the status of the specified order.
      */
     public function updateStatus(Request $request, string $id)
-    {
-        $order = Order::findOrFail($id);
-        $request->validate([
-            'status' => 'required|in:pending,processing,completed,cancelled',
-        ]);
-        $order->update(['status' => $request->status]);
+{
+    $order = Order::findOrFail($id);
 
-        // Nếu trạng thái là "Completed", cập nhật sales cho từng sản phẩm
-        if ($order->status === 'completed') {
-            foreach ($order->orderDetails as $detail) {
-                $product = $detail->product;
-                $product->sales += $detail->quantity;
-                $product->save();
-            }
-        }
+    $request->validate([
+        'status' => 'required|in:pending,processing,shipping,completed,rated,cancelled',
+    ]);
 
-        return redirect()->route('admin.orders.show', $id)->with('success', 'Order status updated successfully.');
+    $currentStatus = $order->status;
+    $newStatus = $request->status;
+
+    // Danh sách trạng thái hợp lệ và trạng thái được phép chuyển tiếp
+    $allowedTransitions = [
+        'pending'     => ['processing', 'cancelled'],
+        'processing'  => ['shipping', 'cancelled'],
+        'shipping'    => ['completed', 'cancelled'],
+        'completed'   => ['rated'],
+        'rated'      => [], // Không thể chuyển sang trạng thái khác sau rated
+        'cancelled'   => [], // Không thể chuyển sang trạng thái khác sau cancelled
+    ];
+
+    // Kiểm tra nếu chuyển trạng thái không hợp lệ
+    if (!in_array($newStatus, $allowedTransitions[$currentStatus])) {
+        return back()->with('error', "Không thể chuyển trạng thái từ {$currentStatus} thành {$newStatus}.");
     }
+
+    // Cập nhật trạng thái mới
+    $order->update(['status' => $newStatus]);
+
+    // Nếu trạng thái là "completed", cập nhật doanh số sản phẩm
+    if ($newStatus === 'completed') {
+        foreach ($order->orderDetails as $detail) {
+            $product = $detail->product;
+            $product->sales += $detail->quantity;
+            $product->save();
+        }
+    }
+
+    return redirect()->route('admin.orders.show', $id)->with('success', 'Chuyển trạng thái thành công.');
+}
 
     /**
      * Remove the specified resource from storage.

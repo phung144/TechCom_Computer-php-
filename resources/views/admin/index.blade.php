@@ -2,177 +2,135 @@
 @section('main')
     <div class="content-wrapper">
         <div class="content">
+
+
             <!-- Top Statistics -->
             <div class="row">
-                <div class="col-xl-3 col-sm-6">
-                    <div class="card card-default card-mini">
-                        <div class="card-header">
-                            <h2>$18,699</h2>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdownMenuLink"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                <a href="{{ route('admin.orders.index') }}">
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card card-default card-mini">
+                            <div class="card-header">
+                                <h2>{{ number_format($totalOrderValue) }}đ</h2>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
+                                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                    </a>
+                                </div>
+                                <div class="sub-title">
+                                    <span class="mr-1">{{ $title }}</span> |
+                                    <span class="mx-1">{{ $orderCount }}</span>
+                                    <i class="mdi mdi-arrow-up-bold text-success"></i>
                                 </div>
                             </div>
-                            <div class="sub-title">
-                                <span class="mr-1">Sales of this year</span> |
-                                <span class="mx-1">45%</span>
-                                <i class="mdi mdi-arrow-up-bold text-success"></i>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-wrapper">
-                                <div>
-                                    <div id="spline-area-1"></div>
+                            <div class="card-body">
+                                <div class="chart-wrapper">
+                                    <div>
+                                        <div id="spline-area-1"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-sm-6">
-                    <div class="card card-default card-mini">
-                        <div class="card-header">
-                            <h2>$14,500</h2>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                </a>
+                <a href="{{ route('admin.orders.index') }}">
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card card-default card-mini">
+                            <div class="card-header">
+                                <h2>{{ number_format($sumTotal) }}đ</h2>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
+                                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                    </a>
+                                </div>
+                                <div class="sub-title">
+                                    <span class="mr-1">{{ $titleCompleted }}</span> |
+                                    <span class="mx-1">{{ $orderCountCompleted }}</span>
+                                    <i class="mdi mdi-arrow-up-bold text-success"></i>
                                 </div>
                             </div>
-                            <div class="sub-title">
-                                <span class="mr-1">Expense of this year</span> |
-                                <span class="mx-1">50%</span>
-                                <i class="mdi mdi-arrow-down-bold text-danger"></i>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-wrapper">
-                                <div>
-                                    <div id="spline-area-2"></div>
+                            <div class="card-body">
+                                <div class="chart-wrapper">
+                                    <div>
+                                        <div id="spline-area-1"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-sm-6">
-                    <div class="card card-default card-mini">
-                        <div class="card-header">
-                            <h2>$4199</h2>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                </a>
+                <a href="{{ route('admin.orders.index') }}">
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card card-default card-mini">
+                            <div class="card-header">
+                                <h2>{{ number_format($totalIncompleteValue) }}đ</h2>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
+                                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                    </a>
+                                </div>
+                                <div class="sub-title">
+                                    <span class="mr-1">{{ $titleIncomplete }}</span> |
+                                    <span class="mx-1">{{ $orderCountIncomplete }}</span>
+                                    <i class="mdi mdi-arrow-down-bold text-danger"></i>
                                 </div>
                             </div>
-                            <div class="sub-title">
-                                <span class="mr-1">Profit of this year</span> |
-                                <span class="mx-1">20%</span>
-                                <i class="mdi mdi-arrow-down-bold text-danger"></i>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-wrapper">
-                                <div>
-                                    <div id="spline-area-3"></div>
+                            <div class="card-body">
+                                <div class="chart-wrapper">
+                                    <div>
+                                        <div id="spline-area-2"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-sm-6">
-                    <div class="card card-default card-mini">
-                        <div class="card-header">
-                            <h2>$20,199</h2>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                </div>
-                            </div>
-                            <div class="sub-title">
-                                <span class="mr-1">Revenue of this year</span> |
-                                <span class="mx-1">35%</span>
-                                <i class="mdi mdi-arrow-up-bold text-success"></i>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-wrapper">
-                                <div>
-                                    <div id="spline-area-4"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </a>
             </div>
 
 
             <div class="row">
                 <div class="col-xl-8">
 
-                    <!-- Income and Express -->
-                    <div class="card card-default">
-                        <div class="card-header">
-                            <h2>Income And Expenses</h2>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" data-display="static">
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-wrapper">
-                                <div id="mixed-chart-1"></div>
-                            </div>
-                        </div>
-
+                    <div class="container mt-4">
+                        <h2>{{ $title }}</h2>
+                        <canvas id="revenueChart"></canvas>
                     </div>
+
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <script>
+                        const ctx = document.getElementById('revenueChart').getContext('2d');
+                        const chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: {!! json_encode(array_column($result, 'category')) !!},
+                                datasets: [{
+                                    label: 'Doanh thu (VND)',
+                                    data: {!! json_encode(array_column($result, 'revenue')) !!},
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function(value) {
+                                                return value.toLocaleString('vi-VN') + ' đ';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    </script>
 
 
                 </div>
-                <div class="col-xl-4">
-                    <!-- Current Users  -->
-                    <div class="card card-default">
-                        <div class="card-header">
-                            <h2>Current Users</h2>
-                            <span>Realtime</span>
-                        </div>
-                        <div class="card-body">
-                            <div id="barchartlg2"></div>
-                        </div>
-                        <div class="card-footer bg-white py-4">
-                            <a href="#" class="text-uppercase">Current Users Overview</a>
-                        </div>
-                    </div>
-                </div>
+
             </div>
 
 
@@ -1186,3 +1144,5 @@
 
     </div>
 @endsection
+
+

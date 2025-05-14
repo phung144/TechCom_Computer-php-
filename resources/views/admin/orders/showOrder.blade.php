@@ -1,6 +1,70 @@
 @extends('admin.layout')
 
 @section('main')
+{{-- Thông báo SweetAlert2 được thiết kế lại --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Hàm hiển thị thông báo thành công với icon checkmark
+    function showSuccessAlert(message) {
+        Swal.fire({
+            icon: 'success',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            toast: true,
+            background: '#f0fff4',  // Màu nền xanh nhạt
+            iconColor: '#38a169',   // Màu xanh lá đậm
+            color: '#2f855a'       // Màu chữ xanh đậm
+        });
+    }
+
+    // Hàm hiển thị thông báo lỗi với icon chấm than
+    function showErrorAlert(message) {
+        Swal.fire({
+            icon: 'error',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            toast: true,
+            background: '#fff5f5',  // Màu nền đỏ nhạt
+            iconColor: '#e53e3e',    // Màu đỏ
+            color: '#c53030'        // Màu chữ đỏ đậm
+        });
+    }
+
+    // Hàm hiển thị thông báo thông tin
+    function showInfoAlert(message) {
+        Swal.fire({
+            icon: 'info',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            toast: true,
+            background: '#ebf8ff',  // Màu nền xanh dương nhạt
+            iconColor: '#3182ce',   // Màu xanh dương
+            color: '#2c5282'       // Màu chữ xanh đậm
+        });
+    }
+
+    // Xử lý thông báo từ session
+    @if(session('success'))
+        showSuccessAlert('{{ session('success') }}');
+    @endif
+
+    @if(session('error'))
+        showErrorAlert('{{ session('error') }}');
+    @endif
+
+    @if(session('info'))
+        showInfoAlert('{{ session('info') }}');
+    @endif
+</script>
 <div class="row">
     <div class="col-12">
         <div class="card card-default shadow-sm">
@@ -96,10 +160,12 @@
                         <div class="form-row align-items-center">
                             <div class="col-md-8">
                                 <select name="status" id="status" class="form-control">
-                                    <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
-                                    <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Completed</option>
-                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                    <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
+                                    <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Đang xử lý</option>
+                                    <option value="shipping" {{ $order->status == 'shipping' ? 'selected' : '' }}>Đang vận chuyển</option>
+                                    <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Đã giao</option>
+                                    <option value="rated" {{ $order->status == 'rated' ? 'selected' : '' }}>Đã hoàn thành</option>
+                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
                                 </select>
                             </div>
                             <div class="col-md-4">

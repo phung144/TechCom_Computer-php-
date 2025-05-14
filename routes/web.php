@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\OrderController as AdminOrderController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\Admin\LoginAdminController;
 use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\StatisticsController;
 use App\Http\Controllers\admin\VariantOptionProductController;
 use App\Http\Controllers\client\CartController;
 use App\Http\Controllers\client\WishlistController;
@@ -114,4 +115,6 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     });
     Route::resource('banners', App\Http\Controllers\admin\BannerController::class);
     Route::patch('banners/{banner}/toggle-status', [App\Http\Controllers\admin\BannerController::class, 'toggleStatus'])->name('banners.toggleStatus');
+
+
 });

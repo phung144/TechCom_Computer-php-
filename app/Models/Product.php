@@ -46,6 +46,11 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
+    public function orderItems()
+    {
+        return $this->hasMany(OrderDetail::class, 'product_id');
+    }
+
     // Chuyển đổi các trường thành datetime
     protected $casts = [
         'discount_start' => 'datetime',

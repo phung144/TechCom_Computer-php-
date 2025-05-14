@@ -14,168 +14,155 @@ use Illuminate\Support\Facades\Log;
 class OrderController extends Controller
 {
     public function index()
-{
-    $userId = auth()->id();
-    $orders = Order::with([
-        'orderDetails.product',
-        'orderDetails.variant.options.variant' // Eager load variant và options
-    ])
-    ->where('user_id', $userId)
-    ->orderBy('created_at', 'desc')
-    ->get();
-
-    return view('client.orders.main', compact('orders'));
-}
-
-public function store(Request $request)
-{
-    $userId = auth()->id();
-
-    // Validate dữ liệu đầu vào
-    $validated = $request->validate([
-        'full_name' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'address' => 'required|string|max:500',
-        'phone' => 'required|string|max:20',
-    ]);
-
-    // Lấy giỏ hàng với lock để tránh xung đột
-    $carts = Cart::with([
-            'product' => function($q) {
-                $q->lockForUpdate();
-            },
-            'variant' => function($q) {
-                $q->lockForUpdate()->with('options');
-            }
+    {
+        $userId = auth()->id();
+        $orders = Order::with([
+            'orderDetails.product',
+            'orderDetails.variant.options.variant' // Eager load variant và options
         ])
         ->where('user_id', $userId)
+        ->orderBy('created_at', 'desc')
         ->get();
 
-    if ($carts->isEmpty()) {
-        return back()->with('error', 'Giỏ hàng trống');
+        return view('client.orders.main', compact('orders'));
     }
 
-    // Kiểm tra tồn kho với transaction riêng
-    DB::transaction(function () use ($carts) {
-        foreach ($carts as $cart) {
-            $available = $cart->variant ? $cart->variant->quantity : $cart->product->quantity;
-            if ($available < $cart->quantity) {
-                throw new \Exception("{$cart->product->name} chỉ còn {$available} sản phẩm");
-            }
-        }
-    });
+    public function store(Request $request)
+    {
+        $userId = auth()->id();
 
-    // Tạo đơn hàng với transaction chính
-    try {
-        DB::beginTransaction();
-
-        $order = Order::create([
-            'user_id' => $userId,
-            'total' => $carts->sum(fn($cart) => $cart->price * $cart->quantity),
-            ...$validated,
-            'status' => 'pending',
-            'payment_method' => 'cash_on_delivery'
+        // Validate dữ liệu đầu vào
+        $validated = $request->validate([
+            'full_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'address' => 'required|string|max:500',
+            'phone' => 'required|string|max:20',
         ]);
 
-        foreach ($carts as $cart) {
-            $variantOptions = $cart->variant ?
-                $cart->variant->options->pluck('value')->implode(', ') : null;
+        // Lấy giỏ hàng với lock để tránh xung đột
+        $carts = Cart::with([
+                'product' => function($q) {
+                    $q->lockForUpdate();
+                },
+                'variant' => function($q) {
+                    $q->lockForUpdate()->with('options');
+                }
+            ])
+            ->where('user_id', $userId)
+            ->get();
 
-            $order->orderDetails()->create([
-                'product_id' => $cart->product_id,
-                'variant_id' => $cart->variant_id,
-                'quantity' => $cart->quantity,
-                'price' => $cart->price,
-                'variant_options' => $variantOptions
+        if ($carts->isEmpty()) {
+            return back()->with('error', 'Giỏ hàng trống');
+        }
+
+        // Kiểm tra tồn kho với transaction riêng
+        DB::transaction(function () use ($carts) {
+            foreach ($carts as $cart) {
+                $available = $cart->variant ? $cart->variant->quantity : $cart->product->quantity;
+                if ($available < $cart->quantity) {
+                    throw new \Exception("{$cart->product->name} chỉ còn {$available} sản phẩm");
+                }
+            }
+        });
+
+        // Tạo đơn hàng với transaction chính
+        try {
+            DB::beginTransaction();
+
+            $order = Order::create([
+                'user_id' => $userId,
+                'total' => $carts->sum(fn($cart) => $cart->price * $cart->quantity),
+                ...$validated,
+                'status' => 'pending',
+                'payment_method' => 'cash_on_delivery'
             ]);
 
-            // Cập nhật tồn kho trực tiếp qua query builder
-            if ($cart->variant_id) {
-                ProductVariant::where('id', $cart->variant_id)
-                    ->decrement('quantity', $cart->quantity);
-            } else {
-                Product::where('id', $cart->product_id)
-                    ->decrement('quantity', $cart->quantity);
+            foreach ($carts as $cart) {
+                $variantOptions = $cart->variant ?
+                    $cart->variant->options->pluck('value')->implode(', ') : null;
+
+                $order->orderDetails()->create([
+                    'product_id' => $cart->product_id,
+                    'variant_id' => $cart->variant_id,
+                    'quantity' => $cart->quantity,
+                    'price' => $cart->price,
+                    'variant_options' => $variantOptions
+                ]);
+
+                // Cập nhật tồn kho trực tiếp qua query builder
+                if ($cart->variant_id) {
+                    ProductVariant::where('id', $cart->variant_id)
+                        ->decrement('quantity', $cart->quantity);
+                } else {
+                    Product::where('id', $cart->product_id)
+                        ->decrement('quantity', $cart->quantity);
+                }
             }
+
+            // Xóa giỏ hàng
+            Cart::where('user_id', $userId)->delete();
+
+            DB::commit();
+
+            // Thêm thông báo success
+            return redirect()->route('orders.index')->with('success', 'Order placed successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Order failed', [
+                'user' => $userId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'carts' => $carts->toArray()
+            ]);
+
+            // Thêm thông báo error
+            return back()->with('error', 'Order placement failed: '.$e->getMessage());
         }
-
-        // Xóa giỏ hàng
-        Cart::where('user_id', $userId)->delete();
-
-        DB::commit();
-
-        return redirect()->route('orders.show', $order->id)
-               ->with('success', 'Đặt hàng thành công!');
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('Order failed', [
-            'user' => $userId,
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            'carts' => $carts->toArray()
-        ]);
-
-        return back()->with('error', 'Lỗi đặt hàng: '.$e->getMessage());
     }
-}
 
-public function show($id)
-{
-    $userId = auth()->id();
-    $order = Order::with([
-        'orderDetails.product',
-        'orderDetails.variant.options.variant',
-        'user'
-    ])->where('id', $id)
-      ->where('user_id', $userId)
-      ->firstOrFail();
+    public function show($id)
+    {
+        $userId = auth()->id();
+        $order = Order::with([
+            'orderDetails.product',
+            'orderDetails.variant.options.variant',
+            'user'
+        ])->where('id', $id)
+        ->where('user_id', $userId)
+        ->firstOrFail();
 
-    return view('client.orders.showOrder', compact('order'));
-}
+        return view('client.orders.showOrder', compact('order'));
+    }
 
     public function destroy($id)
     {
         $userId = auth()->id();
         $order = Order::where('id', $id)->where('user_id', $userId)->first();
 
+        // Kiểm tra đơn hàng tồn tại
         if (!$order) {
             return redirect()->route('orders.index')->with('error', 'Order not found.');
         }
 
-        if ($order->status === 'canceled') {
-            return redirect()->route('orders.index')->with('error', 'Order is already canceled.');
+        // Danh sách trạng thái KHÔNG cho phép hủy
+        $protectedStatuses = ['completed', 'rated', 'canceled'];
+
+        // Kiểm tra trạng thái hiện tại
+        if (in_array($order->status, $protectedStatuses)) {
+            $message = match ($order->status) {
+                'completed' => 'Cannot cancel a completed order.',
+                'rated'     => 'Cannot cancel an order that has been rated.',
+                'canceled'  => 'Order is already canceled.',
+                default     => 'Order cannot be canceled in its current state.'
+            };
+            return redirect()->route('orders.index')->with('error', $message);
         }
 
+        // Hủy đơn hàng nếu thỏa điều kiện
         $order->update(['status' => 'canceled']);
 
-        return redirect()->route('orders.index')->with('success', 'Order has been canceled.');
+        // Thêm thông báo success
+        return redirect()->route('orders.index')->with('success', 'Order canceled successfully.');
     }
-
-    public function forceDeleteOrder($id)
-{
-    $userId = auth()->id();
-    $order = Order::where('id', $id)
-                ->where('user_id', $userId)
-                ->whereIn('status', ['completed', 'canceled'])
-                ->first();
-
-    if (!$order) {
-        return redirect()->route('orders.index')->with('error', 'Order cannot be deleted or not found.');
-    }
-
-    DB::beginTransaction();
-    try {
-        // Xóa các orderDetails trước
-        $order->orderDetails()->delete();
-        // Xóa order
-        $order->delete();
-
-        DB::commit();
-        return redirect()->route('orders.index')->with('success', 'Order has been permanently deleted.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->route('orders.index')->with('error', 'Failed to delete order. Please try again.');
-    }
-}
 }
