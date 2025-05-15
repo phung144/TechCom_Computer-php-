@@ -81,25 +81,31 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::delete('/orders/{order}/force-delete', [OrderController::class, 'forceDeleteOrder'])
     ->name('orders.forceDelete');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::post('/orders/{order}/complete', [OrderController::class, 'complete'])
+    ->name('orders.complete')
+    ->middleware('auth');
 
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/order-now', [OrderNowController::class, 'index'])->name('orderNow.index');
-        Route::post('/order-now/store', [OrderNowController::class, 'store'])->name('orderNow.store');
-        Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-        Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
-    });
+Route::post('/orders/{order}/skip-rating', [OrderController::class, 'skipRating'])
+    ->name('orders.skip-rating')
+    ->middleware('auth');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/order-now', [OrderNowController::class, 'index'])->name('orderNow.index');
+    Route::post('/order-now/store', [OrderNowController::class, 'store'])->name('orderNow.store');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
+});
 
-    // Route::get('/admin/home', function () { // /admin/home là đường dẫn chính xác đến view
-    //     return view('admin.index');
-    // })->name('admin-home'); //Tên route gọi đến view
+// Route::get('/admin/home', function () { // /admin/home là đường dẫn chính xác đến view
+//     return view('admin.index');
+// })->name('admin-home'); //Tên route gọi đến view
 
-    Route::get('/login-admin', [LoginAdminController::class, 'showLoginForm'])->name('login.admin');
-    Route::post('/login-admin', [LoginAdminController::class, 'postLogin'])->name('login.admin.post');
-    Route::get('/logout-admin', function () {
-        Auth::logout();
-        return redirect()->route('login.admin');
-    })->name('logout.admin');
+Route::get('/login-admin', [LoginAdminController::class, 'showLoginForm'])->name('login.admin');
+Route::post('/login-admin', [LoginAdminController::class, 'postLogin'])->name('login.admin.post');
+Route::get('/logout-admin', function () {
+    Auth::logout();
+    return redirect()->route('login.admin');
+})->name('logout.admin');
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [App\Http\Controllers\admin\DashboardController::class, 'index'])->name('home');
     Route::resource('products', ProductController::class);

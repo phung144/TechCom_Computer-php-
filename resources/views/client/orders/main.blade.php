@@ -229,33 +229,21 @@
                                         </div>
                                         <div class="d-flex gap-2 align-items-center">
                                             <div class="order-actions d-flex gap-2 mt-3 mr-2">
-                                                @if ($order->status !== 'canceled' && $order->status !== 'completed' && $order->status !== 'rated')
-                                                    <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="btn btn-outline-danger rounded-pill px-4 py-2 shadow-sm"
-                                                            onclick="return confirm('Are you sure you want to cancel this order?')">
-                                                            <i class="fas fa-times-circle me-1"></i> Cancel Order
-                                                        </button>
-                                                    </form>
+                                                @if (in_array($order->status, ['pending', 'processing']))
+                                                    <button type="button"
+                                                        class="btn btn-outline-danger rounded-pill px-4 py-2 shadow-sm"
+                                                        onclick="styledCancelOrder({{ $order->id }})">
+                                                        <i class="fas fa-times-circle me-1"></i> Cancel Order
+                                                    </button>
                                                 @endif
-
 
                                                 @if (in_array($order->status, ['completed']))
-                                                    <form action="{{ route('orders.forceDelete', $order->id) }}"
-                                                        method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="btn btn-outline-dark rounded-pill px-4 py-2 shadow-sm mr-3"
-                                                            onclick="return confirm('Are you sure you want to permanently delete this order?')">
-                                                            <i class="fas fa-trash-alt me-1"></i> Hoàn thành
-                                                        </button>
-                                                    </form>
+                                                    <button type="button"
+                                                        class="btn btn-outline-success rounded-pill px-4 py-2 shadow-sm mr-3"
+                                                        onclick="showRatingForm({{ $order->id }})">
+                                                        <i class="fas fa-check-circle me-1"></i> Hoàn thành
+                                                    </button>
                                                 @endif
-
-
                                             </div>
 
                                             <div>
@@ -291,6 +279,214 @@
     </div>
 @endsection
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Sử dụng biến toàn cục để theo dõi trạng thái modal
+    let currentSwalInstance = null;
+
+    function styledCancelOrder(orderId) {
+        // Đóng modal hiện tại nếu có
+        if (currentSwalInstance) {
+            currentSwalInstance.close();
+        }
+
+        currentSwalInstance = Swal.fire({
+            title: 'Hủy đơn hàng',
+            html: `
+            <div style="text-align: center;">
+                <p style="margin-bottom: 15px; font-size: 16px;">Vui lòng nhập lý do hủy:</p>
+                <textarea
+                    id="swal-reason"
+                    style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; min-height: 100px;"
+                    placeholder="Nhập lý do hủy đơn hàng..."></textarea>
+            </div>
+        `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận hủy',
+            cancelButtonText: 'Quay lại',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            preConfirm: () => {
+                const reason = document.getElementById('swal-reason').value;
+                if (!reason.trim()) {
+                    Swal.showValidationMessage('Vui lòng nhập lý do hủy');
+                    return false;
+                }
+                return reason;
+            },
+            didOpen: () => {
+                // Tự động focus vào textarea khi modal mở
+                document.getElementById('swal-reason').focus();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitCancelForm(orderId, result.value);
+            }
+            currentSwalInstance = null; // Reset instance sau khi đóng
+        });
+    }
+
+    function submitCancelForm(orderId, reason) {
+        // Tạo form động và submit
+        const form = document.createElement('form');
+        form.action = `/orders/${orderId}`;
+        form.method = 'POST';
+
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = '_token';
+        csrf.value = '{{ csrf_token() }}';
+
+        const method = document.createElement('input');
+        method.type = 'hidden';
+        method.name = '_method';
+        method.value = 'DELETE';
+
+        const reasonInput = document.createElement('input');
+        reasonInput.type = 'hidden';
+        reasonInput.name = 'cancel_reason';
+        reasonInput.value = reason;
+
+        form.appendChild(csrf);
+        form.appendChild(method);
+        form.appendChild(reasonInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+
+<script>
+    function showRatingForm(orderId) {
+        Swal.fire({
+            title: 'Đánh giá đơn hàng',
+            html: `
+                <div class="text-center">
+                    <p class="mb-3">Vui lòng đánh giá chất lượng đơn hàng</p>
+                    <div class="rating-stars mb-4">
+                        <i class="far fa-star" data-rating="1" style="font-size: 2rem; cursor: pointer;"></i>
+                        <i class="far fa-star" data-rating="2" style="font-size: 2rem; cursor: pointer;"></i>
+                        <i class="far fa-star" data-rating="3" style="font-size: 2rem; cursor: pointer;"></i>
+                        <i class="far fa-star" data-rating="4" style="font-size: 2rem; cursor: pointer;"></i>
+                        <i class="far fa-star" data-rating="5" style="font-size: 2rem; cursor: pointer;"></i>
+                    </div>
+                    <textarea id="feedback-content" class="form-control" rows="4" placeholder="Nhập nhận xét của bạn..."></textarea>
+                    <input type="hidden" id="selected-rating" value="0">
+                </div>
+            `,
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Gửi đánh giá',
+            cancelButtonText: 'Hủy bỏ',
+            denyButtonText: 'Bỏ qua đánh giá',
+            confirmButtonColor: '#28a745',
+            denyButtonColor: '#6c757d',
+            preConfirm: () => {
+                const rating = document.getElementById('selected-rating').value;
+                const content = document.getElementById('feedback-content').value;
+
+                if (rating == 0) {
+                    Swal.showValidationMessage('Vui lòng chọn số sao đánh giá');
+                    return false;
+                }
+
+                return {
+                    rating,
+                    content
+                };
+            },
+            didOpen: () => {
+                const stars = document.querySelectorAll('.rating-stars i');
+                stars.forEach(star => {
+                    star.addEventListener('click', function() {
+                        const rating = this.getAttribute('data-rating');
+                        document.getElementById('selected-rating').value = rating;
+
+                        stars.forEach((s, index) => {
+                            if (index < rating) {
+                                s.classList.remove('far');
+                                s.classList.add('fas', 'text-warning');
+                            } else {
+                                s.classList.remove('fas', 'text-warning');
+                                s.classList.add('far');
+                            }
+                        });
+                    });
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitOrderRating(orderId, result.value.rating, result.value.content);
+            } else if (result.isDenied) {
+                skipRating(orderId);
+            }
+        });
+    }
+
+    function submitOrderRating(orderId, rating, content) {
+    // Tạo form động
+    const form = document.createElement('form');
+    form.action = `/orders/${orderId}/complete`;
+    form.method = 'POST';
+    form.style.display = 'none';
+
+    // Thêm các trường dữ liệu
+    form.innerHTML = `
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="rating" value="${rating}">
+        <input type="hidden" name="content" value="${content}">
+    `;
+
+    document.body.appendChild(form);
+    form.submit();
+
+    // Hiển thị thông báo ngay lập tức
+    Swal.fire('Thành công!', 'Đã gửi đánh giá thành công', 'success');
+}
+
+function skipRating(orderId) {
+    // Tạo form động
+    const form = document.createElement('form');
+    form.action = `/orders/${orderId}/skip-rating`;
+    form.method = 'POST';
+    form.style.display = 'none';
+
+    // Thêm CSRF token
+    form.innerHTML = `
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    `;
+
+    document.body.appendChild(form);
+    form.submit();
+
+    // Hiển thị thông báo ngay lập tức
+    Swal.fire('Thành công!', 'Đã bỏ qua đánh giá', 'info');
+}
+</script>
+
+<style>
+    /* Animation cho popup */
+    @keyframes bounceIn {
+        from {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .animated {
+        animation-duration: 0.3s;
+        animation-fill-mode: both;
+    }
+</style>
+
 <style>
     .btn-outline-dark {
         border-color: #2c3e50;
@@ -300,6 +496,21 @@
     .btn-outline-dark:hover {
         background-color: #2c3e50;
         color: white;
+    }
+
+    .btn-outline-danger.cancel-order-btn {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-color: #f5c6cb;
+    }
+
+    .btn-outline-danger.cancel-order-btn:hover {
+        background-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    .cancel-reason-form {
+        display: none;
     }
 
     .order-card {

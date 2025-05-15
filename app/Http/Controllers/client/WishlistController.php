@@ -78,3 +78,6 @@ public function index()
         return redirect()->back()->with('success', '✅ Đã xóa sản phẩm khỏi wishlist thành công!');
     }
 }
+
+
+

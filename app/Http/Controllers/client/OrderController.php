@@ -4,6 +4,7 @@ namespace App\Http\Controllers\client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Feedback;
 use Illuminate\Http\Request;
 use App\Models\Order; // Đảm bảo model Order được import
 use App\Models\Product;
@@ -20,9 +21,9 @@ class OrderController extends Controller
             'orderDetails.product',
             'orderDetails.variant.options.variant' // Eager load variant và options
         ])
-        ->where('user_id', $userId)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('client.orders.main', compact('orders'));
     }
@@ -41,13 +42,13 @@ class OrderController extends Controller
 
         // Lấy giỏ hàng với lock để tránh xung đột
         $carts = Cart::with([
-                'product' => function($q) {
-                    $q->lockForUpdate();
-                },
-                'variant' => function($q) {
-                    $q->lockForUpdate()->with('options');
-                }
-            ])
+            'product' => function ($q) {
+                $q->lockForUpdate();
+            },
+            'variant' => function ($q) {
+                $q->lockForUpdate()->with('options');
+            }
+        ])
             ->where('user_id', $userId)
             ->get();
 
@@ -106,7 +107,6 @@ class OrderController extends Controller
 
             // Thêm thông báo success
             return redirect()->route('orders.index')->with('success', 'Order placed successfully!');
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Order failed', [
@@ -117,7 +117,7 @@ class OrderController extends Controller
             ]);
 
             // Thêm thông báo error
-            return back()->with('error', 'Order placement failed: '.$e->getMessage());
+            return back()->with('error', 'Order placement failed: ' . $e->getMessage());
         }
     }
 
@@ -129,13 +129,13 @@ class OrderController extends Controller
             'orderDetails.variant.options.variant',
             'user'
         ])->where('id', $id)
-        ->where('user_id', $userId)
-        ->firstOrFail();
+            ->where('user_id', $userId)
+            ->firstOrFail();
 
         return view('client.orders.showOrder', compact('order'));
     }
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         $userId = auth()->id();
         $order = Order::where('id', $id)->where('user_id', $userId)->first();
@@ -159,10 +159,70 @@ class OrderController extends Controller
             return redirect()->route('orders.index')->with('error', $message);
         }
 
-        // Hủy đơn hàng nếu thỏa điều kiện
-        $order->update(['status' => 'canceled']);
+        // Lưu lý do hủy đơn hàng
+        $cancelReason = $request->input('cancel_reason');
+        $order->update([
+            'status' => 'canceled',
+            'cancel_reason' => $cancelReason
+        ]);
 
         // Thêm thông báo success
         return redirect()->route('orders.index')->with('success', 'Order canceled successfully.');
     }
+
+    public function complete(Request $request, $orderId)
+{
+    $request->validate([
+        'rating' => 'required|integer|min:1|max:5',
+        'content' => 'nullable|string|max:500',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+    ]);
+
+    $order = Order::with('orderDetails.product')->findOrFail($orderId);
+
+    if ($order->user_id !== auth()->id()) {
+        return back()->with('error', 'Unauthorized action.');
+    }
+
+    $firstProduct = $order->orderDetails->first();
+    if (!$firstProduct) {
+        return back()->with('error', 'No products in this order.');
+    }
+
+    $data = [
+        'user_id' => auth()->id(),
+        'product_id' => $firstProduct->product_id,
+        'order_id' => $orderId,
+        'rating' => $request->rating,
+        'content' => $request->content,
+    ];
+
+    // Xử lý upload ảnh
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('feedback_images', 'public');
+        $data['image'] = $imagePath;
+    }
+
+    Feedback::create($data);
+
+    $order->update(['status' => 'rated']);
+
+    return back()->with('success', 'Feedback submitted successfully!');
+}
+
+public function skipRating($orderId)
+{
+    $order = Order::findOrFail($orderId);
+
+    // Kiểm tra quyền truy cập
+    if ($order->user_id !== auth()->id()) {
+        return back()->with('error', 'Bạn không có quyền thực hiện thao tác này');
+    }
+
+    $order->update(['status' => 'rated']);
+
+    return back()->with('success', 'Đã bỏ qua đánh giá');
+}
+
+
 }
