@@ -121,7 +121,10 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     });
     Route::resource('banners', App\Http\Controllers\admin\BannerController::class);
     Route::patch('banners/{banner}/toggle-status', [App\Http\Controllers\admin\BannerController::class, 'toggleStatus'])->name('banners.toggleStatus');
+    Route::resource('vouchers', App\Http\Controllers\admin\VoucherController::class);
 });
 
 Route::put('/variants/{variant}', [VariantOptionProductController::class, 'update'])->name('variantsOption.update');
 Route::delete('/variants/{variant}', [VariantOptionProductController::class, 'destroy'])->name('variantsOption.destroy');
+
+Route::post('/apply-voucher', [CartController::class, 'applyVoucher'])->name('voucher.check');

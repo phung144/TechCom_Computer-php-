@@ -17,6 +17,7 @@ class Order extends Model
         'address',
         'phone',
         'status',
+        'total_after_discount',
         'payment_method',
     ];
 

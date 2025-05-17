@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Variant;
+use App\Models\Voucher;
 
 class CartController extends Controller
 {
@@ -17,8 +18,19 @@ class CartController extends Controller
 }
     public function index()
     {
-        $carts = Cart::all()->where('user_id', auth()->id());
-        return view('client.cars.main', compact('carts'));
+        $carts = Cart::where('user_id', auth()->id())->with(['product', 'variant.options'])->get();
+
+    $subtotal = $carts->sum(function($cart) {
+        return $cart->price * $cart->quantity;
+    });
+
+    // Lấy tất cả voucher còn hiệu lực
+    $vouchers = Voucher::where('start_date', '<=', now())
+        ->where('end_date', '>=', now())
+        ->orderBy('discount_value', 'desc')
+        ->get();
+
+    return view('client.cars.main', compact('carts', 'subtotal', 'vouchers'));
     }
 
     public function show($id)
@@ -101,4 +113,6 @@ class CartController extends Controller
         }
         return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm trong giỏ hàng.']);
     }
+
+
 }

@@ -70,9 +70,26 @@ class OrderController extends Controller
         try {
             DB::beginTransaction();
 
+            $discountAmount = floatval($request->input('discount_amount', 0));
+            $voucherId = $request->input('voucher_id');
+            if (!$voucherId) {
+                // fallback nếu chỉ có code
+                $voucherCode = $request->input('applied_voucher');
+                if ($voucherCode) {
+                    $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+                    if ($voucher) {
+                        $voucherId = $voucher->id;
+                    }
+                }
+            }
+
+            $subtotal = floatval($request->input('total', 0));
+            $totalAfterDiscount = floatval($request->input('total_after_discount', 0));
+
             $order = Order::create([
                 'user_id' => $userId,
-                'total' => $carts->sum(fn($cart) => $cart->price * $cart->quantity),
+                'total' => $subtotal, // tổng chưa giảm giá
+                'total_after_discount' => $totalAfterDiscount, // tổng sau giảm giá
                 ...$validated,
                 'status' => 'pending',
                 'payment_method' => 'cash_on_delivery'
@@ -87,7 +104,8 @@ class OrderController extends Controller
                     'variant_id' => $cart->variant_id,
                     'quantity' => $cart->quantity,
                     'price' => $cart->price,
-                    'variant_options' => $variantOptions
+                    'variant_options' => $variantOptions,
+                    'voucher_id' => $voucherId // Truyền voucher_id vào order_details
                 ]);
 
                 // Cập nhật tồn kho trực tiếp qua query builder
@@ -105,8 +123,8 @@ class OrderController extends Controller
 
             DB::commit();
 
-            // Thêm thông báo success
-            return redirect()->route('orders.index')->with('success', 'Order placed successfully!');
+            // Chuyển hướng tới trang chi tiết đơn hàng vừa đặt
+            return redirect()->route('orders.show', $order->id)->with('success', 'Order placed successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Order failed', [

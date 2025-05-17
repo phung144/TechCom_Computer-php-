@@ -113,22 +113,26 @@
                     <span>Subtotal</span>
                     <span>${{ number_format($order->total, 2) }}</span>
                 </div>
-
+                <div class="payment-row">
+                    <span>Discount</span>
+                    <span>
+                        -${{ number_format(($order->total - ($order->total_after_discount ?? $order->total)), 2) }}
+                    </span>
+                </div>
                 <div class="payment-row">
                     <span>Shipping</span>
                     <span>Free</span>
                 </div>
-
                 <div class="payment-row">
                     <span>Tax</span>
                     <span>$0.00</span>
                 </div>
-
                 <div class="payment-row total-row">
-                    <span>Total</span>
-                    <span>${{ number_format($order->total, 2) }}</span>
+                    <span>Total after discount</span>
+                    <span>
+                        ${{ number_format($order->total_after_discount ?? $order->total, 2) }}
+                    </span>
                 </div>
-
                 <div class="payment-row method-row">
                     <span>Payment Method</span>
                     <span class="payment-method">
