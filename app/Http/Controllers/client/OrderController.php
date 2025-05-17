@@ -180,15 +180,24 @@ class OrderController extends Controller
 
     $order = Order::with('orderDetails.product')->findOrFail($orderId);
 
+    // Kiểm tra quyền truy cập
     if ($order->user_id !== auth()->id()) {
-        return back()->with('error', 'Unauthorized action.');
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized action.'
+        ], 403);
     }
 
+    // Kiểm tra sản phẩm trong đơn hàng
     $firstProduct = $order->orderDetails->first();
     if (!$firstProduct) {
-        return back()->with('error', 'No products in this order.');
+        return response()->json([
+            'success' => false,
+            'message' => 'No products in this order.'
+        ], 400);
     }
 
+    // Chuẩn bị dữ liệu feedback
     $data = [
         'user_id' => auth()->id(),
         'product_id' => $firstProduct->product_id,
@@ -203,11 +212,16 @@ class OrderController extends Controller
         $data['image'] = $imagePath;
     }
 
+    // Tạo feedback
     Feedback::create($data);
 
+    // Cập nhật trạng thái đơn hàng
     $order->update(['status' => 'rated']);
 
-    return back()->with('success', 'Feedback submitted successfully!');
+    return response()->json([
+        'success' => true,
+        'message' => 'Đánh giá đã được gửi thành công!'
+    ]);
 }
 
 public function skipRating($orderId)

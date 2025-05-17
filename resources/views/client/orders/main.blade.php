@@ -361,90 +361,211 @@
 
 <script>
     function showRatingForm(orderId) {
-        Swal.fire({
-            title: 'Đánh giá đơn hàng',
-            html: `
-                <div class="text-center">
-                    <p class="mb-3">Vui lòng đánh giá chất lượng đơn hàng</p>
-                    <div class="rating-stars mb-4">
-                        <i class="far fa-star" data-rating="1" style="font-size: 2rem; cursor: pointer;"></i>
-                        <i class="far fa-star" data-rating="2" style="font-size: 2rem; cursor: pointer;"></i>
-                        <i class="far fa-star" data-rating="3" style="font-size: 2rem; cursor: pointer;"></i>
-                        <i class="far fa-star" data-rating="4" style="font-size: 2rem; cursor: pointer;"></i>
-                        <i class="far fa-star" data-rating="5" style="font-size: 2rem; cursor: pointer;"></i>
-                    </div>
-                    <textarea id="feedback-content" class="form-control" rows="4" placeholder="Nhập nhận xét của bạn..."></textarea>
-                    <input type="hidden" id="selected-rating" value="0">
+    Swal.fire({
+        title: 'Đánh giá đơn hàng',
+        html: `
+            <div class="rating-container">
+                <p class="rating-title">Vui lòng đánh giá chất lượng đơn hàng</p>
+
+                <div class="rating-stars mb-4">
+                    <i class="far fa-star star-icon" data-rating="1"></i>
+                    <i class="far fa-star star-icon" data-rating="2"></i>
+                    <i class="far fa-star star-icon" data-rating="3"></i>
+                    <i class="far fa-star star-icon" data-rating="4"></i>
+                    <i class="far fa-star star-icon" data-rating="5"></i>
+                    <span class="rating-text ml-2">Chưa đánh giá</span>
                 </div>
-            `,
-            showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonText: 'Gửi đánh giá',
-            cancelButtonText: 'Hủy bỏ',
-            denyButtonText: 'Bỏ qua đánh giá',
-            confirmButtonColor: '#28a745',
-            denyButtonColor: '#6c757d',
-            preConfirm: () => {
-                const rating = document.getElementById('selected-rating').value;
-                const content = document.getElementById('feedback-content').value;
 
-                if (rating == 0) {
-                    Swal.showValidationMessage('Vui lòng chọn số sao đánh giá');
-                    return false;
+                <textarea id="feedback-content" class="form-control rating-textarea" rows="4"
+                    placeholder="Nhập nhận xét của bạn..."></textarea>
+
+                <div class="file-upload-section">
+                    <label class="file-upload-label">Thêm hình ảnh (tối đa 2MB)</label>
+
+                    <div class="file-upload-wrapper">
+                        <label for="feedback-image" class="file-upload-btn">
+                            <i class="fas fa-camera mr-2"></i>
+                            <span class="btn-text">Chọn ảnh</span>
+                            <span id="file-name" class="file-name"></span>
+                        </label>
+                        <input type="file" id="feedback-image" accept="image/*">
+                    </div>
+
+                    <div id="image-preview-container" class="image-preview-wrapper">
+                        <img id="image-preview" src="#" alt="Preview">
+                        <button type="button" id="remove-image-btn" class="remove-image-btn">
+                            <i class="fas fa-trash-alt mr-1"></i> Xóa
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" id="selected-rating" value="0">
+            </div>
+        `,
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: 'Gửi đánh giá',
+        cancelButtonText: 'Hủy bỏ',
+        denyButtonText: 'Bỏ qua đánh giá',
+        confirmButtonColor: '#4CAF50',
+        denyButtonColor: '#757575',
+        width: '600px',
+        customClass: {
+            popup: 'rating-popup',
+            title: 'rating-popup-title',
+            htmlContainer: 'rating-html-container'
+        },
+        preConfirm: () => {
+            const rating = document.getElementById('selected-rating').value;
+            const content = document.getElementById('feedback-content').value;
+            const imageInput = document.getElementById('feedback-image');
+
+            if (rating == 0) {
+                Swal.showValidationMessage('Vui lòng chọn số sao đánh giá');
+                return false;
+            }
+
+            if (imageInput.files.length > 0 && imageInput.files[0].size > 2 * 1024 * 1024) {
+                Swal.showValidationMessage('Ảnh không được vượt quá 2MB');
+                return false;
+            }
+
+            return {
+                rating,
+                content,
+                image: imageInput.files.length > 0 ? imageInput.files[0] : null
+            };
+        },
+        didOpen: () => {
+            // Xử lý rating stars
+            const stars = document.querySelectorAll('.star-icon');
+            const ratingText = document.querySelector('.rating-text');
+
+            stars.forEach(star => {
+                star.addEventListener('mouseover', function() {
+                    const rating = this.getAttribute('data-rating');
+                    highlightStars(rating);
+                });
+
+                star.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-rating');
+                    document.getElementById('selected-rating').value = rating;
+                    highlightStars(rating);
+                    updateRatingText(rating);
+                });
+            });
+
+            document.querySelector('.rating-stars').addEventListener('mouseleave', function() {
+                const currentRating = document.getElementById('selected-rating').value;
+                if (currentRating > 0) {
+                    highlightStars(currentRating);
+                } else {
+                    resetStars();
                 }
+            });
 
-                return {
-                    rating,
-                    content
-                };
-            },
-            didOpen: () => {
-                const stars = document.querySelectorAll('.rating-stars i');
-                stars.forEach(star => {
-                    star.addEventListener('click', function() {
-                        const rating = this.getAttribute('data-rating');
-                        document.getElementById('selected-rating').value = rating;
-
-                        stars.forEach((s, index) => {
-                            if (index < rating) {
-                                s.classList.remove('far');
-                                s.classList.add('fas', 'text-warning');
-                            } else {
-                                s.classList.remove('fas', 'text-warning');
-                                s.classList.add('far');
-                            }
-                        });
-                    });
+            function highlightStars(rating) {
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.remove('far');
+                        star.classList.add('fas', 'star-active');
+                    } else {
+                        star.classList.remove('fas', 'star-active');
+                        star.classList.add('far');
+                    }
                 });
             }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                submitOrderRating(orderId, result.value.rating, result.value.content);
-            } else if (result.isDenied) {
-                skipRating(orderId);
+
+            function resetStars() {
+                stars.forEach(star => {
+                    star.classList.remove('fas', 'star-active');
+                    star.classList.add('far');
+                });
             }
-        });
+
+            function updateRatingText(rating) {
+                const texts = ['Rất tệ', 'Tệ', 'Bình thường', 'Tốt', 'Rất tốt'];
+                ratingText.textContent = texts[rating - 1] || 'Chưa đánh giá';
+                ratingText.style.color = getRatingColor(rating);
+            }
+
+            function getRatingColor(rating) {
+                const colors = ['#ff3d3d', '#ff6b6b', '#ffb74d', '#81c784', '#4caf50'];
+                return colors[rating - 1] || '#757575';
+            }
+
+            // Xử lý file upload
+            const imageInput = document.getElementById('feedback-image');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+            const imagePreview = document.getElementById('image-preview');
+            const removeImageBtn = document.getElementById('remove-image-btn');
+            const fileNameDisplay = document.getElementById('file-name');
+
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    fileNameDisplay.textContent = file.name.length > 20
+                        ? file.name.substring(0, 17) + '...'
+                        : file.name;
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreviewContainer.style.display = 'flex';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeImageBtn.addEventListener('click', function() {
+                imageInput.value = '';
+                imagePreviewContainer.style.display = 'none';
+                fileNameDisplay.textContent = '';
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            submitOrderRating(orderId, result.value.rating, result.value.content, result.value.image);
+        } else if (result.isDenied) {
+            skipRating(orderId);
+        }
+    });
+}
+
+
+    function submitOrderRating(orderId, rating, content, imageFile) {
+    // Tạo form động với FormData để hỗ trợ file upload
+    const form = new FormData();
+    form.append('_token', '{{ csrf_token() }}');
+    form.append('rating', rating);
+    form.append('content', content);
+    if (imageFile) {
+        form.append('image', imageFile);
     }
 
-    function submitOrderRating(orderId, rating, content) {
-    // Tạo form động
-    const form = document.createElement('form');
-    form.action = `/orders/${orderId}/complete`;
-    form.method = 'POST';
-    form.style.display = 'none';
-
-    // Thêm các trường dữ liệu
-    form.innerHTML = `
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <input type="hidden" name="rating" value="${rating}">
-        <input type="hidden" name="content" value="${content}">
-    `;
-
-    document.body.appendChild(form);
-    form.submit();
-
-    // Hiển thị thông báo ngay lập tức
-    Swal.fire('Thành công!', 'Đã gửi đánh giá thành công', 'success');
+    // Gửi dữ liệu bằng AJAX
+    fetch(`/orders/${orderId}/complete`, {
+        method: 'POST',
+        body: form,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire('Thành công!', 'Đã gửi đánh giá thành công', 'success')
+                .then(() => {
+                    window.location.reload();
+                });
+        } else {
+            Swal.fire('Lỗi!', data.message || 'Có lỗi xảy ra khi gửi đánh giá', 'error');
+        }
+    })
+    .catch(error => {
+        Swal.fire('Lỗi!', 'Có lỗi xảy ra khi gửi đánh giá', 'error');
+        console.error('Error:', error);
+    });
 }
 
 function skipRating(orderId) {
@@ -619,4 +740,181 @@ function skipRating(orderId) {
             margin-bottom: 10px;
         }
     }
+</style>
+
+
+{{-- CSS form feedback --}}
+<style>
+    /* Popup style */
+.rating-popup {
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.rating-popup-title {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.rating-container {
+    padding: 0 10px;
+}
+
+/* Star rating style */
+.rating-stars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.star-icon {
+    font-size: 2.5rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0 5px;
+}
+
+.star-icon:hover {
+    transform: scale(1.1);
+}
+
+.star-active {
+    color: #FFC107 !important;
+    text-shadow: 0 0 5px rgba(255, 193, 7, 0.3);
+}
+
+.rating-text {
+    font-size: 1rem;
+    color: #757575;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+/* Textarea style */
+.rating-textarea {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 12px;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    margin-bottom: 20px;
+}
+
+.rating-textarea:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* File upload style */
+.file-upload-section {
+    margin-top: 20px;
+}
+
+.file-upload-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.file-upload-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.file-upload-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    color: #555;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.file-upload-btn:hover {
+    background-color: #e9f5e9;
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.file-upload-btn i {
+    font-size: 1.1rem;
+}
+
+.file-name {
+    margin-left: 10px;
+    color: #666;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    display: inline-block;
+}
+
+#feedback-image {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+/* Image preview style */
+.image-preview-wrapper {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    object-fit: contain;
+}
+
+.remove-image-btn {
+    background: none;
+    border: 1px solid #f44336;
+    color: #f44336;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.remove-image-btn:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+.remove-image-btn i {
+    font-size: 0.8rem;
+}
 </style>

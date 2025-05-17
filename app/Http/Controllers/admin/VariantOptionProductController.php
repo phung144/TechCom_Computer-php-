@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Variant;
 use App\Models\VariantOption;
 use Illuminate\Http\Request;
@@ -101,17 +102,39 @@ class VariantOptionProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, ProductVariant $variant)
     {
-        //
+        // Validate dữ liệu đầu vào
+        $validated = $request->validate([
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        // Cập nhật variant
+        $variant->update($validated);
+
+        // Trả về response dạng JSON (cho AJAX)
+        return response()->json([
+            'success' => true,
+            'message' => 'Variant updated successfully',
+            'formatted_price' => number_format($variant->price),
+            'quantity' => $variant->quantity
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(ProductVariant $variant)
     {
-        //
+        // Xóa variant
+        $variant->delete();
+
+        // Trả về response dạng JSON (cho AJAX)
+        return response()->json([
+            'success' => true,
+            'message' => 'Variant deleted successfully'
+        ]);
     }
 
     private function generateSkuFromVariantData(Product $product, array $variantData): string
