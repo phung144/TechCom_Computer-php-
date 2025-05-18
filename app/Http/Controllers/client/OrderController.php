@@ -311,15 +311,15 @@ class OrderController extends Controller
             }
 
             $subtotal = floatval($request->input('subtotal', 0));
-
+            $totalAfterDiscount = floatval($request->input('total_after_discount', $subtotal));
             $order = Order::create([
                 'user_id' => $userId,
                 'total' => $subtotal,
-                'total_after_discount' => $subtotal,
-                'full_name' => $request->input('full_name')?? "Pham hung",
-                'email' => $request->input('email')?? "phamhung@gmail.com",
-                'address' => $request->input('address')?? "Pham hung",
-                'phone' => $request->input('phone')?? "0386373687",
+                'total_after_discount' => $totalAfterDiscount,
+                'full_name' => $request->input('full_name'),
+                'email' => $request->input('email'),
+                'address' => $request->input('address'),
+                'phone' => $request->input('phone'),
                 'status' => 'pending',
                 'payment_method' => 'momo',
                 'payment_status' => 'unpaid'
@@ -352,7 +352,7 @@ class OrderController extends Controller
             $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
 
             $orderInfo = "Thanh toán qua MoMo";
-            $amount = $subtotal;
+            $amount = $totalAfterDiscount; // Sử dụng giá sau giảm giá để thanh toán MoMo
             $orderId = $order->id . '_' . time();
             $redirectUrl = route('momo.callback'); // route xử lý redirectUrl
             $ipnUrl = route('momo.ipn'); // route xử lý ipnUrl

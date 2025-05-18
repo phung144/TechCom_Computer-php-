@@ -140,6 +140,16 @@
                         {{ ucwords(str_replace('_', ' ', $order->payment_method)) }}
                     </span>
                 </div>
+                <div class="payment-row">
+                    <span>Payment Status</span>
+                    <span>
+                        @if($order->payment_status === 'paid')
+                            <span class="badge bg-success">Đã thanh toán</span>
+                        @else
+                            <span class="badge bg-warning text-dark">Chưa thanh toán</span>
+                        @endif
+                    </span>
+                </div>
             </div>
         </div>
 
@@ -165,6 +175,8 @@
 @endsection
 
 <style>
+
+
     .order-detail-container {
     max-width: 800px;
     margin: 0 auto;

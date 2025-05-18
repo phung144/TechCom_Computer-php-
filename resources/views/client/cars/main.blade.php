@@ -317,12 +317,27 @@
                                         of Service</a></small>
                             </div>
 
-                            <form action="{{ route('momo.payment') }}" method="post">
+                            <form action="{{ route('momo.payment') }}" method="post" id="momo-form">
                                 @csrf
-                                <input type="hidden" name="subtotal" value="{{ $subtotal }}" >
-                                <button type="submit" class="btn btn-default check_out" name="payUrl">Thanh
-                                    toán MOMO</button>
+                                <input type="hidden" name="subtotal" value="{{ $subtotal }}">
+                                <input type="hidden" name="total_after_discount" id="momo_total_after_discount" value="{{ $subtotal }}">
+                                <input type="hidden" name="full_name" id="momo_full_name">
+                                <input type="hidden" name="email" id="momo_email">
+                                <input type="hidden" name="address" id="momo_address">
+                                <input type="hidden" name="phone" id="momo_phone">
+                                <button type="submit" class="btn btn-default check_out" name="payUrl">Thanh toán MOMO</button>
                             </form>
+                            <script>
+                                // Khi submit form MOMO, lấy dữ liệu từ form order và gán vào input hidden
+                                document.getElementById('momo-form').addEventListener('submit', function(e) {
+                                    document.getElementById('momo_full_name').value = document.getElementById('full_name').value;
+                                    document.getElementById('momo_email').value = document.getElementById('email').value;
+                                    document.getElementById('momo_address').value = document.getElementById('address').value;
+                                    document.getElementById('momo_phone').value = document.getElementById('phone').value;
+                                    // Lấy giá trị mới nhất của total_after_discount từ form chính
+                                    document.getElementById('momo_total_after_discount').value = document.getElementById('order-total-after-discount').value;
+                                });
+                            </script>
 
                         </div>
                     </div>
