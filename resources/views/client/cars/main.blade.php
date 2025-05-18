@@ -316,6 +316,14 @@
                                 <small class="text-muted">By placing your order, you agree to our <a href="#">Terms
                                         of Service</a></small>
                             </div>
+
+                            <form action="{{ route('momo.payment') }}" method="post">
+                                @csrf
+                                <input type="hidden" name="subtotal" value="{{ $subtotal }}" >
+                                <button type="submit" class="btn btn-default check_out" name="payUrl">Thanh
+                                    toán MOMO</button>
+                            </form>
+
                         </div>
                     </div>
                 </div>

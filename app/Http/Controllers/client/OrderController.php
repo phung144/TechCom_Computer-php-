@@ -189,72 +189,289 @@ class OrderController extends Controller
     }
 
     public function complete(Request $request, $orderId)
-{
-    $request->validate([
-        'rating' => 'required|integer|min:1|max:5',
-        'content' => 'nullable|string|max:500',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
-    ]);
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'content' => 'nullable|string|max:500',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+        ]);
 
-    $order = Order::with('orderDetails.product')->findOrFail($orderId);
+        $order = Order::with('orderDetails.product')->findOrFail($orderId);
 
-    // Kiểm tra quyền truy cập
-    if ($order->user_id !== auth()->id()) {
+        // Kiểm tra quyền truy cập
+        if ($order->user_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        // Kiểm tra sản phẩm trong đơn hàng
+        $firstProduct = $order->orderDetails->first();
+        if (!$firstProduct) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No products in this order.'
+            ], 400);
+        }
+
+        // Chuẩn bị dữ liệu feedback
+        $data = [
+            'user_id' => auth()->id(),
+            'product_id' => $firstProduct->product_id,
+            'order_id' => $orderId,
+            'rating' => $request->rating,
+            'content' => $request->content,
+        ];
+
+        // Xử lý upload ảnh
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('feedback_images', 'public');
+            $data['image'] = $imagePath;
+        }
+
+        // Tạo feedback
+        Feedback::create($data);
+
+        // Cập nhật trạng thái đơn hàng
+        $order->update(['status' => 'rated']);
+
         return response()->json([
-            'success' => false,
-            'message' => 'Unauthorized action.'
-        ], 403);
+            'success' => true,
+            'message' => 'Đánh giá đã được gửi thành công!'
+        ]);
     }
 
-    // Kiểm tra sản phẩm trong đơn hàng
-    $firstProduct = $order->orderDetails->first();
-    if (!$firstProduct) {
-        return response()->json([
-            'success' => false,
-            'message' => 'No products in this order.'
-        ], 400);
+    public function skipRating($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        // Kiểm tra quyền truy cập
+        if ($order->user_id !== auth()->id()) {
+            return back()->with('error', 'Bạn không có quyền thực hiện thao tác này');
+        }
+
+        $order->update(['status' => 'rated']);
+
+        return back()->with('success', 'Đã bỏ qua đánh giá');
     }
 
-    // Chuẩn bị dữ liệu feedback
-    $data = [
-        'user_id' => auth()->id(),
-        'product_id' => $firstProduct->product_id,
-        'order_id' => $orderId,
-        'rating' => $request->rating,
-        'content' => $request->content,
-    ];
+    public function momoPayment(Request $request)
+    {
+        $userId = auth()->id();
 
-    // Xử lý upload ảnh
-    if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('feedback_images', 'public');
-        $data['image'] = $imagePath;
+        // Validate dữ liệu đầu vào (giống store)
+        // $validated = $request->validate([
+        //     'full_name' => 'required|string|max:255',
+        //     'email' => 'required|email|max:255',
+        //     'address' => 'required|string|max:500',
+        //     'phone' => 'required|string|max:20',
+        // ]);
+
+        // Lấy giỏ hàng
+        $carts = Cart::with([
+            'product' => function ($q) {
+                $q->lockForUpdate();
+            },
+            'variant' => function ($q) {
+                $q->lockForUpdate()->with('options');
+            }
+        ])
+            ->where('user_id', $userId)
+            ->get();
+
+        if ($carts->isEmpty()) {
+            return back()->with('error', 'Giỏ hàng trống');
+        }
+
+        // Kiểm tra tồn kho
+        DB::transaction(function () use ($carts) {
+            foreach ($carts as $cart) {
+                $available = $cart->variant ? $cart->variant->quantity : $cart->product->quantity;
+                if ($available < $cart->quantity) {
+                    throw new \Exception("{$cart->product->name} chỉ còn {$available} sản phẩm");
+                }
+            }
+        });
+
+        // Tạo đơn hàng với trạng thái payment_status = unpaid
+        // try {
+        //     DB::beginTransaction();
+
+            $discountAmount = floatval($request->input('discount_amount', 0));
+            $voucherId = $request->input('voucher_id');
+            if (!$voucherId) {
+                $voucherCode = $request->input('applied_voucher');
+                if ($voucherCode) {
+                    $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+                    if ($voucher) {
+                        $voucherId = $voucher->id;
+                    }
+                }
+            }
+
+            $subtotal = floatval($request->input('subtotal', 0));
+
+            $order = Order::create([
+                'user_id' => $userId,
+                'total' => $subtotal,
+                'total_after_discount' => $subtotal,
+                'full_name' => $request->input('full_name')?? "Pham hung",
+                'email' => $request->input('email')?? "phamhung@gmail.com",
+                'address' => $request->input('address')?? "Pham hung",
+                'phone' => $request->input('phone')?? "0386373687",
+                'status' => 'pending',
+                'payment_method' => 'momo',
+                'payment_status' => 'unpaid'
+            ]);
+
+            foreach ($carts as $cart) {
+                $variantOptions = $cart->variant ?
+                    $cart->variant->options->pluck('value')->implode(', ') : null;
+
+                $order->orderDetails()->create([
+                    'product_id' => $cart->product_id,
+                    'variant_id' => $cart->variant_id,
+                    'quantity' => $cart->quantity,
+                    'price' => $cart->price,
+                    'variant_options' => $variantOptions,
+                    'voucher_id' => $voucherId
+                ]);
+            }
+
+            // Không xóa giỏ hàng, chỉ xóa khi thanh toán thành công
+            DB::commit();
+
+            // Lưu order_id vào session để xử lý sau khi thanh toán
+            session(['momo_order_id' => $order->id]);
+
+            // Tạo request MoMo
+            $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+            $partnerCode = 'MOMOBKUN20180529';
+            $accessKey = 'klm05TvNBzhg7h7j';
+            $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
+
+            $orderInfo = "Thanh toán qua MoMo";
+            $amount = $subtotal;
+            $orderId = $order->id . '_' . time();
+            $redirectUrl = route('momo.callback'); // route xử lý redirectUrl
+            $ipnUrl = route('momo.ipn'); // route xử lý ipnUrl
+            $extraData = "";
+
+
+            $requestId = time() . "";
+            $requestType = "payWithATM";
+            $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
+            $signature = hash_hmac("sha256", $rawHash, $secretKey);
+            $data = array(
+                'partnerCode' => $partnerCode,
+                'partnerName' => "Test",
+                "storeId" => "MomoTestStore",
+                'requestId' => $requestId,
+                'amount' => $amount,
+                'orderId' => $orderId,
+                'orderInfo' => $orderInfo,
+                'redirectUrl' => $redirectUrl,
+                'ipnUrl' => $ipnUrl,
+                'lang' => 'vi',
+                'extraData' => $extraData,
+                'requestType' => $requestType,
+                'signature' => $signature
+            );
+            $result = $this->execPostRequest($endpoint, json_encode($data));
+            $jsonResult = json_decode($result, true);
+
+
+            // Redirect tới MoMo
+            return redirect()->to($jsonResult['payUrl']);
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
+        //     Log::error('Order failed (MoMo)', [
+        //         'user' => $userId,
+        //         'error' => $e->getMessage(),
+        //         'trace' => $e->getTraceAsString(),
+        //         'carts' => $carts->toArray()
+        //     ]);
+        //     return back()->with('error', 'Order placement failed: ' . $e->getMessage());
+        // }
     }
 
-    // Tạo feedback
-    Feedback::create($data);
+    // Xử lý khi MoMo redirect về (redirectUrl)
+    public function momoPaymentCallback(Request $request)
+    {
+        // Lấy order_id từ session
+        $orderId = session('momo_order_id');
+        if (!$orderId) {
+            return redirect()->route('orders.index')->with('error', 'Không tìm thấy đơn hàng.');
+        }
 
-    // Cập nhật trạng thái đơn hàng
-    $order->update(['status' => 'rated']);
+        $order = Order::find($orderId);
+        if (!$order) {
+            return redirect()->route('orders.index')->with('error', 'Không tìm thấy đơn hàng.');
+        }
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Đánh giá đã được gửi thành công!'
-    ]);
-}
-
-public function skipRating($orderId)
-{
-    $order = Order::findOrFail($orderId);
-
-    // Kiểm tra quyền truy cập
-    if ($order->user_id !== auth()->id()) {
-        return back()->with('error', 'Bạn không có quyền thực hiện thao tác này');
+        // Kiểm tra kết quả thanh toán
+        $resultCode = $request->input('resultCode');
+        if ($resultCode == 0) {
+            // Thanh toán thành công
+            $order->update(['payment_status' => 'paid']);
+            // Xóa giỏ hàng
+            Cart::where('user_id', $order->user_id)->delete();
+            // Xóa session
+            session()->forget('momo_order_id');
+            return redirect()->route('orders.show', $order->id)->with('success', 'Thanh toán thành công!');
+        } else {
+            // Thanh toán thất bại
+            $order->update(['payment_status' => 'unpaid']);
+            session()->forget('momo_order_id');
+            return redirect()->route('orders.index')->with('error', 'Thanh toán thất bại hoặc bị hủy.');
+        }
     }
 
-    $order->update(['status' => 'rated']);
+    // Xử lý ipnUrl (nếu cần, có thể dùng cho xác nhận server-to-server)
+    public function momoPaymentIpn(Request $request)
+    {
+        $orderId = session('momo_order_id');
+        if (!$orderId) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+        $order = Order::find($orderId);
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+        $resultCode = $request->input('resultCode');
+        if ($resultCode == 0) {
+            $order->update(['payment_status' => 'paid']);
+            Cart::where('user_id', $order->user_id)->delete();
+            session()->forget('momo_order_id');
+            return response()->json(['message' => 'Payment success']);
+        } else {
+            $order->update(['payment_status' => 'unpaid']);
+            session()->forget('momo_order_id');
+            return response()->json(['message' => 'Payment failed']);
+        }
+    }
 
-    return back()->with('success', 'Đã bỏ qua đánh giá');
-}
-
-
+    public function execPostRequest($url, $data)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($data)
+            )
+        );
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        //execute post
+        $result = curl_exec($ch);
+        //close connection
+        curl_close($ch);
+        return $result;
+    }
 }

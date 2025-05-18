@@ -128,3 +128,7 @@ Route::put('/variants/{variant}', [VariantOptionProductController::class, 'updat
 Route::delete('/variants/{variant}', [VariantOptionProductController::class, 'destroy'])->name('variantsOption.destroy');
 
 Route::post('/apply-voucher', [CartController::class, 'applyVoucher'])->name('voucher.check');
+
+Route::post('/momo/payment', [OrderController::class, 'momoPayment'])->name('momo.payment');
+Route::get('/momo/return', [OrderController::class, 'momoPaymentCallback'])->name('momo.callback');
+Route::post('/momo/ipn', [OrderController::class, 'momoPaymentIpn'])->name('momo.ipn');
