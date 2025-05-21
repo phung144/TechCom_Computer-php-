@@ -19,7 +19,8 @@ class Order extends Model
         'status',
         'total_after_discount',
         'payment_method',
-        'payment_status'
+        'payment_status',
+        'cancel_reason'
     ];
 
     // Quan hệ chính với OrderDetail

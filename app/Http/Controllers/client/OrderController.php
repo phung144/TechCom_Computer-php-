@@ -181,7 +181,7 @@ class OrderController extends Controller
         $cancelReason = $request->input('cancel_reason');
         $order->update([
             'status' => 'canceled',
-            'cancel_reason' => $cancelReason
+            'cancel_reason' => $cancelReason // Đảm bảo đúng tên trường là cancel_reason
         ]);
 
         // Thêm thông báo success
@@ -260,14 +260,6 @@ class OrderController extends Controller
     {
         $userId = auth()->id();
 
-        // Validate dữ liệu đầu vào (giống store)
-        // $validated = $request->validate([
-        //     'full_name' => 'required|string|max:255',
-        //     'email' => 'required|email|max:255',
-        //     'address' => 'required|string|max:500',
-        //     'phone' => 'required|string|max:20',
-        // ]);
-
         // Lấy giỏ hàng
         $carts = Cart::with([
             'product' => function ($q) {
@@ -294,25 +286,25 @@ class OrderController extends Controller
             }
         });
 
-        // Tạo đơn hàng với trạng thái payment_status = unpaid
-        // try {
-        //     DB::beginTransaction();
-
-            $discountAmount = floatval($request->input('discount_amount', 0));
-            $voucherId = $request->input('voucher_id');
-            if (!$voucherId) {
-                $voucherCode = $request->input('applied_voucher');
-                if ($voucherCode) {
-                    $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
-                    if ($voucher) {
-                        $voucherId = $voucher->id;
-                    }
+        // Lưu thông tin đơn hàng vào session (chưa tạo đơn hàng)
+        $discountAmount = floatval($request->input('discount_amount', 0));
+        $voucherId = $request->input('voucher_id');
+        if (!$voucherId) {
+            $voucherCode = $request->input('applied_voucher');
+            if ($voucherCode) {
+                $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+                if ($voucher) {
+                    $voucherId = $voucher->id;
                 }
             }
+        }
 
-            $subtotal = floatval($request->input('subtotal', 0));
-            $totalAfterDiscount = floatval($request->input('total_after_discount', $subtotal));
-            $order = Order::create([
+        $subtotal = floatval($request->input('subtotal', 0));
+        $totalAfterDiscount = floatval($request->input('total_after_discount', $subtotal));
+
+        // Lưu thông tin đơn hàng và giỏ hàng vào session
+        session([
+            'momo_order_data_' . $userId => [
                 'user_id' => $userId,
                 'total' => $subtotal,
                 'total_after_discount' => $totalAfterDiscount,
@@ -322,108 +314,143 @@ class OrderController extends Controller
                 'phone' => $request->input('phone'),
                 'status' => 'pending',
                 'payment_method' => 'momo',
-                'payment_status' => 'unpaid'
-            ]);
+                'payment_status' => 'unpaid',
+                'voucher_id' => $voucherId,
+                'carts' => $carts->map(function ($cart) {
+                    return [
+                        'product_id' => $cart->product_id,
+                        'variant_id' => $cart->variant_id,
+                        'quantity' => $cart->quantity,
+                        'price' => $cart->price,
+                        'variant_options' => $cart->variant ? $cart->variant->options->pluck('value')->implode(', ') : null,
+                    ];
+                })->toArray()
+            ]
+        ]);
 
-            foreach ($carts as $cart) {
-                $variantOptions = $cart->variant ?
-                    $cart->variant->options->pluck('value')->implode(', ') : null;
+        // Tạo request MoMo
+        $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+        $partnerCode = 'MOMOBKUN20180529';
+        $accessKey = 'klm05TvNBzhg7h7j';
+        $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
 
-                $order->orderDetails()->create([
-                    'product_id' => $cart->product_id,
-                    'variant_id' => $cart->variant_id,
-                    'quantity' => $cart->quantity,
-                    'price' => $cart->price,
-                    'variant_options' => $variantOptions,
-                    'voucher_id' => $voucherId
-                ]);
-            }
+        $orderInfo = "Thanh toán qua MoMo";
+        $amount = $totalAfterDiscount;
+        $orderId = uniqid('momo_') . '_' . time(); // orderId chỉ để gửi sang MoMo, không phải id đơn hàng thật
+        $redirectUrl = route('momo.callback');
+        $ipnUrl = route('momo.ipn');
+        $extraData = json_encode(['user_id' => $userId]);
 
-            // Không xóa giỏ hàng, chỉ xóa khi thanh toán thành công
-            DB::commit();
+        $requestId = time() . "";
+        $requestType = "payWithATM";
+        $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
+        $signature = hash_hmac("sha256", $rawHash, $secretKey);
+        $data = array(
+            'partnerCode' => $partnerCode,
+            'partnerName' => "Test",
+            "storeId" => "MomoTestStore",
+            'requestId' => $requestId,
+            'amount' => $amount,
+            'orderId' => $orderId,
+            'orderInfo' => $orderInfo,
+            'redirectUrl' => $redirectUrl,
+            'ipnUrl' => $ipnUrl,
+            'lang' => 'vi',
+            'extraData' => $extraData,
+            'requestType' => $requestType,
+            'signature' => $signature
+        );
+        $result = $this->execPostRequest($endpoint, json_encode($data));
+        $jsonResult = json_decode($result, true);
 
-            // Lưu order_id vào session để xử lý sau khi thanh toán
-            session(['momo_order_id' => $order->id]);
-
-            // Tạo request MoMo
-            $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-            $partnerCode = 'MOMOBKUN20180529';
-            $accessKey = 'klm05TvNBzhg7h7j';
-            $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
-
-            $orderInfo = "Thanh toán qua MoMo";
-            $amount = $totalAfterDiscount; // Sử dụng giá sau giảm giá để thanh toán MoMo
-            $orderId = $order->id . '_' . time();
-            $redirectUrl = route('momo.callback'); // route xử lý redirectUrl
-            $ipnUrl = route('momo.ipn'); // route xử lý ipnUrl
-            $extraData = "";
-
-
-            $requestId = time() . "";
-            $requestType = "payWithATM";
-            $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
-            $signature = hash_hmac("sha256", $rawHash, $secretKey);
-            $data = array(
-                'partnerCode' => $partnerCode,
-                'partnerName' => "Test",
-                "storeId" => "MomoTestStore",
-                'requestId' => $requestId,
-                'amount' => $amount,
-                'orderId' => $orderId,
-                'orderInfo' => $orderInfo,
-                'redirectUrl' => $redirectUrl,
-                'ipnUrl' => $ipnUrl,
-                'lang' => 'vi',
-                'extraData' => $extraData,
-                'requestType' => $requestType,
-                'signature' => $signature
-            );
-            $result = $this->execPostRequest($endpoint, json_encode($data));
-            $jsonResult = json_decode($result, true);
-
-
-            // Redirect tới MoMo
+        if (isset($jsonResult['payUrl'])) {
+            // Lưu orderId MoMo vào session để đối chiếu callback nếu cần
+            session(['momo_orderId' => $orderId]);
             return redirect()->to($jsonResult['payUrl']);
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-        //     Log::error('Order failed (MoMo)', [
-        //         'user' => $userId,
-        //         'error' => $e->getMessage(),
-        //         'trace' => $e->getTraceAsString(),
-        //         'carts' => $carts->toArray()
-        //     ]);
-        //     return back()->with('error', 'Order placement failed: ' . $e->getMessage());
-        // }
+        } else {
+            Log::error('MoMo payment error', [
+                'response' => $jsonResult,
+                'request_data' => $data
+            ]);
+            return back()->with('error', 'Không thể tạo liên kết thanh toán MoMo. Vui lòng thử lại hoặc liên hệ hỗ trợ.');
+        }
     }
 
     // Xử lý khi MoMo redirect về (redirectUrl)
     public function momoPaymentCallback(Request $request)
     {
-        // Lấy order_id từ session
-        $orderId = session('momo_order_id');
-        if (!$orderId) {
-            return redirect()->route('orders.index')->with('error', 'Không tìm thấy đơn hàng.');
+        // Lấy user_id từ extraData
+        $extraData = $request->input('extraData');
+        $userId = null;
+        if ($extraData) {
+            $extra = json_decode($extraData, true);
+            $userId = $extra['user_id'] ?? null;
+        }
+        if (!$userId) {
+            return redirect()->route('orders.index')->with('error', 'Không xác định được người dùng.');
         }
 
-        $order = Order::find($orderId);
-        if (!$order) {
-            return redirect()->route('orders.index')->with('error', 'Không tìm thấy đơn hàng.');
+        // Lấy thông tin đơn hàng tạm từ session theo user_id
+        $orderData = session('momo_order_data_' . $userId);
+        if (!$orderData) {
+            return redirect()->route('orders.index')->with('error', 'Không tìm thấy thông tin đơn hàng.');
         }
 
         // Kiểm tra kết quả thanh toán
         $resultCode = $request->input('resultCode');
         if ($resultCode == 0) {
-            // Thanh toán thành công
-            $order->update(['payment_status' => 'paid']);
-            // Xóa giỏ hàng
-            Cart::where('user_id', $order->user_id)->delete();
-            // Xóa session
-            session()->forget('momo_order_id');
-            return redirect()->route('orders.show', $order->id)->with('success', 'Thanh toán thành công!');
+            // Thanh toán thành công, tạo đơn hàng thật sự
+            try {
+                DB::beginTransaction();
+                $order = Order::create([
+                    'user_id' => $orderData['user_id'],
+                    'total' => $orderData['total'],
+                    'total_after_discount' => $orderData['total_after_discount'],
+                    'full_name' => $orderData['full_name'],
+                    'email' => $orderData['email'],
+                    'address' => $orderData['address'],
+                    'phone' => $orderData['phone'],
+                    'status' => 'pending',
+                    'payment_method' => 'momo',
+                    'payment_status' => 'paid',
+                ]);
+                foreach ($orderData['carts'] as $cart) {
+                    $order->orderDetails()->create([
+                        'product_id' => $cart['product_id'],
+                        'variant_id' => $cart['variant_id'],
+                        'quantity' => $cart['quantity'],
+                        'price' => $cart['price'],
+                        'variant_options' => $cart['variant_options'],
+                        'voucher_id' => $orderData['voucher_id']
+                    ]);
+                    // Cập nhật tồn kho
+                    if ($cart['variant_id']) {
+                        ProductVariant::where('id', $cart['variant_id'])
+                            ->decrement('quantity', $cart['quantity']);
+                    } else {
+                        Product::where('id', $cart['product_id'])
+                            ->decrement('quantity', $cart['quantity']);
+                    }
+                }
+                // Xóa giỏ hàng
+                Cart::where('user_id', $orderData['user_id'])->delete();
+                DB::commit();
+                // Xóa session
+                session()->forget(['momo_order_data_' . $userId, 'momo_orderId']);
+                return redirect()->route('orders.show', $order->id)->with('success', 'Thanh toán thành công!');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Order creation after MoMo payment failed', [
+                    'user' => $orderData['user_id'],
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                    'orderData' => $orderData
+                ]);
+                return redirect()->route('orders.index')->with('error', 'Tạo đơn hàng thất bại sau khi thanh toán MoMo: ' . $e->getMessage());
+            }
         } else {
             // Thanh toán thất bại
-            $order->update(['payment_status' => 'unpaid']);
-            session()->forget('momo_order_id');
+            session()->forget(['momo_order_data_' . $userId, 'momo_orderId']);
             return redirect()->route('orders.index')->with('error', 'Thanh toán thất bại hoặc bị hủy.');
         }
     }

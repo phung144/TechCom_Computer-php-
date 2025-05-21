@@ -132,3 +132,4 @@ Route::post('/apply-voucher', [CartController::class, 'applyVoucher'])->name('vo
 Route::post('/momo/payment', [OrderController::class, 'momoPayment'])->name('momo.payment');
 Route::get('/momo/return', [OrderController::class, 'momoPaymentCallback'])->name('momo.callback');
 Route::post('/momo/ipn', [OrderController::class, 'momoPaymentIpn'])->name('momo.ipn');
+Route::post('/cart/check-prices', [CartController::class, 'checkPrices'])->name('cart.check-prices');

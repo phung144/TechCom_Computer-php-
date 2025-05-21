@@ -114,5 +114,25 @@ class CartController extends Controller
         return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm trong giỏ hàng.']);
     }
 
+    public function checkPrices(Request $request)
+{
+    $changed = [];
+    foreach ($request->items as $item) {
+        $variant = $item['variant_id'] ? \App\Models\ProductVariant::find($item['variant_id']) : null;
+        $product = \App\Models\Product::find($item['product_id']);
+        $basePriceDb = $variant ? $variant->price : ($product ? $product->price : 0);
+        $oldPrice = floatval($item['base_price']);
+
+        if ($basePriceDb != $oldPrice) {
+            $changed[] = [
+                'name' => $product ? $product->name : 'Sản phẩm',
+                'old_price' => $oldPrice,
+                'new_price' => $basePriceDb
+            ];
+        }
+    }
+    return response()->json(['changed' => $changed]);
+}
+
 
 }
