@@ -314,7 +314,6 @@
                                         <img src="{{ asset('images/default-avatar.png') }}" alt="Avatar" class="rounded-circle" width="50" height="50">
                                     @endif
                                 </div>
-
                                 <!-- Nội dung bình luận -->
                                 <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -339,11 +338,9 @@
                                             </div>
                                         @endif
                                     </div>
-
                                     <div class="comment-content mb-2">
                                         {{ $item->comment }}
                                     </div>
-
                                     <div class="comment-actions d-flex align-items-center">
                                         <button class="btn btn-text btn-sm mr-3 like-btn" data-comment-id="{{ $item->id }}">
                                             <i class="far fa-thumbs-up mr-1"></i> <span>{{ $item->likes_count ?? 0 }}</span>
@@ -352,6 +349,43 @@
                                             <i class="far fa-comment-dots mr-1"></i> Phản hồi
                                         </button>
                                     </div>
+                                    <!-- Form rep comment (ẩn, hiện khi bấm Phản hồi) -->
+                                    <div class="reply-form mt-2" id="reply-form-{{ $item->id }}" style="display: none;">
+                                        @if(Auth::check())
+                                            <form action="{{ route('comments.reply.client',$item->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <input type="hidden" name="parent_id" value="{{ $item->id }}">
+                                                <div class="form-group mb-2">
+                                                    <textarea name="comment" class="form-control shadow-sm" rows="2" placeholder="Viết phản hồi..." style="border-radius: 20px;"></textarea>
+                                                </div>
+                                                <div class="text-right">
+                                                    <button type="submit" class="btn btn-primary btn-sm px-3 py-1" style="border-radius: 20px; background-color: #a49e20; border: none;">
+                                                        <i class="fas fa-paper-plane mr-1"></i>Gửi phản hồi
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        @else
+                                            <div class="alert alert-light border mb-2 d-flex align-items-center">
+                                                <i class="fas fa-info-circle mr-2 text-warning"></i>
+                                                <span>Vui lòng <a href="{{ route('login') }}" class="font-weight-bold text-primary">đăng nhập</a> để phản hồi.</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <!-- Hiển thị rep comment -->
+                                    @if($item->replies && $item->replies->count())
+                                        <div class="ml-5 mt-3">
+                                            @foreach($item->replies as $reply)
+                                                <div class="comment-reply mb-2 p-2 bg-light rounded">
+                                                    <div class="d-flex align-items-center mb-1">
+                                                        <strong class="mr-2 text-primary">{{ $reply->user->name ?? 'Admin' }}</strong>
+                                                        <small class="text-muted">{{ $reply->created_at->diffForHumans() }}</small>
+                                                    </div>
+                                                    <div>{{ $reply->comment }}</div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -617,4 +651,22 @@
             });
             </script>
     </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.reply-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var commentId = this.getAttribute('data-comment-id');
+                var form = document.getElementById('reply-form-' + commentId);
+                if (form) {
+                    if (form.style.display === 'none') {
+                        form.style.display = 'block';
+                    } else {
+                        form.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+</script>
 @endsection

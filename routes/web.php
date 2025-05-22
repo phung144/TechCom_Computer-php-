@@ -73,6 +73,7 @@ Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
 Route::post('comment', [ProductDetailController::class,'comment'])->name('comment');
+Route::post('comments/{comment}/reply/client', [ProductDetailController::class, 'reply'])->name('comments.reply.client');
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
@@ -94,6 +95,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/order-now/store', [OrderNowController::class, 'store'])->name('orderNow.store');
     Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
+    Route::get('/profile', [App\Http\Controllers\Client\ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Route::get('/admin/home', function () { // /admin/home là đường dẫn chính xác đến view
@@ -122,6 +125,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::resource('banners', App\Http\Controllers\admin\BannerController::class);
     Route::patch('banners/{banner}/toggle-status', [App\Http\Controllers\admin\BannerController::class, 'toggleStatus'])->name('banners.toggleStatus');
     Route::resource('vouchers', App\Http\Controllers\admin\VoucherController::class);
+    Route::resource('comments', App\Http\Controllers\admin\CommentController::class);
+    Route::post('comments/{comment}/reply', [App\Http\Controllers\admin\CommentController::class, 'reply'])->name('comments.reply');
 });
 
 Route::put('/variants/{variant}', [VariantOptionProductController::class, 'update'])->name('variantsOption.update');
