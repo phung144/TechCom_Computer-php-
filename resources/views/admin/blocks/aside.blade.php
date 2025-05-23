@@ -45,6 +45,12 @@
 
 
                 <li>
+                    <a class="sidenav-item-link" href="{{ route('admin.home') }}">
+                        <i class="mdi mdi-cube"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li>
                     <a class="sidenav-item-link" href="{{ route('admin.products.index') }}">
                         <i class="mdi mdi-cube"></i>
                         <span class="nav-text">Product</span>

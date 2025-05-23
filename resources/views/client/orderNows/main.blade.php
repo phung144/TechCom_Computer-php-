@@ -1,8 +1,8 @@
 @extends('client.layout')
 
 @section('main')
-<main id="content" role="main" class="cart-page">
-    {{-- Thông báo add to cart thành công --}}
+<main id="content" role="main" class="cart-page bg-light">
+    {{-- Success Notification --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if(session('success'))
         <script>
@@ -10,7 +10,7 @@
                 icon: 'success',
                 title: '{{ session('success') }}',
                 showConfirmButton: false,
-                timer: 2000, // Tự động đóng sau 2 giây
+                timer: 2000,
                 timerProgressBar: true,
                 position: 'top-end',
                 toast: true,
@@ -19,140 +19,228 @@
             });
         </script>
     @endif
-    <!-- Breadcrumb -->
-    <div class="bg-gray-13 bg-md-transparent">
-        <div class="container">
-            <div class="my-md-3">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-3 flex-nowrap flex-xl-wrap overflow-auto overflow-xl-visible">
-                        <li class="breadcrumb-item"><a href="{{ route('client-home') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Cart</li>
-                    </ol>
-                </nav>
+
+    <!-- Modern Breadcrumb -->
+    <div class="bg-white shadow-sm">
+        <div class="container py-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="h4 mb-0">
+                        <i class="fas fa-shopping-cart text-primary me-2"></i>
+                        Quick Order Checkout
+                    </h1>
+                </div>
+                <div class="col-md-6">
+                    <nav aria-label="breadcrumb" class="justify-content-end">
+                        <ol class="breadcrumb mb-0 bg-transparent justify-content-end">
+                            <li class="breadcrumb-item"><a href="{{ route('client-home') }}" class="text-decoration-none">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Order Now</li>
+                        </ol>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
-    <!-- End Breadcrumb -->
 
-    <div class="container">
-        <div class="mb-5 text-center">
-            <h1 class="display-5">Your Shopping Cart</h1>
-            <p class="text-muted">Review your items before checkout</p>
-        </div>
-
-        <!-- Cart Table -->
-        <div class="cart-table mb-5">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="text-center" style="width: 100px;">Image</th>
-                            <th>Product</th>
-                            <th>Variant</th>
-                            <th class="text-center" style="width: 120px;">Price</th>
-                            <th class="text-center" style="width: 150px;">Quantity</th>
-                            <th class="text-center" style="width: 120px;">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if(isset($product))
-                        <tr>
-                            <td class="text-center">
-                                <img src="{{ asset(Storage::url($product->image)) }}" style="width: 80px;">
-                            </td>
-                            <td>{{ $product->name }}</td>
-                            <td>
-                                @if(isset($variant))
-                                    {{ $variant->combination_code }}
-                                @else
-                                    No variant selected
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                @if(isset($variant))
-                                    {{ number_format($variant->price, 0) }} VND
-                                @else
-                                    {{ number_format($product->price, 0) }} VND
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                {{ $quantity }}
-                            </td>
-                            <td class="text-center">
-                                @php
-                                    $price = isset($variant) ? $variant->price : $product->price;
-                                    $total = $price * $quantity;
-                                @endphp
-                                <strong class="text-primary">{{ number_format($total, 0) }} VND</strong>
-                            </td>
-                        </tr>
-                        @endif
-                    </tbody>
-                    <tfoot class="table-group-divider">
-                        <tr>
-                            <th colspan="5" class="text-end">Total:</th>
-                            <td class="text-center">
-                                @if(isset($product))
-                                    @php
-                                        $price = isset($variant) ? $variant->price : $product->price;
-                                        $total = $price * $quantity;
-                                    @endphp
-                                    <strong id="cart-total" class="text-primary">{{ number_format($total, 0) }} VND</strong>
-                                @else
-                                    <strong id="cart-total" class="text-primary">0 VND</strong>
-                                @endif
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-        <!-- End Cart Table -->
-
-        <!-- Billing Details -->
-        <div class="billing-details bg-light p-4 rounded mb-5">
-            <div class="mb-4">
-                <h3 class="h4 border-bottom pb-2">Billing Details</h3>
-            </div>
-            <form id="order-form" action="{{ route('orderNow.store', [
-                'product_id' => $product->id,
-                'variant_id' => $variant->id ?? null,
-                'quantity' => $quantity
-            ]) }}" method="POST">
-                @csrf
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="full_name" class="form-label">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Jack Wayley">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <!-- Order Summary Card -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white border-0 py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <span class="badge bg-primary rounded-pill me-2">1</span>
+                                Item in your order
+                            </h5>
+                            <a href="{{ route('client-home') }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-arrow-left me-1"></i> Continue Shopping
+                            </a>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
-                        <input type="text" id="address" name="address" class="form-control" placeholder="470 Lucy Forks, London">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="jackwayley@gmail.com">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone</label>
-                        <input type="text" id="phone" name="phone" class="form-control" placeholder="+1 (062) 109-9222">
-                    </div>
-                    <div class="col-12 text-center mt-3">
-                        <button type="submit" class="btn btn-primary btn-lg px-5">
-                            <i class="fas fa-shopping-bag me-2"></i> Place Order
-                        </button>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="text-center" style="width: 100px;">Image</th>
+                                        <th style="min-width: 200px;">Product</th>
+                                        <th>Variant</th>
+                                        <th class="text-center" style="width: 120px;">Price</th>
+                                        <th class="text-center" style="width: 120px;">Quantity</th>
+                                        <th class="text-center" style="width: 120px;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(isset($product))
+                                    <tr>
+                                        <td class="text-center">
+                                            <div class="product-thumbnail mx-auto">
+                                                <img src="{{ asset(Storage::url($product->image)) }}"
+                                                     alt="{{ $product->name }}"
+                                                     class="img-fluid rounded border"
+                                                     style="max-height: 80px;">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h6 class="mb-1 fw-semibold">{{ $product->name }}</h6>
+                                            <small class="text-muted d-block">SKU: {{ $product->sku }}</small>
+                                        </td>
+                                        <td>
+                                            @if(isset($variant))
+                                                <div class="variant-options">
+                                                    <span class="badge bg-light text-dark border">{{ $variant->combination_code }}</span>
+                                                </div>
+                                            @else
+                                                <span class="text-muted">No variant selected</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="fw-bold">
+                                                @if(isset($variant))
+                                                    {{ number_format($variant->price, 0) }}
+                                                @else
+                                                    {{ number_format($product->price, 0) }}
+                                                @endif
+                                                VND
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center">
+                                                <div class="input-group quantity-control" style="max-width: 120px;">
+                                                    <input type="text" class="form-control text-center"
+                                                           value="{{ $quantity }}" readonly>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center fw-bold text-primary">
+                                            @php
+                                                $price = isset($variant) ? $variant->price : $product->price;
+                                                $total = $price * $quantity;
+                                            @endphp
+                                            {{ number_format($total, 0) }} VND
+                                        </td>
+                                    </tr>
+                                    @endif
+                                </tbody>
+                                <tfoot class="table-group-divider">
+                                    <tr>
+                                        <th colspan="5" class="text-end">Subtotal:</th>
+                                        <td class="text-center">
+                                            @if(isset($product))
+                                                @php
+                                                    $price = isset($variant) ? $variant->price : $product->price;
+                                                    $total = $price * $quantity;
+                                                @endphp
+                                                <strong id="cart-total" class="text-primary">{{ number_format($total, 0) }} VND</strong>
+                                            @else
+                                                <strong id="cart-total" class="text-primary">0 VND</strong>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </form>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Billing Details Card -->
+                <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-circle text-primary me-2"></i>
+                            Billing Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="order-form" action="{{ route('orderNow.store', [
+                            'product_id' => $product->id,
+                            'variant_id' => $variant->id ?? null,
+                            'quantity' => $quantity
+                        ]) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="full_name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Your name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="your@email.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                                <input type="text" id="address" name="address" class="form-control" placeholder="Your address" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="text" id="phone" name="phone" class="form-control" placeholder="Your phone number">
+                            </div>
+                            <div class="mb-4">
+                                <label for="notes" class="form-label">Order Notes</label>
+                                <textarea id="notes" name="notes" class="form-control" rows="2" placeholder="Special instructions..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 mb-3">
+                                <i class="fas fa-shopping-bag me-2"></i> Place Order Now
+                            </button>
+
+                            <div class="text-center">
+                                <small class="text-muted">By placing your order, you agree to our <a href="#" class="text-decoration-none">Terms of Service</a></small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- End Billing Details -->
     </div>
 </main>
 
 <style>
-    /* Custom CSS for better visual */
+    /* Modern Cart Page Styling */
     .cart-page {
-        padding-bottom: 3rem;
+        min-height: calc(100vh - 120px);
+    }
+
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .quantity-control .btn {
+        padding: 0.375rem 0.75rem;
+    }
+
+    .quantity-control .form-control {
+        padding: 0.375rem;
+        text-align: center;
+    }
+
+    .table th {
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #495057;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .sticky-top {
+        z-index: 10;
     }
 
     .product-thumbnail {
@@ -162,81 +250,57 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        background: white;
+        border-radius: 8px;
+        padding: 5px;
     }
 
-    .product-thumbnail img {
-        max-height: 100%;
-        object-fit: contain;
-    }
-
-    .quantity-control {
-        max-width: 120px;
-    }
-
-    .table th {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
-    }
-
-    .table tfoot th {
-        font-size: 1rem;
-    }
-
-    .billing-details {
-        background-color: #f8f9fa;
-        border: 1px solid #eee;
-    }
-
-    .variant-options {
-        line-height: 1.3;
-    }
-
-    @media (max-width: 767.98px) {
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+    @media (max-width: 991.98px) {
+        .sticky-top {
+            position: relative !important;
         }
+    }
+
+    /* Smooth transitions */
+    .fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.delete-cart-form').forEach(form => {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const cartId = this.dataset.cartId;
-                if (confirm('Are you sure you want to remove this product?')) {
-                    fetch(this.action, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({ cart_id: cartId })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            document.querySelector(`tr[data-cart-id="${cartId}"]`).remove();
-                            updateCartTotal();
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        document.getElementById('order-form').addEventListener('submit', function(e) {
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
                 }
             });
-        });
 
-        function updateCartTotal() {
-            let total = 0;
-            document.querySelectorAll('.item-total').forEach(el => {
-                total += parseFloat(el.dataset.itemTotal);
-            });
-            document.getElementById('cart-total').textContent = total.toLocaleString() + ' VND';
-        }
+            if (!isValid) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Missing Information',
+                    text: 'Please fill in all required fields',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    position: 'top-end',
+                    toast: true
+                });
+            }
+        });
     });
 </script>
 @endsection

@@ -330,6 +330,8 @@
                             <script>
                                 // Khi submit form MOMO, lấy dữ liệu từ form order và gán vào input hidden
                                 document.getElementById('momo-form').addEventListener('submit', function(e) {
+                                    // Cảnh báo: Đơn hàng sẽ không được tạo nếu chỉ submit form này!
+                                    // Nên submit form order trước hoặc tạo đơn hàng ở backend khi callback MOMO thành công.
                                     document.getElementById('momo_full_name').value = document.getElementById('full_name').value;
                                     document.getElementById('momo_email').value = document.getElementById('email').value;
                                     document.getElementById('momo_address').value = document.getElementById('address').value;
@@ -338,7 +340,10 @@
                                     document.getElementById('momo_total_after_discount').value = document.getElementById('order-total-after-discount').value;
                                 });
                             </script>
-
+                            {{--
+                                Lưu ý: Đơn hàng sẽ không được tạo nếu chỉ submit form MOMO!
+                                Bạn cần xử lý tạo đơn hàng ở backend khi callback MOMO thành công, hoặc submit form order trước khi thanh toán MOMO.
+                            --}}
                         </div>
                     </div>
                 </div>
@@ -347,111 +352,315 @@
     </main>
 
     <style>
-        /* Custom CSS for better visual */
-        .cart-page {
-            padding-bottom: 3rem;
-            background-color: #f8fafc;
+    /* Modern Cart Page Styling */
+    .cart-page {
+        background-color: #f9fafc;
+        padding-bottom: 4rem;
+    }
+
+    /* Enhanced Header Section */
+    .bg-light.py-3 {
+        background-color: #ffffff !important;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .breadcrumb {
+        padding: 0.5rem 1rem;
+        background-color: transparent;
+    }
+
+    .breadcrumb-item a {
+        color: #5a6a85;
+        transition: color 0.3s;
+    }
+
+    .breadcrumb-item a:hover {
+        color: #3b82f6;
+        text-decoration: none;
+    }
+
+    /* Main Title Section */
+    .text-center.mb-5 h1 {
+        font-size: 2.5rem;
+        letter-spacing: -0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .text-center.mb-5 .lead {
+        color: #64748b;
+        font-weight: 400;
+    }
+
+    .divider {
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+        border-radius: 2px;
+        margin: 1rem auto;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Table Styling */
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        background-color: #f8fafc;
+        color: #4b5563;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        border-bottom-width: 1px;
+        padding: 1rem 1.5rem;
+    }
+
+    .table tbody td {
+        padding: 1.25rem 1.5rem;
+        vertical-align: middle;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .table tfoot td, .table tfoot th {
+        border-top: 2px solid #f1f5f9;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    /* Product Image */
+    .product-thumbnail {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        background-color: white;
+        padding: 5px;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-thumbnail img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+    /* Remove Button */
+    .btn-outline-danger {
+        border-color: #fecaca;
+        color: #ef4444;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #ef4444;
+        border-color: #ef4444;
+    }
+
+    /* Quantity Input */
+    .quantity-control {
+        max-width: 120px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .js-quantity-input {
+        border-left: none;
+        border-right: none;
+        text-align: center;
+        font-weight: 500;
+    }
+
+    /* Price Styling */
+    .text-primary {
+        color: #3b82f6 !important;
+    }
+
+    .fw-bold.text-primary {
+        font-weight: 600;
+    }
+
+    /* Voucher Cards */
+    .voucher-card:not(.bg-light) {
+        background-color: white;
+        border-left: 4px solid #3b82f6;
+    }
+
+    .voucher-card .card-body {
+        padding: 1.25rem;
+    }
+
+    .voucher-card .badge.bg-success {
+        background-color: #10b981 !important;
+    }
+
+    .voucher-card .badge.bg-warning {
+        background-color: #f59e0b !important;
+    }
+
+    .voucher-card .badge.bg-primary {
+        background-color: #3b82f6 !important;
+    }
+
+    /* Selected Voucher */
+    #selected-voucher .alert {
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        background-color: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+    }
+
+    /* Form Styling */
+    .form-control, .form-select {
+        border: 1px solid #e2e8f0;
+        padding: 0.625rem 1rem;
+        border-radius: 8px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .input-group-text {
+        background-color: #f8fafc;
+        border-color: #e2e8f0;
+        color: #64748b;
+    }
+
+    /* Order Summary */
+    .list-group-item {
+        padding: 1rem 0;
+        border-color: #f1f5f9;
+    }
+
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+
+    .bg-light {
+        background-color: #f8fafc !important;
+    }
+
+    /* Checkout Button */
+    .btn-primary {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+        padding: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #2563eb;
+        border-color: #2563eb;
+        transform: translateY(-2px);
+    }
+
+    /* MOMO Payment Button */
+    .btn-default.check_out {
+        background-color: #a50064;
+        color: white;
+        border: none;
+        padding: 1rem;
+        margin-top: 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        width: 100%;
+        transition: all 0.3s;
+    }
+
+    .btn-default.check_out:hover {
+        background-color: #7a0048;
+        transform: translateY(-2px);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 767.98px) {
+        .table-responsive {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
 
-        .text-gradient-primary {
-            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
+        .table thead {
+            display: none;
         }
 
-        .divider {
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
-            margin: 15px auto;
+        .table tbody tr {
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .bg-light-primary {
-            background-color: rgba(75, 108, 183, 0.1);
+        .table tbody td {
+            padding: 0.5rem 0;
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table tbody td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #4b5563;
+            margin-right: 1rem;
         }
 
         .product-thumbnail {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            border-radius: 8px;
-            padding: 5px;
+            margin: 0 auto 1rem;
         }
+    }
 
-        .quantity-control {
-            max-width: 120px;
-        }
+    /* Animation Enhancements */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        .table th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            color: #4b6cb7;
-        }
+    .card, .table, .text-center.mb-5 {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
 
-        .table tfoot th {
-            font-size: 1rem;
-        }
+    /* Hover Effects */
+    .table-hover tbody tr:hover {
+        background-color: #f8fafc;
+    }
 
-        .variant-options {
-            line-height: 1.3;
-        }
+    /* Text Enhancements */
+    .fw-semibold {
+        font-weight: 600;
+    }
 
-        .voucher-card {
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 10px;
-            overflow: hidden;
-            border: none;
-        }
-
-        .voucher-card:hover:not(.bg-light) {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .voucher-card.bg-light {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .card {
-            border-radius: 12px;
-            border: none;
-        }
-
-        .input-group-text {
-            background-color: #f8f9fa;
-        }
-
-        @media (max-width: 767.98px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .sticky-top {
-                position: relative !important;
-            }
-        }
-
-        /* Quantity control buttons */
-        .js-quantity-decrement,
-        .js-quantity-increment {
-            width: 36px;
-        }
-
-        .js-quantity-input {
-            width: 50px;
-        }
-    </style>
+    .text-muted {
+        color: #64748b !important;
+    }
+</style>
 
     <script>
         // Tính toán tổng giỏ hàng

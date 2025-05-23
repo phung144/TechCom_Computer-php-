@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,13 @@ class OrderNowController extends Controller
         'order_now_quantity' => $quantity
     ]);
 
+    // Lấy tất cả voucher còn hiệu lực
+    $vouchers = Voucher::where('start_date', '<=', now())
+        ->where('end_date', '>=', now())
+        ->orderBy('discount_value', 'desc')
+        ->get();
+
+
     // Lấy thông tin để hiển thị
     $product = Product::findOrFail($productId);
     $variant = $variantId ? ProductVariant::find($variantId) : null;
@@ -40,7 +48,8 @@ class OrderNowController extends Controller
     return view('client.orderNows.main', [
         'product' => $product,
         'variant' => $variant,
-        'quantity' => $quantity
+        'quantity' => $quantity,
+        'vouchers' => $vouchers,
     ]);
 }
 

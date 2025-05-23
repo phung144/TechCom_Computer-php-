@@ -6,17 +6,19 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Models\Category;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $startOfWeek = Carbon::now()->startOfWeek(); // Monday
         $endOfWeek = Carbon::now()->endOfWeek();     // Sunday
 
         $data = Category::with(['products.orderItems.order' => function ($query) use ($startOfWeek, $endOfWeek) {
-            $query->where('status', 'completed')
+            $query->whereIn('status', ['completed', 'rated'])
                   ->whereBetween('created_at', [$startOfWeek, $endOfWeek]);
         }])->get();
 
@@ -40,16 +42,56 @@ class DashboardController extends Controller
         }
 
         $orderCount = Order::count();
-        $totalOrderValue = Order::sum('total');
-        $sumTotal = Order::where('status', 'completed')->sum('total');
-        $orderCountCompleted = Order::where('status', 'completed')->count();
+        $totalOrderValue = Order::whereIn('status', ["completed","rated"])->sum('total');
+        $sumTotal = Order::whereIn('status', ['completed', 'rated'])->sum('total');
+        $orderCountCompleted = Order::whereIn('status', ['completed', 'rated'])->count();
 
-        $orderCountIncomplete = Order::where('status', '!=', 'completed')->count();
-        $totalIncompleteValue = Order::where('status', '!=', 'completed')->sum('total');
+        $orderCountIncomplete = Order::whereNotIn('status', ['completed', 'rated'])->count();
+        $totalIncompleteValue = Order::whereNotIn('status', ['completed', 'rated'])->sum('total');
 
         $title = 'Tổng đơn đang có';
         $titleCompleted = 'Đơn đã hoàn thành';
         $titleIncomplete = 'Đơn chưa hoàn thành';
+
+        // Lấy filter từ request (default: week)
+        $filter = $request->input('filter', 'week');
+
+        // Thống kê doanh thu theo filter
+        if ($filter == 'day') {
+            $from = Carbon::now()->startOfDay();
+            $to = Carbon::now()->endOfDay();
+            $groupFormat = '%Y-%m-%d';
+        } elseif ($filter == 'month') {
+            $from = Carbon::now()->startOfMonth();
+            $to = Carbon::now()->endOfMonth();
+            $groupFormat = '%Y-%m-%d';
+        } else { // week
+            $from = Carbon::now()->startOfWeek();
+            $to = Carbon::now()->endOfWeek();
+            $groupFormat = '%Y-%m-%d';
+        }
+
+        // Doanh thu theo từng ngày trong khoảng
+        $revenues = Order::select(
+                DB::raw("DATE_FORMAT(created_at, '$groupFormat') as date"),
+                DB::raw("SUM(total) as total")
+            )
+            ->whereIn('status', ['completed', 'rated'])
+            ->whereBetween('created_at', [$from, $to])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Top sản phẩm bán chạy trong khoảng
+        $topProducts = Product::select('products.id', 'products.name', DB::raw('SUM(order_details.quantity) as sold'))
+            ->join('order_details', 'products.id', '=', 'order_details.product_id')
+            ->join('orders', 'order_details.order_id', '=', 'orders.id')
+            ->whereIn('orders.status', ['completed', 'rated'])
+            ->whereBetween('orders.created_at', [$from, $to])
+            ->groupBy('products.id', 'products.name')
+            ->orderByDesc('sold')
+            ->limit(5)
+            ->get();
 
         return view('admin.index', compact(
             'title',
@@ -61,14 +103,17 @@ class DashboardController extends Controller
             'orderCountCompleted',
             'titleIncomplete',
             'orderCountIncomplete',
-            'totalIncompleteValue'
+            'totalIncompleteValue',
+            'revenues',
+            'filter',
+            'topProducts'
         ));
     }
 
     public function getOrderStats()
     {
         $orderCount = Order::count();
-        $totalOrderValue = Order::where('status', 'completed')->sum('total_price');
+        $totalOrderValue = Order::whereIn('status', ["completed","rated"])->sum('total');
 
         return view('admin.index', compact('orderCount', 'totalOrderValue'));
     }

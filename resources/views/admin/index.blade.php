@@ -2,1147 +2,419 @@
 @section('main')
     <div class="content-wrapper">
         <div class="content">
-
+            <!-- Dashboard Header -->
+            <div class="page-header">
+                <h1 class="page-title">Dashboard Overview</h1>
+                <div class="breadcrumb">
+                    <span class="me-1">Last updated:</span>
+                    <span class="text-muted">{{ now()->format('F j, Y, g:i a') }}</span>
+                </div>
+            </div>
 
             <!-- Top Statistics -->
             <div class="row">
-                <a href="{{ route('admin.orders.index') }}">
-                    <div class="col-xl-3 col-sm-6">
-                        <div class="card card-default card-mini">
-                            <div class="card-header">
-                                <h2>{{ number_format($totalOrderValue) }}đ</h2>
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                    </a>
-                                </div>
-                                <div class="sub-title">
-                                    <span class="mr-1">{{ $title }}</span> |
-                                    <span class="mx-1">{{ $orderCount }}</span>
-                                    <i class="mdi mdi-arrow-up-bold text-success"></i>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-wrapper">
-                                    <div>
-                                        <div id="spline-area-1"></div>
+                <div class="col-xl-4 col-sm-6 mb-4">
+                    <div class="card card-statistic h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h6 class="card-title mb-1">TOTAL ORDERS</h6>
+                                    <h2 class="mb-0">{{ number_format($totalOrderValue) }}đ</h2>
+                                    <div class="mt-2">
+                                        <span class="badge bg-light text-dark">{{ $orderCount }} orders</span>
                                     </div>
                                 </div>
+                                <div class="card-icon bg-primary">
+                                    <i class="mdi mdi-cart-outline"></i>
+                                </div>
                             </div>
+                            <a href="{{ route('admin.orders.index') }}" class="stretched-link"></a>
                         </div>
                     </div>
-                </a>
-                <a href="{{ route('admin.orders.index') }}">
-                    <div class="col-xl-3 col-sm-6">
-                        <div class="card card-default card-mini">
-                            <div class="card-header">
-                                <h2>{{ number_format($sumTotal) }}đ</h2>
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                    </a>
-                                </div>
-                                <div class="sub-title">
-                                    <span class="mr-1">{{ $titleCompleted }}</span> |
-                                    <span class="mx-1">{{ $orderCountCompleted }}</span>
-                                    <i class="mdi mdi-arrow-up-bold text-success"></i>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-wrapper">
-                                    <div>
-                                        <div id="spline-area-1"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-                <a href="{{ route('admin.orders.index') }}">
-                    <div class="col-xl-3 col-sm-6">
-                        <div class="card card-default card-mini">
-                            <div class="card-header">
-                                <h2>{{ number_format($totalIncompleteValue) }}đ</h2>
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                    </a>
-                                </div>
-                                <div class="sub-title">
-                                    <span class="mr-1">{{ $titleIncomplete }}</span> |
-                                    <span class="mx-1">{{ $orderCountIncomplete }}</span>
-                                    <i class="mdi mdi-arrow-down-bold text-danger"></i>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-wrapper">
-                                    <div>
-                                        <div id="spline-area-2"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-
-            <div class="row">
-                <div class="col-xl-8">
-
-                    <div class="container mt-4">
-                        <h2>{{ $title }}</h2>
-                        <canvas id="revenueChart"></canvas>
-                    </div>
-
-                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                    <script>
-                        const ctx = document.getElementById('revenueChart').getContext('2d');
-                        const chart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: {!! json_encode(array_column($result, 'category')) !!},
-                                datasets: [{
-                                    label: 'Doanh thu (VND)',
-                                    data: {!! json_encode(array_column($result, 'revenue')) !!},
-                                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        ticks: {
-                                            callback: function(value) {
-                                                return value.toLocaleString('vi-VN') + ' đ';
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    </script>
-
-
                 </div>
 
-            </div>
-
-
-
-            <!-- Table Product -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card card-default">
-                        <div class="card-header">
-                            <h2>Products Inventory</h2>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Yearly Chart
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                <div class="col-xl-4 col-sm-6 mb-4">
+                    <div class="card card-statistic h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h6 class="card-title mb-1">COMPLETED ORDERS</h6>
+                                    <h2 class="mb-0">{{ number_format($sumTotal) }}đ</h2>
+                                    <div class="mt-2">
+                                        <span class="badge bg-light text-dark">{{ $orderCountCompleted }} orders</span>
+                                        <span class="text-success ms-2"><i class="mdi mdi-arrow-up"></i> 100%</span>
+                                    </div>
+                                </div>
+                                <div class="card-icon bg-success">
+                                    <i class="mdi mdi-check-circle-outline"></i>
                                 </div>
                             </div>
+                            <a href="{{ route('admin.orders.index') }}" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-sm-6 mb-4">
+                    <div class="card card-statistic h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h6 class="card-title mb-1">PENDING ORDERS</h6>
+                                    <h2 class="mb-0">{{ number_format($totalIncompleteValue) }}đ</h2>
+                                    <div class="mt-2">
+                                        <span class="badge bg-light text-dark">{{ $orderCountIncomplete }} orders</span>
+                                        <span class="text-danger ms-2"><i class="mdi mdi-arrow-down"></i> 0%</span>
+                                    </div>
+                                </div>
+                                <div class="card-icon bg-warning">
+                                    <i class="mdi mdi-clock-outline"></i>
+                                </div>
+                            </div>
+                            <a href="{{ route('admin.orders.index') }}" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-8 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Revenue Analytics</h5>
+                            <form method="get" class="d-flex align-items-center">
+                                <label class="me-2 mb-0">Filter:</label>
+                                <select name="filter" onchange="this.form.submit()" class="form-select form-select-sm w-auto">
+                                    <option value="day" {{ $filter == 'day' ? 'selected' : '' }}>Daily</option>
+                                    <option value="week" {{ $filter == 'week' ? 'selected' : '' }}>Weekly</option>
+                                    <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Monthly</option>
+                                </select>
+                            </form>
                         </div>
                         <div class="card-body">
-                            <table id="productsTable" class="table table-hover table-product" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Product Name</th>
-                                        <th>ID</th>
-                                        <th>Qty</th>
-                                        <th>Variants</th>
-                                        <th>Committed</th>
-                                        <th>Daily Sale</th>
-                                        <th>Sold</th>
-                                        <th>In Stock</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-01.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Coach Swagger</td>
-                                        <td>24541</td>
-                                        <td>27</td>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>
-                                            <div id="tbl-chart-01"></div>
-                                        </td>
-                                        <td>4</td>
-                                        <td>18</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-02.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Toddler Shoes, Gucci Watch</td>
-                                        <td>24542</td>
-                                        <td>18</td>
-                                        <td>7</td>
-                                        <td>5</td>
-                                        <td>
-                                            <div id="tbl-chart-02"></div>
-                                        </td>
-                                        <td>1</td>
-                                        <td>14</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-03.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Hat Black Suits</td>
-                                        <td>24543</td>
-                                        <td>20</td>
-                                        <td>3</td>
-                                        <td>7</td>
-                                        <td>
-                                            <div id="tbl-chart-03"></div>
-                                        </td>
-                                        <td>6</td>
-                                        <td>26</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-04.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Backpack Gents</td>
-                                        <td>24544</td>
-                                        <td>37</td>
-                                        <td>8</td>
-                                        <td>3</td>
-                                        <td>
-                                            <div id="tbl-chart-04"></div>
-                                        </td>
-                                        <td>6</td>
-                                        <td>7</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-05.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Speed 500 Ignite</td>
-                                        <td>24545</td>
-                                        <td>8</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>
-                                            <div id="tbl-chart-05"></div>
-                                        </td>
-                                        <td>8</td>
-                                        <td>42</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-06.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Olay</td>
-                                        <td>24546</td>
-                                        <td>19</td>
-                                        <td>6</td>
-                                        <td>6</td>
-                                        <td>
-                                            <div id="tbl-chart-06"></div>
-                                        </td>
-                                        <td>79</td>
-                                        <td>12</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-07.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Ledger Nano X</td>
-                                        <td>24547</td>
-                                        <td>61</td>
-                                        <td>46</td>
-                                        <td>18</td>
-                                        <td>
-                                            <div id="tbl-chart-07"></div>
-                                        </td>
-                                        <td>76</td>
-                                        <td>36</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-08.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Surface Laptop 2</td>
-                                        <td>24548</td>
-                                        <td>33</td>
-                                        <td>56</td>
-                                        <td>89</td>
-                                        <td>
-                                            <div id="tbl-chart-08"></div>
-                                        </td>
-                                        <td>38</td>
-                                        <td>5</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-09.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>TIGI Bed Head Superstar Queen</td>
-                                        <td>24549</td>
-                                        <td>3</td>
-                                        <td>9</td>
-                                        <td>15</td>
-                                        <td>
-                                            <div id="tbl-chart-09"></div>
-                                        </td>
-                                        <td>6</td>
-                                        <td>46</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-10.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Wattbike Atom</td>
-                                        <td>24550</td>
-                                        <td>61</td>
-                                        <td>56</td>
-                                        <td>68</td>
-                                        <td>
-                                            <div id="tbl-chart-10"></div>
-                                        </td>
-                                        <td>3</td>
-                                        <td>19</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-11.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Smart Watch</td>
-                                        <td>24551</td>
-                                        <td>19</td>
-                                        <td>76</td>
-                                        <td>38</td>
-                                        <td>
-                                            <div id="tbl-chart-11"></div>
-                                        </td>
-                                        <td>3</td>
-                                        <td>17</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another
-                                                        action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-12.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Magic Bullet Blender</td>
-                                        <td>24552</td>
-                                        <td>12</td>
-                                        <td>30</td>
-                                        <td>14</td>
-                                        <td>
-                                            <div id="tbl-chart-12"></div>
-                                        </td>
-                                        <td>26</td>
-                                        <td>9</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another
-                                                        action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-13.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Kanana rucksack</td>
-                                        <td>24553</td>
-                                        <td>14</td>
-                                        <td>65</td>
-                                        <td>39</td>
-                                        <td>
-                                            <div id="tbl-chart-13"></div>
-                                        </td>
-                                        <td>9</td>
-                                        <td>55</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another
-                                                        action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-14.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Copic Opaque White</td>
-                                        <td>24554</td>
-                                        <td>43</td>
-                                        <td>29</td>
-                                        <td>75</td>
-                                        <td>
-                                            <div id="tbl-chart-14"></div>
-                                        </td>
-                                        <td>7</td>
-                                        <td>15</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another
-                                                        action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="py-0">
-                                            <img src="{{ asset('dist/assets/images/products/products-xs-15.jpg') }}"
-                                                alt="Product Image">
-                                        </td>
-                                        <td>Headphones</td>
-                                        <td>24555</td>
-                                        <td>17</td>
-                                        <td>6</td>
-                                        <td>7</td>
-                                        <td>
-                                            <div id="tbl-chart-15"></div>
-                                        </td>
-                                        <td>6</td>
-                                        <td>98</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle icon-burger-mini" href="#" role="button"
-                                                    id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-right"
-                                                    aria-labelledby="dropdownMenuLink">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another
-                                                        action</a>
-                                                    <a class="dropdown-item" href="#">Something else
-                                                        here</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-
-
-                                </tbody>
-                            </table>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-xl-4">
-                    <!-- Top Customers -->
-                    <div class="card card-default">
-                        <div class="card-header">
-                            <h2>Top Customers</h2>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-borderless table-thead-border">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th class="text-right">Income</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-dark font-weight-bold">Gunter Reich</td>
-                                        <td class="text-right">$2,560</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-dark font-weight-bold">Anke Kirsch</td>
-                                        <td class="text-right">$1,720</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-dark font-weight-bold">Karolina Beer</td>
-                                        <td class="text-right">$1,230</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-dark font-weight-bold">Lucia Christ</td>
-                                        <td class="text-right">$875</td>
-                                    </tr>
-                                </tbody>
-                                <tfoot class="border-top">
-                                    <tr>
-                                        <td><a href="#" class="text-uppercase">See All</a></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-xl-8">
-                    <div class="card card-default">
-                        <div class="card-header">
-                            <h2>Sales by Country</h2>
-                            <div id="country-sales-range" class="date-range">
-                                <i class="mdi mdi-calendar"></i>&nbsp;
-                                <span class="date-holder"></span>
-                                <i class="mdi mdi-menu-down"></i>
+                            <div class="chart-container" style="height: 300px; position: relative;">
+                                <canvas id="revenueChart"></canvas>
                             </div>
                         </div>
-                        <div class="card-body py-0">
-                            <div class="row pb-4">
-                                <div class="col-lg-7 border-right-lg">
-                                    <div class="vec-map-wrapper">
-                                        <div id="home-world" style="height: 100%; width: 100%;"></div>
-                                    </div>
+                        <div class="card-footer bg-light">
+                            <div class="row text-center">
+                                <div class="col-4 border-end">
+                                    <h6 class="mb-0">This {{ $filter }}</h6>
+                                    <p class="text-primary fw-bold mb-0">
+                                        {{ number_format($revenues->last()->total ?? 0) }}đ
+                                    </p>
                                 </div>
-                                <div class="col-lg-5">
-                                    <div class="chart-wrapper">
-                                        <div id="horizontal-bar-chart"></div>
-                                    </div>
+                                <div class="col-4 border-end">
+                                    <h6 class="mb-0">Last {{ $filter }}</h6>
+                                    <p class="text-muted fw-bold mb-0">
+                                        {{ number_format($revenues->slice(-2, 1)->first()->total ?? 0) }}đ
+                                    </p>
+                                </div>
+                                <div class="col-4">
+                                    <h6 class="mb-0">Growth</h6>
+                                    <p class="{{ ($revenues->last()->total ?? 0) > ($revenues->slice(-2, 1)->first()->total ?? 0) ? 'text-success' : 'text-danger' }} fw-bold mb-0">
+                                        @php
+                                            $current = $revenues->last()->total ?? 0;
+                                            $previous = $revenues->slice(-2, 1)->first()->total ?? 1;
+                                            $growth = $previous != 0 ? (($current - $previous) / $previous) * 100 : 0;
+                                        @endphp
+                                        {{ number_format($growth, 1) }}%
+                                        <i class="mdi mdi-arrow-{{ $growth >= 0 ? 'up text-success' : 'down text-danger' }}"></i>
+                                    </p>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-xl-8">
-
-                    <!-- Sales by Product -->
-                    <div class="card card-default">
-                        <div class="card-header align-items-center">
-                            <h2 class="">Sales by Product</h2>
-                            <a href="#" class="btn btn-primary btn-pill" data-toggle="modal"
-                                data-target="#modal-stock">Add Stock</a>
+                <div class="col-xl-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">Top Selling Products</h5>
                         </div>
-                        <div class="card-body">
-                            <div class="tab-content">
-                                <table id="product-sale" class="table table-product " style="width:100%">
-                                    <thead>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="bg-light">
                                         <tr>
-                                            <th>Product Name</th>
-                                            <th>Unit</th>
-                                            <th>Amount</th>
-                                            <th>%sold</th>
-                                            <th class="th-width-250"></th>
+                                            <th>Product</th>
+                                            <th class="text-end">Sold</th>
+                                            <th class="text-end">Revenue</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-
+                                        @foreach($topProducts as $product)
                                         <tr>
-                                            <td>Coach Swagger</td>
-                                            <td>134</td>
-                                            <td>$24541</td>
-                                            <td>35.28%</td>
                                             <td>
-                                                <div class="progress progress-md rounded-0">
-                                                    <div class="progress-bar" role="progressbar" style="width: 70%"
-                                                        aria-valuenow="70%" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar avatar-sm me-3">
+                                                        <span class="avatar-title bg-primary rounded-circle">
+                                                            {{ substr($product->name, 0, 1) }}
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0">{{ Str::limit($product->name, 20) }}</h6>
+                                                        <small class="text-muted">SKU: {{ $product->sku ?? 'N/A' }}</small>
+                                                    </div>
                                                 </div>
                                             </td>
+                                            <td class="text-end">{{ $product->sold }}</td>
+                                            <td class="text-end text-success">{{ number_format($product->revenue) }}đ</td>
                                         </tr>
-
-                                        <tr>
-                                            <td>Toddler Shoes</td>
-                                            <td>119</td>
-                                            <td>$20225</td>
-                                            <td>27.05%</td>
-                                            <td>
-                                                <div class="progress progress-md rounded-0">
-                                                    <div class="progress-bar" role="progressbar" style="width: 55%"
-                                                        aria-valuenow="55%" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Hat Black Suits</td>
-                                            <td>101</td>
-                                            <td>$17,290</td>
-                                            <td>20.25%</td>
-                                            <td>
-                                                <div class="progress progress-md rounded-0">
-                                                    <div class="progress-bar" role="progressbar" style="width: 45%"
-                                                        aria-valuenow="45%" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Backpack Gents</td>
-                                            <td>59</td>
-                                            <td>$1150</td>
-                                            <td>12.50%</td>
-                                            <td>
-                                                <div class="progress progress-md rounded-0">
-                                                    <div class="progress-bar" role="progressbar" style="width: 25%"
-                                                        aria-valuenow="25%" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Speed 500 Ignite</td>
-                                            <td>25</td>
-                                            <td>$590</td>
-                                            <td>02.10%</td>
-                                            <td>
-                                                <div class="progress progress-md rounded-0">
-                                                    <div class="progress-bar" role="progressbar" style="width: 10%"
-                                                        aria-valuenow="10%" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Earphone & Headphone</td>
-                                            <td>23</td>
-                                            <td>$450</td>
-                                            <td>02%</td>
-                                            <td>
-                                                <div class="progress progress-md rounded-0">
-                                                    <div class="progress-bar" role="progressbar" style="width: 8%"
-                                                        aria-valuenow="8%" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Gucci Watch</td>
-                                            <td>32</td>
-                                            <td>$554</td>
-                                            <td>8%</td>
-                                            <td>
-                                                <div class="progress progress-md rounded-0">
-                                                    <div class="progress-bar" role="progressbar" style="width: 8%"
-                                                        aria-valuenow="8%" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>
-
-                </div>
-                <div class="col-xl-4">
-
-                    <!-- Chat -->
-                    <div class="card card-default chat">
-                        <div class="card-header">
-                            <h2>Selena Wagner</h2>
-                            <div class="dropdown dropdown-chat-state">
-                                <button class="dropdown-toggle btn btn-primary btn-rounded-circle" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" data-display="static">
-                                    <i class="mdi mdi-account-alert"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <a href="#" class="user-link">
-                                            <img src="{{ asset('dist/assets/images/user/user-sm-01.jpg') }}"
-                                                alt="User Image">
-                                            <span class="username">anna patuary
-                                                <span class="badge badge-secondary">18</span>
-                                            </span>
-                                            <span class="state active">
-                                                <i class="mdi mdi-circle-medium"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="user-link">
-                                            <img src="{{ asset('dist/assets/images/user/user-sm-02.jpg') }}"
-                                                alt="User Image">
-                                            <span class="username">riman Ghose
-                                                <span class="badge badge-secondary">18</span>
-                                            </span>
-                                            <span class="state">
-                                                1hrs
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="user-link">
-                                            <img src="{{ asset('dist/assets/images/user/user-sm-03.jpg') }}"
-                                                alt="User Image">
-                                            <span class="username">riman Ghose
-                                                <span class="badge badge-secondary">18</span>
-                                            </span>
-                                            <span class="state">
-                                                1hrs
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="user-link">
-                                            <img src="{{ asset('dist/assets/images/user/user-sm-04.jpg') }}"
-                                                alt="User Image">
-                                            <span class="username">riman Ghose
-                                                <span class="badge badge-secondary">18</span>
-                                            </span>
-                                            <span class="state">
-                                                1hrs
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="user-link">
-                                            <img src="{{ asset('dist/assets/images/user/user-sm-05.jpg') }}"
-                                                alt="User Image">
-                                            <span class="username">riman Ghose</span>
-                                            <span class="state">15min</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-body pb-0" data-simplebar style="height: 363px;">
-                            <!-- Media Chat Left -->
-                            <div class="media media-chat">
-                                <img src="{{ asset('dist/assets/images/user/user-sm-01.jpg') }}" class="rounded-circle"
-                                    alt="Avatar Image">
-                                <div class="media-body">
-                                    <div class="text-content">
-                                        <span class="message">Hello my name is anna.</span>
-                                        <time class="time">5 mins ago</time>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Media Chat Right -->
-                            <div class="media media-chat media-chat-right">
-                                <div class="media-body">
-                                    <div class="text-content">
-                                        <span class="message">Hello i am Riman.</span>
-                                        <time class="time">4 mins ago</time>
-                                    </div>
-                                    <div class="text-content">
-                                        <span class="message">I want to know about yourself</span>
-                                        <time class="time">3 mins ago</time>
-                                    </div>
-                                </div>
-                                <img src="{{ asset('dist/assets/images/user/user-sm-02.jpg') }}" class="rounded-circle"
-                                    alt="Avatar Image">
-                            </div>
-
-                            <!-- Media Chat Left -->
-                            <div class="media media-chat">
-                                <img src="{{ asset('dist/assets/images/user/user-sm-01.jpg') }}" class="rounded-circle"
-                                    alt="Avatar Image">
-                                <div class="media-body">
-                                    <div class="text-content">
-                                        <span class="message">Its had resolving otherwise she contented
-                                            therefore.</span>
-                                        <time class="time">1 mins ago</time>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chat-footer">
-                            <form>
-                                <div class="input-group input-group-chat">
-                                    <div class="input-group-prepend">
-                                        <span class="emoticon-icon mdi mdi-emoticon-happy-outline"></span>
-                                    </div>
-                                    <input type="text" class="form-control"
-                                        aria-label="Text input with dropdown button">
-                                </div>
-                            </form>
+                        <div class="card-footer bg-light text-center">
+                            <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-outline-primary">
+                                View All Products <i class="mdi mdi-chevron-right"></i>
+                            </a>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <!-- Stock Modal -->
-            <div class="modal fade modal-stock" id="modal-stock" aria-labelledby="modal-stock" aria-hidden="true">
-                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                    <form action="#">
-                        <div class="modal-content">
-                            <div class="modal-header align-items-center p3 p-md-5">
-                                <h2 class="modal-title" id="exampleModalGridTitle">Add Stock</h2>
-                                <div>
-                                    <button type="button" class="btn btn-light btn-pill mr-1 mr-md-2"
-                                        data-dismiss="modal"> cancel </button>
-                                    <button type="submit" class="btn btn-primary  btn-pill" data-dismiss="modal"> save
-                                    </button>
-                                </div>
-
-                            </div>
-                            <div class="modal-body p3 p-md-5">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <h3 class="h5 mb-5">Product Information</h3>
-                                        <div class="form-group mb-5">
-                                            <label for="new-product">Product Title</label>
-                                            <input type="text" class="form-control" id="new-product"
-                                                placeholder="Add Product">
-                                        </div>
-                                        <div class="form-row mb-4">
-                                            <div class="col">
-                                                <label for="price">Price</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="basic-addon1">$</span>
-                                                    </div>
-                                                    <input type="text" class="form-control" id="price"
-                                                        placeholder="Price" aria-label="Price"
-                                                        aria-describedby="basic-addon1">
-                                                </div>
-                                            </div>
-                                            <div class="col">
-                                                <label for="sale-price">Sale Price</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="basic-addon1">$</span>
-                                                    </div>
-                                                    <input type="text" class="form-control" id="sale-price"
-                                                        placeholder="Sale Price" aria-label="SalePrice"
-                                                        aria-describedby="basic-addon1">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="product-type mb-3 ">
-                                            <label class="d-block" for="sale-price">Product Type <i
-                                                    class="mdi mdi-help-circle-outline"></i> </label>
-                                            <div>
-
-                                                <div class="custom-control custom-radio d-inline-block mr-3 mb-3">
-                                                    <input type="radio" id="customRadio1" name="customRadio"
-                                                        class="custom-control-input" checked="checked">
-                                                    <label class="custom-control-label" for="customRadio1">Physical
-                                                        Good</label>
-                                                </div>
-
-                                                <div class="custom-control custom-radio d-inline-block mr-3 mb-3">
-                                                    <input type="radio" id="customRadio2" name="customRadio"
-                                                        class="custom-control-input">
-                                                    <label class="custom-control-label" for="customRadio2">Digital
-                                                        Good</label>
-                                                </div>
-
-                                                <div class="custom-control custom-radio d-inline-block mr-3 mb-3">
-                                                    <input type="radio" id="customRadio3" name="customRadio"
-                                                        class="custom-control-input">
-                                                    <label class="custom-control-label" for="customRadio3">Service</label>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="editor">
-                                            <label class="d-block" for="sale-price">Description <i
-                                                    class="mdi mdi-help-circle-outline"></i></label>
-                                            <div id="standalone">
-                                                <div id="toolbar">
-                                                    <span class="ql-formats">
-                                                        <select class="ql-font"></select>
-                                                        <select class="ql-size"></select>
-                                                    </span>
-                                                    <span class="ql-formats">
-                                                        <button class="ql-bold"></button>
-                                                        <button class="ql-italic"></button>
-                                                        <button class="ql-underline"></button>
-                                                    </span>
-                                                    <span class="ql-formats">
-                                                        <select class="ql-color"></select>
-                                                    </span>
-                                                    <span class="ql-formats">
-                                                        <button class="ql-blockquote"></button>
-                                                    </span>
-                                                    <span class="ql-formats">
-                                                        <button class="ql-list" value="ordered"></button>
-                                                        <button class="ql-list" value="bullet"></button>
-                                                        <button class="ql-indent" value="-1"></button>
-                                                        <button class="ql-indent" value="+1"></button>
-                                                    </span>
-                                                    <span class="ql-formats">
-                                                        <button class="ql-direction" value="rtl"></button>
-                                                        <select class="ql-align"></select>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div id="editor"></div>
-
-                                            <div class="custom-control custom-checkbox d-inline-block mt-2">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                                <label class="custom-control-label" for="customCheck2">Hide
-                                                    product from published site</label>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="customFile"
-                                                placeholder="please imgae here">
-                                            <span class="upload-image">Click here to <span class="text-primary">add
-                                                    product image.</span> </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+            <!-- Additional Stats Row -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">Recent Activity</h5>
                         </div>
-                    </form>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-sm bg-info me-3">
+                                            <i class="mdi mdi-cart-plus"></i>
+                                        </div>
+                                        <div>
+                                            <p class="mb-0">New order #1234 received</p>
+                                            <small class="text-muted">2 minutes ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-sm bg-success me-3">
+                                            <i class="mdi mdi-account-plus"></i>
+                                        </div>
+                                        <div>
+                                            <p class="mb-0">New customer registered</p>
+                                            <small class="text-muted">15 minutes ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-sm bg-warning me-3">
+                                            <i class="mdi mdi-alert-circle"></i>
+                                        </div>
+                                        <div>
+                                            <p class="mb-0">Low stock alert for Product X</p>
+                                            <small class="text-muted">1 hour ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Sales Funnel</h5>
+                            <span class="badge bg-light text-dark">Last 30 days</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container" style="height: 200px;">
+                                <canvas id="salesFunnelChart"></canvas>
+                            </div>
+                            <div class="mt-4">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div>
+                                        <span class="dot bg-primary"></span>
+                                        <span class="ms-2">Visitors: 1,234</span>
+                                    </div>
+                                    <span class="text-muted">100%</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div>
+                                        <span class="dot bg-info"></span>
+                                        <span class="ms-2">Added to Cart: 456</span>
+                                    </div>
+                                    <span class="text-muted">37%</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div>
+                                        <span class="dot bg-success"></span>
+                                        <span class="ms-2">Completed Orders: 123</span>
+                                    </div>
+                                    <span class="text-muted">10%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <style>
+            .card-statistic {
+                border-radius: 10px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                border: none;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            }
+
+            .card-statistic:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .card-icon {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 24px;
+            }
+
+            .page-header {
+                margin-bottom: 30px;
+            }
+
+            .page-header h1 {
+                font-weight: 600;
+                color: #2c3e50;
+            }
+
+            .chart-container {
+                position: relative;
+            }
+
+            .dot {
+                height: 10px;
+                width: 10px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+
+            .avatar-title {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: 600;
+            }
+
+            .list-group-item {
+                border-left: 0;
+                border-right: 0;
+            }
+
+            .list-group-item:first-child {
+                border-top: 0;
+            }
+
+            .list-group-item:last-child {
+                border-bottom: 0;
+            }
+        </style>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Revenue Chart
+            const revenueLabels = {!! json_encode($revenues->pluck('date')) !!};
+            const revenueData = {!! json_encode($revenues->pluck('total')) !!};
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: revenueLabels,
+                    datasets: [{
+                        label: 'Revenue (VND)',
+                        data: revenueData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw.toLocaleString('vi-VN') + 'đ';
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN') + 'đ';
+                                }
+                            },
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Sales Funnel Chart
+            const funnelCtx = document.getElementById('salesFunnelChart').getContext('2d');
+            new Chart(funnelCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Visitors', 'Added to Cart', 'Completed Orders'],
+                    datasets: [{
+                        data: [1234, 456, 123],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(75, 192, 117, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(75, 192, 117, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        </script>
     </div>
 @endsection
-
-

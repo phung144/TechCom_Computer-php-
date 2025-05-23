@@ -39,8 +39,14 @@ class ProductDetailController extends Controller
             ->where('product_id', $id)
             ->orderBy('created_at', 'desc')
             ->paginate(3); // Hoặc ->get() nếu không cần phân trang
+        // Lấy feedbacks của sản phẩm, phân trang 5 feedback/trang
+        $feedbacks = \App\Models\Feedback::with('user')
+            ->where('product_id', $product->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+
         // Truyền dữ liệu qua view
-        return view('client.products.main', compact('product', 'relatedProducts', 'discountedPrice', 'originalPrice', 'variants', 'comments'));
+        return view('client.products.main', compact('product', 'relatedProducts', 'discountedPrice', 'originalPrice', 'variants', 'comments', 'feedbacks'));
     }
 
     public function comment(Request $request) {

@@ -75,7 +75,8 @@
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="order-info-box">
-                                <h4 class="info-title"><i class="mdi mdi-information-outline"></i> Order Information</h4>
+                                <h4 class="info-title"><i class="mdi mdi-information-outline"></i> Order Information
+                                </h4>
                                 <div class="info-content">
                                     <div class="info-item">
                                         <span class="info-label">ID:</span>
@@ -98,7 +99,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="order-info-box">
-                                <h4 class="info-title"><i class="mdi mdi-cash-multiple"></i> Payment Information</h4>
+                                <h4 class="info-title"><i class="mdi mdi-cash-multiple"></i> Payment Information
+                                </h4>
                                 <div class="info-content">
                                     <div class="info-item">
                                         <span class="info-label">Total:</span>
@@ -166,7 +168,8 @@
                             @method('PUT')
                             <div class="form-row align-items-center">
                                 <div class="col-md-8">
-                                    <select name="status" id="status" class="form-control">
+                                    <select name="status" id="status" class="form-control"
+                                        @if(in_array($order->status, ['completed', 'rated', 'canceled'])) disabled @endif>
                                         <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xác
                                             nhận</option>
                                         <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>
@@ -182,9 +185,18 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <button type="submit" class="btn btn-primary btn-block">
+                                    <button type="submit" class="btn btn-primary btn-block"
+                                        @if(in_array($order->status, ['completed', 'rated', 'canceled'])) disabled @endif>
                                         <i class="mdi mdi-check"></i> Update Status
                                     </button>
+                                </div>
+                            </div>
+                            <div class="form-row mt-3" id="cancel-reason-row" style="display: none;">
+                                <div class="col-12">
+                                    <input type="text" name="cancel_reason" id="cancel_reason" class="form-control"
+                                        placeholder="Nhập lý do hủy đơn..."
+                                        value="{{ old('cancel_reason', $order->cancel_reason) }}"
+                                        @if(in_array($order->status, ['completed', 'rated', 'canceled'])) disabled @endif>
                                 </div>
                             </div>
                         </form>
@@ -481,11 +493,32 @@
     </style>
 
     <script>
-        // Add data-label attributes for responsive table
         document.addEventListener('DOMContentLoaded', function() {
+            const statusSelect = document.getElementById('status');
+            const cancelReasonRow = document.getElementById('cancel-reason-row');
+            const cancelReasonInput = document.getElementById('cancel_reason');
+            function toggleCancelReason() {
+                if (statusSelect.value === 'canceled') {
+                    cancelReasonRow.style.display = '';
+                } else {
+                    cancelReasonRow.style.display = 'none';
+                }
+            }
+            if (statusSelect && cancelReasonRow) {
+                statusSelect.addEventListener('change', toggleCancelReason);
+                toggleCancelReason();
+            }
+            // Disable all controls if completed, rated, or canceled (for JS fallback)
+            @if(in_array($order->status, ['completed', 'rated', 'canceled']))
+                if (statusSelect) statusSelect.disabled = true;
+                if (cancelReasonInput) cancelReasonInput.disabled = true;
+                const updateBtn = document.querySelector('.status-update-box button[type="submit"]');
+                if (updateBtn) updateBtn.disabled = true;
+            @endif
+
+            // Add data-label attributes for responsive table
             const headers = document.querySelectorAll('.product-table thead th');
             const rows = document.querySelectorAll('.product-table tbody tr');
-
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td');
                 cells.forEach((cell, index) => {

@@ -72,33 +72,45 @@ class OrderController extends Controller
     public function updateStatus(Request $request, string $id)
 {
     $order = Order::findOrFail($id);
-
     $request->validate([
-        'status' => 'required|in:pending,processing,shipping,completed,rated,cancelled',
+        'status' => 'required|in:pending,processing,shipping,completed,rated,canceled',
+        'cancel_reason' => 'nullable|string|max:255'
     ]);
 
     $currentStatus = $order->status;
     $newStatus = $request->status;
 
-    // Danh sách trạng thái hợp lệ và trạng thái được phép chuyển tiếp
     $allowedTransitions = [
-        'pending'     => ['processing', 'cancelled'],
-        'processing'  => ['shipping', 'cancelled'],
-        'shipping'    => ['completed', 'cancelled'],
-        'completed'   => ['rated'],
-        'rated'      => [], // Không thể chuyển sang trạng thái khác sau rated
-        'cancelled'   => [], // Không thể chuyển sang trạng thái khác sau cancelled
+        'pending'     => ['processing', 'canceled'],
+        'processing'  => ['shipping', 'canceled'],
+        'shipping'    => ['completed', 'canceled'],
+        'completed'   => [],
+        'rated'      => [],
+        'canceled'   => [],
     ];
 
-    // Kiểm tra nếu chuyển trạng thái không hợp lệ
+    // Nếu chuyển sang canceled, lưu lý do hủy
+    if (
+        ($currentStatus === 'pending' && $newStatus === 'canceled') ||
+        ($currentStatus === 'shipping' && $newStatus === 'canceled')
+    ) {
+        $order->status = $newStatus;
+        $order->cancel_reason = $request->cancel_reason;
+        $order->save();
+        return redirect()->route('admin.orders.show', $id)->with('success', 'Chuyển trạng thái thành công.');
+    }
+
     if (!in_array($newStatus, $allowedTransitions[$currentStatus])) {
         return back()->with('error', "Không thể chuyển trạng thái từ {$currentStatus} thành {$newStatus}.");
     }
 
-    // Cập nhật trạng thái mới
-    $order->update(['status' => $newStatus]);
+    $order->status = $newStatus;
+    // Nếu chuyển sang canceled từ các trạng thái khác (phòng trường hợp mở rộng)
+    if ($newStatus === 'canceled') {
+        $order->cancel_reason = $request->cancel_reason;
+    }
+    $order->save();
 
-    // Nếu trạng thái là "completed", cập nhật doanh số sản phẩm
     if ($newStatus === 'completed') {
         foreach ($order->orderDetails as $detail) {
             $product = $detail->product;
