@@ -15,6 +15,13 @@
     </div>
     @endif
 
+    <!-- Thông báo lỗi -->
+    @if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
+
     <!-- Thông tin người dùng -->
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -29,27 +36,13 @@
 
 
         </div>
-        <div class="card-body border-top d-flex justify-content-between align-items-center">
-            <div>
-                <i class="fas fa-hourglass-half text-success me-2"></i>
-                <span class="text-muted">Created at:</span>
-                <strong>{{ optional($user->created_at)->format('d/m/Y H:i:s') }}</strong>
-            </div>
-            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
-                onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này không?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash-alt"></i> Delete
-                </button>
-            </form>
-        </div>
     </div>
 
     <!-- Form chỉnh sửa -->
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Chỉnh sửa tài khoản</h5>
+            <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-warning btn-sm">Sửa</a>
         </div>
         <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="card-body">
             @csrf
@@ -64,13 +57,13 @@
                     <div class="mb-2">
                         <label for="name" class="form-label">Tên người dùng</label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
-                            name="name" value="{{ old('name', $user->name) }}" disabled>
+                            name="name" value="{{ old('name', $user->name) }}">
                         @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                     <div class="mb-2">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                            name="email" value="{{ old('email', $user->email) }}" disabled>
+                            name="email" value="{{ old('email', $user->email) }}">
                         @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 

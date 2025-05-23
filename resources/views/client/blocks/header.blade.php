@@ -24,7 +24,7 @@
                                     data-unfold-duration="500">
                                     @if(auth()->check())
                                     <i class="ec ec-user mr-1"></i>
-                                    {{ auth()->user()->name }}
+                                    <a href="{{ route('profile.show') }}" class="font-weight-bold text-primary">{{ auth()->user()->name }}</a>
 
                                     @if(auth()->user()->role === 'admin')  {{-- Kiểm tra role admin --}}
                                         <a href="{{ route('admin.home') }}" class="btn btn-link p-0 m-0 align-baseline text-primary ml-2">

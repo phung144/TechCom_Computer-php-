@@ -35,8 +35,9 @@ class ProductDetailController extends Controller
             ->take(12)
             ->get();
 
-            $comments = Comment::with('user')
+            $comments = Comment::with(['user', 'replies.user'])
             ->where('product_id', $id)
+            ->whereNull('parent_id')
             ->orderBy('created_at', 'desc')
             ->paginate(3); // Hoặc ->get() nếu không cần phân trang
         // Lấy feedbacks của sản phẩm, phân trang 5 feedback/trang
@@ -56,10 +57,26 @@ class ProductDetailController extends Controller
             $data = [
                 "comment" => $requestData["comment"],
                 "product_id" => $requestData["product_id"],
-                "user_id" => $Auth
+                "user_id" => $Auth,
+                "parent_id" => NULL
             ];
             Comment::create($data);
         }
+        return back();
+    }
+    public function reply(Request $request, $id)
+    {
+        $request->validate([
+            'comment' => 'required|string|max:255',
+        ]);
+        $adminId = auth()->id();
+        $parentComment = Comment::findOrFail($id);
+        Comment::create([
+            'user_id' => $adminId,
+            'product_id' => $parentComment->product_id,
+            'comment' => $request->comment,
+            'parent_id' => $id,
+        ]);
         return back();
     }
 }

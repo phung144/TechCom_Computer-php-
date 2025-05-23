@@ -16,6 +16,7 @@ use App\Http\Controllers\client\OrderController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\client\OrderNowController;
 use App\Http\Controllers\shop\ShopController as ShopShopController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +74,7 @@ Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
 Route::post('comment', [ProductDetailController::class,'comment'])->name('comment');
+Route::post('comments/{comment}/reply/client', [ProductDetailController::class, 'reply'])->name('comments.reply.client');
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
@@ -94,6 +96,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/order-now/store', [OrderNowController::class, 'store'])->name('orderNow.store');
     Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
+    Route::get('/profile', [App\Http\Controllers\Client\ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Route::get('/admin/home', function () { // /admin/home là đường dẫn chính xác đến view
@@ -109,6 +113,7 @@ Route::get('/logout-admin', function () {
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [App\Http\Controllers\admin\DashboardController::class, 'index'])->name('home');
     Route::resource('products', ProductController::class);
+    Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('carts', AdminCartController::class);
     Route::resource('orders', AdminOrderController::class);
@@ -122,6 +127,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::resource('banners', App\Http\Controllers\admin\BannerController::class);
     Route::patch('banners/{banner}/toggle-status', [App\Http\Controllers\admin\BannerController::class, 'toggleStatus'])->name('banners.toggleStatus');
     Route::resource('vouchers', App\Http\Controllers\admin\VoucherController::class);
+    Route::resource('comments', App\Http\Controllers\admin\CommentController::class);
+    Route::post('comments/{comment}/reply', [App\Http\Controllers\admin\CommentController::class, 'reply'])->name('comments.reply');
 });
 
 Route::put('/variants/{variant}', [VariantOptionProductController::class, 'update'])->name('variantsOption.update');
@@ -133,3 +140,4 @@ Route::post('/momo/payment', [OrderController::class, 'momoPayment'])->name('mom
 Route::get('/momo/return', [OrderController::class, 'momoPaymentCallback'])->name('momo.callback');
 Route::post('/momo/ipn', [OrderController::class, 'momoPaymentIpn'])->name('momo.ipn');
 Route::post('/cart/check-prices', [CartController::class, 'checkPrices'])->name('cart.check-prices');
+Route::get('show-client/{id}', [UserController::class,'showClient']);

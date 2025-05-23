@@ -12,7 +12,8 @@ class Comment extends Model
     protected $fillable = [
         'user_id',
         'product_id',
-        'comment'
+        'comment',
+        'parent_id'
     ];
 
     public function user()
@@ -23,5 +24,17 @@ class Comment extends Model
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    // Bình luận cha
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'parent_id');
+    }
+
+    // Các bình luận con (rep comment)
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'parent_id');
     }
 }

@@ -51,6 +51,12 @@
                     </a>
                 </li>
                 <li>
+                    <a class="sidenav-item-link" href="{{ route('admin.users.index') }}">
+                          <i class="mdi mdi-account"></i>
+                        <span class="nav-text">User</span>
+                    </a>
+                </li>
+                <li>
                     <a class="sidenav-item-link" href="{{ route('admin.products.index') }}">
                         <i class="mdi mdi-cube"></i>
                         <span class="nav-text">Product</span>
@@ -90,9 +96,12 @@
                     </a>
                 </li>
 
-
-
-
+                <li>
+                    <a class="sidenav-item-link" href="{{ route('admin.comments.index') }}">
+                        <i class="mdi mdi-receipt"></i>
+                        <span class="nav-text">Comment</span>
+                    </a>
+                </li>
 
                 <li>
                     <a class="sidenav-item-link" href="{{route('admin.variants.index')}}">

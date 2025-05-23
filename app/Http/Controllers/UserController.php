@@ -54,31 +54,43 @@ class UserController extends Controller
     // Hiển thị chi tiết người dùng (Admin)
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->route('admin.users.index')->with('error', 'Không tìm thấy người dùng!');
+        }
         return view('admin.users.show', compact('user'));
     }
 
     // Hiển thị form chỉnh sửa người dùng (Admin)
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->route('admin.users.index')->with('error', 'Không tìm thấy người dùng!');
+        }
         return view('admin.users.edit', compact('user'));
     }
 
     // Cập nhật người dùng (Admin)
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->route('admin.users.index')->with('error', 'Không tìm thấy người dùng!');
+        }
 
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:user,admin',
         ]);
 
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
         if ($request->filled('password')) {
             $user->password = Hash::make($validated['password']);
         }
-
         $user->role = $validated['role'];
         $user->save();
 
@@ -88,7 +100,14 @@ class UserController extends Controller
     // Xóa người dùng (Admin)
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->route('admin.users.index')->with('error', 'Không tìm thấy người dùng!');
+        }
+        // Không cho phép xóa chính mình
+        if (auth()->id() == $user->id) {
+            return redirect()->route('admin.users.index')->with('error', 'Bạn không thể tự xóa chính mình!');
+        }
         $user->delete();
 
         return redirect()->route('admin.users.index')->with('success', 'Đã xóa người dùng thành công');

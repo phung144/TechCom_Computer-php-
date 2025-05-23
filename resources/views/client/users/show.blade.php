@@ -62,7 +62,7 @@
         <div class="card-header">
             <h5 class="mb-0">Chỉnh sửa tài khoản</h5>
         </div>
-        <form action="{{ route('users.update', $user->id) }}" method="POST" class="card-body">
+        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="card-body">
             @csrf
             @method('PUT')
             <div class="row">

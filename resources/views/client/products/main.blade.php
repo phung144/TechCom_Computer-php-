@@ -272,432 +272,468 @@
             </div>
 
             <!-- Feedback Section -->
-<div class="feedback-section mt-5">
-    <h2 class="mb-4 font-weight-bold text-dark">Customer Reviews</h2>
+            <div class="feedback-section mt-5">
+                <h2 class="mb-4 font-weight-bold text-dark">Customer Reviews</h2>
 
-    <!-- Review Summary -->
-    <div class="review-summary mb-5 p-4 bg-light rounded-lg">
-        <div class="row align-items-center">
-            <div class="col-md-3 text-center mb-3 mb-md-0">
-                <div class="display-4 font-weight-bold text-primary">4.8</div>
-                <div class="rating-stars mb-2">
-                    <i class="fas fa-star text-warning"></i>
-                    <i class="fas fa-star text-warning"></i>
-                    <i class="fas fa-star text-warning"></i>
-                    <i class="fas fa-star text-warning"></i>
-                    <i class="fas fa-star-half-alt text-warning"></i>
-                </div>
-                <small class="text-muted">Based on {{ $feedbacks->total() }} reviews</small>
-            </div>
-            <div class="col-md-9">
-                <div class="rating-bars">
-                    @for($i = 5; $i >= 1; $i--)
-                        <div class="rating-bar-item d-flex align-items-center mb-2">
-                            <div class="text-nowrap mr-2">
-                                <span class="font-weight-bold">{{ $i }}</span>
-                                <i class="fas fa-star text-warning ml-1"></i>
+                <!-- Review Summary -->
+                <div class="review-summary mb-5 p-4 bg-light rounded-lg">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                            <div class="display-4 font-weight-bold text-primary">4.8</div>
+                            <div class="rating-stars mb-2">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star-half-alt text-warning"></i>
                             </div>
-                            <div class="progress flex-grow-1" style="height: 8px;">
-                                <div class="progress-bar bg-warning"
-                                     style="width: {{ rand(70, 100) }}%"></div>
+                            <small class="text-muted">Based on {{ $feedbacks->total() }} reviews</small>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="rating-bars">
+                                @for ($i = 5; $i >= 1; $i--)
+                                    <div class="rating-bar-item d-flex align-items-center mb-2">
+                                        <div class="text-nowrap mr-2">
+                                            <span class="font-weight-bold">{{ $i }}</span>
+                                            <i class="fas fa-star text-warning ml-1"></i>
+                                        </div>
+                                        <div class="progress flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar bg-warning" style="width: {{ rand(70, 100) }}%">
+                                            </div>
+                                        </div>
+                                        <div class="ml-2 text-muted" style="min-width: 30px;">
+                                            {{ rand(10, 50) }}%
+                                        </div>
+                                    </div>
+                                @endfor
                             </div>
-                            <div class="ml-2 text-muted" style="min-width: 30px;">
-                                {{ rand(10, 50) }}%
-                            </div>
-                        </div>
-                    @endfor
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Feedback List -->
-    <div class="feedback-list">
-        @foreach ($feedbacks as $feedback)
-        <div class="feedback-item card mb-4 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex">
-                    <!-- User Avatar -->
-                    <div class="flex-shrink-0 mr-3">
-                        <div class="avatar avatar-lg">
-                            @if ($feedback->user && $feedback->user->image)
-                                <img src="{{ Storage::url($feedback->user->image) }}"
-                                     alt="User" class="rounded-circle">
-                            @else
-                                <div class="avatar-initials bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
-                                    {{ substr($feedback->user->name ?? 'U', 0, 1) }}
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Feedback Content -->
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between mb-2">
-                            <div>
-                                <h5 class="mb-0 font-weight-bold">{{ $feedback->user->name ?? 'Anonymous' }}</h5>
-                                <div class="rating-stars small">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        <i class="fas fa-star{{ $i <= $feedback->rating ? ' text-warning' : ' text-muted' }}"></i>
-                                    @endfor
-                                </div>
-                            </div>
-                            <small class="text-muted">
-                                {{ $feedback->created_at->format('M d, Y') }}
-                            </small>
-                        </div>
-
-                        <div class="feedback-content mb-3">
-                            <p class="mb-0">{{ $feedback->content }}</p>
-                        </div>
-
-                        @if(!empty($feedback->image))
-                        <div class="feedback-images mt-3">
-                            <a href="{{ Storage::url($feedback->image) }}" data-fancybox="feedback-gallery">
-                                <img src="{{ Storage::url($feedback->image) }}"
-                                     class="img-thumbnail mr-2 mb-2"
-                                     style="max-height: 100px;">
-                            </a>
-                        </div>
-                        @endif
-
-                        <div class="feedback-actions mt-3 pt-2 border-top">
-                            <button class="btn btn-sm btn-outline-secondary mr-2">
-                                <i class="far fa-thumbs-up mr-1"></i> Helpful ({{ rand(0, 20) }})
-                            </button>
-                            <button class="btn btn-sm btn-outline-secondary">
-                                <i class="far fa-comment mr-1"></i> Reply
-                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        @endforeach
-    </div>
 
-    <!-- Pagination -->
-    <div class="mt-4 d-flex justify-content-center">
-        {{ $feedbacks->onEachSide(1)->links('pagination::bootstrap-4') }}
-    </div>
-</div>
+                <!-- Feedback List -->
+                <div class="feedback-list">
+                    @foreach ($feedbacks as $feedback)
+                        <div class="feedback-item card mb-4 border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <!-- User Avatar -->
+                                    <div class="flex-shrink-0 mr-3">
+                                        <div class="avatar avatar-lg">
+                                            @if ($feedback->user && $feedback->user->image)
+                                                <img src="{{ Storage::url($feedback->user->image) }}" alt="User"
+                                                    class="rounded-circle">
+                                            @else
+                                                <div
+                                                    class="avatar-initials bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                                    {{ substr($feedback->user->name ?? 'U', 0, 1) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
 
-<!-- Comment Section -->
-<div class="comment-section mt-5">
-    <h2 class="mb-4 font-weight-bold text-dark">Product Discussions</h2>
+                                    <!-- Feedback Content -->
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <div>
+                                                <h5 class="mb-0 font-weight-bold">
+                                                    {{ $feedback->user->name ?? 'Anonymous' }}</h5>
+                                                <div class="rating-stars small">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <i
+                                                            class="fas fa-star{{ $i <= $feedback->rating ? ' text-warning' : ' text-muted' }}"></i>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">
+                                                {{ $feedback->created_at->format('M d, Y') }}
+                                            </small>
+                                        </div>
 
-    <!-- Comment Form -->
-    @auth
-    <div class="comment-form card mb-4 border-0 shadow-sm">
-        <div class="card-body">
-            <div class="d-flex">
-                <div class="flex-shrink-0 mr-3">
-                    <div class="avatar avatar-lg">
-                        @if(Auth::user()->image)
-                            <img src="{{ Storage::url(Auth::user()->image) }}"
-                                 alt="User" class="rounded-circle">
-                        @else
-                            <div class="avatar-initials bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
-                                {{ substr(Auth::user()->name, 0, 1) }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-                <div class="flex-grow-1">
-                    <form action="{{ route('comment') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <div class="form-group mb-3">
-                            <textarea name="comment" class="form-control" rows="3"
-                                      placeholder="Share your thoughts about this product..."
-                                      style="border-radius: 12px;"></textarea>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="notify-replies">
-                                <label class="form-check-label small text-muted" for="notify-replies">
-                                    Notify me about replies
-                                </label>
-                            </div>
-                            <button type="submit" class="btn btn-primary px-4">
-                                <i class="fas fa-paper-plane mr-2"></i> Post Comment
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    @else
-    <div class="alert alert-light d-flex align-items-center mb-4">
-        <i class="fas fa-info-circle text-primary mr-2"></i>
-        <span>Please <a href="{{ route('login') }}" class="font-weight-bold">sign in</a> to post your comment.</span>
-    </div>
-    @endauth
+                                        <div class="feedback-content mb-3">
+                                            <p class="mb-0">{{ $feedback->content }}</p>
+                                        </div>
 
-    <!-- Comment List -->
-    <div class="comment-list">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="mb-0 font-weight-bold">{{ $comments->total() }} Comments</h5>
-            <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                        data-toggle="dropdown">
-                    <i class="fas fa-sort mr-1"></i> Sort by
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#">Newest first</a>
-                    <a class="dropdown-item" href="#">Oldest first</a>
-                    <a class="dropdown-item" href="#">Most liked</a>
-                </div>
-            </div>
-        </div>
+                                        @if (!empty($feedback->image))
+                                            <div class="feedback-images mt-3">
+                                                <a href="{{ Storage::url($feedback->image) }}"
+                                                    data-fancybox="feedback-gallery">
+                                                    <img src="{{ Storage::url($feedback->image) }}"
+                                                        class="img-thumbnail mr-2 mb-2" style="max-height: 100px;">
+                                                </a>
+                                            </div>
+                                        @endif
 
-        @forelse ($comments as $comment)
-        <div class="comment-item card mb-3 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex">
-                    <!-- User Avatar -->
-                    <div class="flex-shrink-0 mr-3">
-                        <div class="avatar">
-                            @if($comment->user->image)
-                                <img src="{{ Storage::url($comment->user->image) }}"
-                                     alt="User" class="rounded-circle">
-                            @else
-                                <div class="avatar-initials bg-info text-white rounded-circle d-flex align-items-center justify-content-center">
-                                    {{ substr($comment->user->name, 0, 1) }}
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Comment Content -->
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between mb-2">
-                            <div>
-                                <h6 class="mb-0 font-weight-bold">{{ $comment->user->name }}</h6>
-                                <small class="text-muted">
-                                    {{ $comment->created_at->diffForHumans() }}
-                                </small>
-                            </div>
-                            @if(Auth::check() && Auth::id() == $comment->user_id)
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-text dropdown-toggle" type="button"
-                                        data-toggle="dropdown">
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#">Edit</a>
-                                    <a class="dropdown-item text-danger" href="#">Delete</a>
+                                        <div class="feedback-actions mt-3 pt-2 border-top">
+                                            <button class="btn btn-sm btn-outline-secondary mr-2">
+                                                <i class="far fa-thumbs-up mr-1"></i> Helpful ({{ rand(0, 20) }})
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary">
+                                                <i class="far fa-comment mr-1"></i> Reply
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            @endif
                         </div>
+                    @endforeach
+                </div>
 
-                        <div class="comment-content mb-3">
-                            <p class="mb-0">{{ $comment->comment }}</p>
-                        </div>
+                <!-- Pagination -->
+                <div class="mt-4 d-flex justify-content-center">
+                    {{ $feedbacks->onEachSide(1)->links('pagination::bootstrap-4') }}
+                </div>
+            </div>
 
-                        <div class="comment-actions d-flex align-items-center">
-                            <button class="btn btn-sm btn-text mr-3 like-btn"
-                                    data-comment-id="{{ $comment->id }}">
-                                <i class="far fa-thumbs-up mr-1"></i>
-                                <span>{{ $comment->likes_count ?? 0 }}</span>
-                            </button>
-                            <button class="btn btn-sm btn-text reply-btn"
-                                    data-comment-id="{{ $comment->id }}">
-                                <i class="far fa-comment-dots mr-1"></i> Reply
-                            </button>
-                        </div>
+            <!-- Comment Section -->
+            <div class="comment-section mt-5">
+                <h2 class="mb-4 font-weight-bold text-dark">Product Discussions</h2>
 
-                        <!-- Replies (if any) -->
-                        @if($comment->replies && $comment->replies->count() > 0)
-                        <div class="replies mt-3 pt-3 border-top">
-                            @foreach($comment->replies as $reply)
-                            <div class="reply-item d-flex mb-3">
+                <!-- Comment Form -->
+                @auth
+                    <div class="comment-form card mb-4 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex">
                                 <div class="flex-shrink-0 mr-3">
-                                    <div class="avatar avatar-sm">
-                                        @if($reply->user->image)
-                                            <img src="{{ Storage::url($reply->user->image) }}"
-                                                 alt="User" class="rounded-circle">
+                                    <div class="avatar avatar-lg">
+                                        @if (Auth::user()->image)
+                                            <img src="{{ Storage::url(Auth::user()->image) }}" alt="User"
+                                                class="rounded-circle">
                                         @else
-                                            <div class="avatar-initials bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center">
-                                                {{ substr($reply->user->name, 0, 1) }}
+                                            <div
+                                                class="avatar-initials bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                                {{ substr(Auth::user()->name, 0, 1) }}
                                             </div>
                                         @endif
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <h6 class="mb-0 font-weight-bold">{{ $reply->user->name }}</h6>
-                                        <small class="text-muted">
-                                            {{ $reply->created_at->diffForHumans() }}
-                                        </small>
-                                    </div>
-                                    <p class="mb-2 small">{{ $reply->comment }}</p>
-                                    <div class="d-flex align-items-center">
-                                        <button class="btn btn-xs btn-text mr-2 like-btn">
-                                            <i class="far fa-thumbs-up mr-1"></i> {{ $reply->likes_count ?? 0 }}
-                                        </button>
+                                    <form action="{{ route('comment') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                        <div class="form-group mb-3">
+                                            <textarea name="comment" class="form-control" rows="3" placeholder="Share your thoughts about this product..."
+                                                style="border-radius: 12px;"></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="notify-replies">
+                                                <label class="form-check-label small text-muted" for="notify-replies">
+                                                    Notify me about replies
+                                                </label>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary px-4">
+                                                <i class="fas fa-paper-plane mr-2"></i> Post Comment
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="alert alert-light d-flex align-items-center mb-4">
+                        <i class="fas fa-info-circle text-primary mr-2"></i>
+                        <span>Please <a href="{{ route('login') }}" class="font-weight-bold">sign in</a> to post your
+                            comment.</span>
+                    </div>
+                @endauth
+
+                <!-- Comment List -->
+                <div class="comment-list">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 font-weight-bold">{{ $comments->total() }} Comments</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                data-toggle="dropdown">
+                                <i class="fas fa-sort mr-1"></i> Sort by
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#">Newest first</a>
+                                <a class="dropdown-item" href="#">Oldest first</a>
+                                <a class="dropdown-item" href="#">Most liked</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    @forelse ($comments as $comment)
+                        <div class="comment-item card mb-3 border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <!-- Comment Content -->
+                                    <div class="flex-grow-1">
+                                        @if ($comment->replies && $comment->replies->count() > 0)
+                                            <div class="replies mt-3 pt-3 border-top">
+                                                    <div class="reply-item d-flex mb-3">
+                                                        <div class="flex-shrink-0 mr-3">
+
+                                                            @if ($comment->user->image)
+                                                                <img src="{{ asset('storage/' . $comment->user->image) }}"
+                                                                    alt="Avatar" class="rounded-circle" width="50"
+                                                                    height="50">
+                                                            @else
+                                                                <img src="{{ asset('images/default-avatar.png') }}"
+                                                                    alt="Avatar" class="rounded-circle" width="50"
+                                                                    height="50">
+                                                            @endif
+                                                        </div>
+                                                        <!-- Nội dung bình luận -->
+                                                        <div class="flex-grow-1">
+                                                            <div
+                                                                class="d-flex justify-content-between align-items-center mb-2">
+                                                                <div>
+                                                                    <h5 class="mb-0 font-weight-bold">
+                                                                        {{ $comment->user->name }}</h5>
+                                                                    <small class="text-muted">
+                                                                        <i
+                                                                            class="far fa-clock mr-1"></i>{{ $comment->created_at->diffForHumans() }}
+                                                                    </small>
+                                                                </div>
+                                                                @if (Auth::check() && Auth::id() == $comment->user_id)
+                                                                    <div class="dropdown">
+                                                                        <button class="btn btn-sm btn-text dropdown-toggle"
+                                                                            type="button" data-toggle="dropdown">
+                                                                            <i class="fas fa-ellipsis-h"></i>
+                                                                        </button>
+                                                                        {{-- <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editCommentModal-{{ $reply->id }}">Sửa</a>
+                                                    <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); document.getElementById('delete-comment-{{ $reply->id }}').submit();">Xóa</a>
+                                                    <form id="delete-comment-{{ $reply->id }}" action="{{ route('comment.delete', $reply->id) }}" method="POST" style="display: none;">
+                                                        @csrf @method('DELETE')
+                                                    </form>
+                                                </div> --}}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="comment-content mb-2">
+                                                                {{ $comment->comment }}
+                                                            </div>
+                                                            <div class="comment-actions d-flex align-items-center">
+                                                                <button class="btn btn-text btn-sm mr-3 like-btn"
+                                                                    data-comment-id="{{ $comment->id }}">
+                                                                    <i class="far fa-thumbs-up mr-1"></i>
+                                                                    <span>{{ $comment->likes_count ?? 0 }}</span>
+                                                                </button>
+                                                                <button class="btn btn-text btn-sm reply-btn"
+                                                                    data-comment-id="{{ $comment->id }}">
+                                                                    <i class="far fa-comment-dots mr-1"></i> Phản hồi
+                                                                </button>
+                                                            </div>
+                                                            <!-- Form rep comment (ẩn, hiện khi bấm Phản hồi) -->
+                                                            <div class="reply-form mt-2"
+                                                                id="reply-form-{{ $comment->id }}"
+                                                                style="display: none;">
+                                                                @if (Auth::check())
+                                                                    <form
+                                                                        action="{{ route('comments.reply.client', $comment->id) }}"
+                                                                        method="POST">
+                                                                        @csrf
+                                                                        <input type="hidden" name="product_id"
+                                                                            value="{{ $product->id }}">
+                                                                        <input type="hidden" name="parent_id"
+                                                                            value="{{ $comment->id }}">
+                                                                        <div class="form-group mb-2">
+                                                                            <textarea name="comment" class="form-control shadow-sm" rows="2" placeholder="Viết phản hồi..."
+                                                                                style="border-radius: 20px;"></textarea>
+                                                                        </div>
+                                                                        <div class="text-right">
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary btn-sm px-3 py-1"
+                                                                                style="border-radius: 20px; background-color: #a49e20; border: none;">
+                                                                                <i class="fas fa-paper-plane mr-1"></i>Gửi
+                                                                                phản hồi
+                                                                            </button>
+                                                                        </div>
+                                                                    </form>
+                                                                @else
+                                                                    <div
+                                                                        class="alert alert-light border mb-2 d-flex align-items-center">
+                                                                        <i
+                                                                            class="fas fa-info-circle mr-2 text-warning"></i>
+                                                                        <span>Vui lòng <a href="{{ route('login') }}"
+                                                                                class="font-weight-bold text-primary">đăng
+                                                                                nhập</a> để phản hồi.</span>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <!-- Hiển thị rep comment -->
+                                                            @if ($comment->replies && $comment->replies->count())
+                                                                <div class="ml-5 mt-3">
+                                                                    @foreach ($comment->replies as $reply)
+                                                                        <div
+                                                                            class="comment-reply mb-2 p-2 bg-light rounded">
+                                                                            <div class="d-flex align-items-center mb-1">
+                                                                                <strong
+                                                                                    class="mr-2 text-primary">{{ $reply->user->name ?? 'Admin' }}</strong>
+                                                                                <small
+                                                                                    class="text-muted">{{ $reply->created_at->diffForHumans() }}</small>
+                                                                            </div>
+                                                                            <div>{{ $reply->comment }}</div>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
-                            @endforeach
                         </div>
-                        @endif
+                    @empty
+                        <div class="empty-state text-center py-5">
+                            <i class="far fa-comments fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No comments yet</h5>
+                            <p class="text-muted">Be the first to share what you think!</p>
+                        </div>
+                    @endforelse
+
+                    <!-- Pagination -->
+                    <div class="mt-4 d-flex justify-content-center">
+                        {{ $comments->onEachSide(1)->links('pagination::bootstrap-4') }}
                     </div>
                 </div>
             </div>
-        </div>
-        @empty
-        <div class="empty-state text-center py-5">
-            <i class="far fa-comments fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted">No comments yet</h5>
-            <p class="text-muted">Be the first to share what you think!</p>
-        </div>
-        @endforelse
 
-        <!-- Pagination -->
-        <div class="mt-4 d-flex justify-content-center">
-            {{ $comments->onEachSide(1)->links('pagination::bootstrap-4') }}
-        </div>
-    </div>
-</div>
-
-<!-- CSS Styles -->
-<style>
-    /* General Styles */
-    .avatar {
-        width: 48px;
-        height: 48px;
-        position: relative;
-    }
-
-    .avatar-lg {
-        width: 56px;
-        height: 56px;
-    }
-
-    .avatar-sm {
-        width: 36px;
-        height: 36px;
-    }
-
-    .avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .avatar-initials {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        font-weight: bold;
-    }
-
-    /* Feedback Section */
-    .review-summary {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-    }
-
-    .rating-bars .progress {
-        border-radius: 4px;
-        background-color: #e9ecef;
-    }
-
-    .rating-stars {
-        color: #ffc107;
-        letter-spacing: 2px;
-    }
-
-    .rating-stars.small {
-        font-size: 0.8rem;
-    }
-
-    /* Comment Section */
-    .comment-form textarea {
-        resize: none;
-        transition: all 0.3s;
-    }
-
-    .comment-form textarea:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
-
-    .comment-item {
-        transition: transform 0.2s;
-    }
-
-    .comment-item:hover {
-        transform: translateY(-2px);
-    }
-
-    .like-btn, .reply-btn {
-        transition: all 0.2s;
-    }
-
-    .like-btn:hover, .reply-btn:hover {
-        color: #007bff !important;
-    }
-
-    .empty-state {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .review-summary .col-md-3 {
-            margin-bottom: 1.5rem;
-        }
-
-        .avatar, .avatar-lg {
-            width: 40px;
-            height: 40px;
-        }
-    }
-</style>
-
-<!-- JavaScript Enhancements -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Fancybox for image gallery
-        if(typeof Fancybox !== 'undefined') {
-            Fancybox.bind("[data-fancybox]", {
-                // Options
-            });
-        }
-
-        // Like button functionality
-        document.querySelectorAll('.like-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const commentId = this.dataset.commentId;
-                // AJAX call to like the comment
-                console.log('Liked comment:', commentId);
-
-                // Temporary UI update
-                const likeCount = this.querySelector('span');
-                if(likeCount) {
-                    const currentLikes = parseInt(likeCount.textContent);
-                    likeCount.textContent = currentLikes + 1;
+            <!-- CSS Styles -->
+            <style>
+                /* General Styles */
+                .avatar {
+                    width: 48px;
+                    height: 48px;
+                    position: relative;
                 }
 
-                this.classList.add('text-primary');
-            });
-        });
+                .avatar-lg {
+                    width: 56px;
+                    height: 56px;
+                }
 
-        // Reply button functionality
-        document.querySelectorAll('.reply-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const commentId = this.dataset.commentId;
-                // Logic to show reply form
-                console.log('Reply to comment:', commentId);
-            });
-        });
-    });
-</script>
+                .avatar-sm {
+                    width: 36px;
+                    height: 36px;
+                }
+
+                .avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                .avatar-initials {
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    font-weight: bold;
+                }
+
+                /* Feedback Section */
+                .review-summary {
+                    background-color: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                }
+
+                .rating-bars .progress {
+                    border-radius: 4px;
+                    background-color: #e9ecef;
+                }
+
+                .rating-stars {
+                    color: #ffc107;
+                    letter-spacing: 2px;
+                }
+
+                .rating-stars.small {
+                    font-size: 0.8rem;
+                }
+
+                /* Comment Section */
+                .comment-form textarea {
+                    resize: none;
+                    transition: all 0.3s;
+                }
+
+                .comment-form textarea:focus {
+                    border-color: #80bdff;
+                    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+                }
+
+                .comment-item {
+                    transition: transform 0.2s;
+                }
+
+                .comment-item:hover {
+                    transform: translateY(-2px);
+                }
+
+                .like-btn,
+                .reply-btn {
+                    transition: all 0.2s;
+                }
+
+                .like-btn:hover,
+                .reply-btn:hover {
+                    color: #007bff !important;
+                }
+
+                .empty-state {
+                    background-color: #f8f9fa;
+                    border-radius: 8px;
+                }
+
+                /* Responsive adjustments */
+                @media (max-width: 768px) {
+                    .review-summary .col-md-3 {
+                        margin-bottom: 1.5rem;
+                    }
+
+                    .avatar,
+                    .avatar-lg {
+                        width: 40px;
+                        height: 40px;
+                    }
+                }
+            </style>
+
+            <!-- JavaScript Enhancements -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Initialize Fancybox for image gallery
+                    if (typeof Fancybox !== 'undefined') {
+                        Fancybox.bind("[data-fancybox]", {
+                            // Options
+                        });
+                    }
+
+                    // Like button functionality
+                    document.querySelectorAll('.like-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const commentId = this.dataset.commentId;
+                            // AJAX call to like the comment
+                            console.log('Liked comment:', commentId);
+
+                            // Temporary UI update
+                            const likeCount = this.querySelector('span');
+                            if (likeCount) {
+                                const currentLikes = parseInt(likeCount.textContent);
+                                likeCount.textContent = currentLikes + 1;
+                            }
+
+                            this.classList.add('text-primary');
+                        });
+                    });
+
+                    // Reply button functionality
+                    document.querySelectorAll('.reply-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const commentId = this.dataset.commentId;
+                            // Logic to show reply form
+                            console.log('Reply to comment:', commentId);
+                        });
+                    });
+                });
+            </script>
 
 
         </div>
@@ -836,7 +872,7 @@
                         const variantPrice = parseFloat(this.dataset.variantPrice); // Giá gốc
                         const discountPercent = parseFloat(this.dataset.discountPercent); // % giảm giá
                         const variantQuantity = parseInt(this.dataset
-                        .variantQuantity); // Số lượng tồn kho
+                            .variantQuantity); // Số lượng tồn kho
 
                         // 4. Tính toán giá sau khi giảm (nếu có)
                         const finalPrice = discountPercent > 0 ?
@@ -958,4 +994,22 @@
             });
         </script>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.reply-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var commentId = this.getAttribute('data-comment-id');
+                    var form = document.getElementById('reply-form-' + commentId);
+                    if (form) {
+                        if (form.style.display === 'none') {
+                            form.style.display = 'block';
+                        } else {
+                            form.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
