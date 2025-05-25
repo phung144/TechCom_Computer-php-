@@ -64,11 +64,12 @@ class ShopController extends Controller
 public function search(Request $request)
 {
     $query = $request->input('query');
-
+//
     $products = Product::with('variants')
+    //
         ->where('name', 'like', "%$query%")
         ->paginate(12);
-
+//
     foreach ($products as $product) {
         $this->prepareProductPrice($product);
     }
@@ -77,7 +78,9 @@ public function search(Request $request)
 
     return view('shop.blocks.main', compact('products', 'categories'));
 }
-
+//
+//
+//
 
     public function getCategories()
 {
