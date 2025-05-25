@@ -20,8 +20,19 @@ class CartController extends Controller
     {
         $carts = Cart::where('user_id', auth()->id())->with(['product', 'variant.options'])->get();
 
+    // Tính lại subtotal theo giá đã áp dụng discount của product (áp cho cả variant)
     $subtotal = $carts->sum(function($cart) {
-        return $cart->price * $cart->quantity;
+        $basePrice = $cart->variant ? $cart->variant->price : $cart->product->price;
+        $hasDiscount = $cart->product->discount_type && $cart->product->discount_value > 0;
+        $discountedPrice = $basePrice;
+        if ($hasDiscount) {
+            if ($cart->product->discount_type === 'percent' || $cart->product->discount_type === 'percentage') {
+                $discountedPrice = $basePrice * (1 - $cart->product->discount_value / 100);
+            } else {
+                $discountedPrice = $basePrice - $cart->product->discount_value;
+            }
+        }
+        return $discountedPrice * $cart->quantity;
     });
 
     // Lấy tất cả voucher còn hiệu lực
@@ -47,44 +58,43 @@ class CartController extends Controller
         'quantity' => 'required|integer|min:1',
     ]);
 
-    // Lấy thông tin sản phẩm và biến thể
     $product = Product::findOrFail($request->product_id);
     $productVariant = ProductVariant::findOrFail($request->variant_id);
 
-    // Tính giá sau giảm giá
-    $finalPrice = $productVariant->price; // Giá gốc của biến thể
-
-    if ($product->discount_value > 0) {
-        if ($product->discount_type === 'percentage') {
-            $finalPrice = $productVariant->price * (1 - $product->discount_value / 100);
+    // Áp dụng discount của product cho cả variant
+    $basePrice = $productVariant->price;
+    $finalPrice = $basePrice;
+    if ($product->discount_type && $product->discount_value > 0) {
+        if ($product->discount_type === 'percent' || $product->discount_type === 'percentage') {
+            $finalPrice = $basePrice * (1 - $product->discount_value / 100);
         } else {
-            $finalPrice = $productVariant->price - $product->discount_value;
+            $finalPrice = $basePrice - $product->discount_value;
         }
     }
 
-    // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa (cùng user_id, product_id, variant_id)
     $existingCartItem = Cart::where('user_id', auth()->id())
         ->where('product_id', $request->product_id)
         ->where('variant_id', $request->variant_id)
         ->first();
 
     if ($existingCartItem) {
-        // Nếu đã tồn tại, cập nhật số lượng
         $existingCartItem->update([
             'quantity' => $existingCartItem->quantity + $request->quantity,
         ]);
     } else {
-        // Nếu chưa tồn tại, thêm mới vào giỏ hàng
         Cart::create([
             'user_id' => auth()->id(),
             'product_id' => $request->product_id,
             'variant_id' => $request->variant_id,
             'quantity' => $request->quantity,
-            'price' => $finalPrice, // Giá sau giảm giá
+            'price' => $finalPrice,
         ]);
     }
-
-    return redirect()->back()->with('success', 'Sản phẩm đã được thêm vào giỏ hàng! 🛒');
+    if ($request->orderNow == 1) {
+        return redirect()->route('cart.index')->with('success', 'Sản phẩm đã được thêm vào giỏ hàng! 🛒');
+    }else{
+        return redirect()->back()->with('success', 'Sản phẩm đã được thêm vào giỏ hàng! 🛒');
+    }
 }
 
 
@@ -109,23 +119,22 @@ class CartController extends Controller
         $cart = Cart::find($id);
         if ($cart) {
             $cart->delete();
-            return response()->json(['success' => true, 'message' => 'Sản phẩm đã được xóa khỏi giỏ hàng.']);
+            return redirect()->back()->with('success', 'Sản phẩm đã được xóa khỏi giỏ hàng.');
         }
-        return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm trong giỏ hàng.']);
+        return redirect()->back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng.');
     }
 
     public function checkPrices(Request $request)
 {
     $changed = [];
     foreach ($request->items as $item) {
-        $variant = $item['variant_id'] ? \App\Models\ProductVariant::find($item['variant_id']) : null;
-        $product = \App\Models\Product::find($item['product_id']);
-        $basePriceDb = $variant ? $variant->price : ($product ? $product->price : 0);
+        if (empty($item['variant_id'])) continue;
+        $variant = \App\Models\ProductVariant::with('product')->find($item['variant_id']);
+        $basePriceDb = $variant ? $variant->price : 0;
         $oldPrice = floatval($item['base_price']);
-
         if ($basePriceDb != $oldPrice) {
             $changed[] = [
-                'name' => $product ? $product->name : 'Sản phẩm',
+                'name' => $variant && $variant->product ? $variant->product->name : 'Sản phẩm',
                 'old_price' => $oldPrice,
                 'new_price' => $basePriceDb
             ];

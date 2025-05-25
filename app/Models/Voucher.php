@@ -15,6 +15,7 @@ class Voucher extends Model
         'discount_type',
         'discount_value',
         'min_order_value',
+        'max_discount',
         'start_date',
         'end_date',
         'is_active',

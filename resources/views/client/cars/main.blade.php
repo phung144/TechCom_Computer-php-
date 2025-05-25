@@ -66,6 +66,19 @@
                             </thead>
                             <tbody>
                                 @foreach ($carts as $cart)
+                                    @php
+                                        $isVariant = $cart->variant ? true : false;
+                                        $basePrice = $isVariant ? $cart->variant->price : $cart->product->price;
+                                        $hasDiscount = $cart->product->discount_type && $cart->product->discount_value > 0;
+                                        $discountedPrice = $basePrice;
+                                        if ($hasDiscount) {
+                                            if ($cart->product->discount_type === 'percent' || $cart->product->discount_type === 'percentage') {
+                                                $discountedPrice = $basePrice * (1 - $cart->product->discount_value / 100);
+                                            } else {
+                                                $discountedPrice = $basePrice - $cart->product->discount_value;
+                                            }
+                                        }
+                                    @endphp
                                     <tr data-cart-id="{{ $cart->id }}" class="align-middle">
                                         <td class="text-center">
                                             <form class="delete-cart-form" action="{{ route('cart.delete', $cart->id) }}"
@@ -85,7 +98,6 @@
                                         </td>
                                         <td>
                                             <h6 class="mb-1 fw-semibold">{{ $cart->product->name }}</h6>
-                                            <small class="text-muted">SKU: {{ $cart->product->sku }}</small>
                                         </td>
                                         <td>
                                             @if ($cart->variant)
@@ -100,8 +112,18 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <span class="fw-bold text-primary">{{ number_format($cart->price, 0) }}
-                                                VND</span>
+                                            <span class="fw-bold text-primary">
+                                                @if ($hasDiscount)
+                                                    <span class="text-decoration-line-through text-muted me-1">
+                                                        {{ number_format($basePrice, 0) }} VND
+                                                    </span>
+                                                    <span class="fw-bold text-danger">
+                                                        {{ number_format($discountedPrice, 0) }} VND
+                                                    </span>
+                                                @else
+                                                    {{ number_format($basePrice, 0) }} VND
+                                                @endif
+                                            </span>
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center">
@@ -113,8 +135,17 @@
                                             </div>
                                         </td>
                                         <td class="text-center fw-bold item-total text-primary"
-                                            data-item-total="{{ $cart->price * $cart->quantity }}">
-                                            {{ number_format($cart->price * $cart->quantity, 0) }} VND
+                                            data-item-total="{{ $discountedPrice * $cart->quantity }}">
+                                            @if ($hasDiscount)
+                                                <span class="text-decoration-line-through text-muted me-1">
+                                                    {{ number_format($basePrice * $cart->quantity, 0) }} VND
+                                                </span>
+                                                <span class="fw-bold text-danger">
+                                                    {{ number_format($discountedPrice * $cart->quantity, 0) }} VND
+                                                </span>
+                                            @else
+                                                {{ number_format($basePrice * $cart->quantity, 0) }} VND
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -124,7 +155,18 @@
                                     <th colspan="6" class="text-end">Subtotal:</th>
                                     @php
                                         $total = $carts->sum(function ($cart) {
-                                            return $cart->price * $cart->quantity;
+                                            $isVariant = $cart->variant ? true : false;
+                                            $basePrice = $isVariant ? $cart->variant->price : $cart->product->price;
+                                            $hasDiscount = $cart->product->discount_type && $cart->product->discount_value > 0;
+                                            $discountedPrice = $basePrice;
+                                            if ($hasDiscount) {
+                                                if ($cart->product->discount_type === 'percent' || $cart->product->discount_type === 'percentage') {
+                                                    $discountedPrice = $basePrice * (1 - $cart->product->discount_value / 100);
+                                                } else {
+                                                    $discountedPrice = $basePrice - $cart->product->discount_value;
+                                                }
+                                            }
+                                            return $discountedPrice * $cart->quantity;
                                         });
                                     @endphp
                                     <td class="text-center">
@@ -155,7 +197,9 @@
                                     data-voucher-id="{{ $voucher->id }}"
                                     data-discount-type="{{ $voucher->discount_type }}"
                                     data-discount-value="{{ $voucher->discount_value }}"
-                                    data-min-order="{{ $voucher->min_order_value }}" onclick="applyVoucher(this)">
+                                    data-min-order="{{ $voucher->min_order_value }}"
+                                    data-max-discount="{{ $voucher->max_discount ?? 0 }}" {{-- thêm max_discount --}}
+                                    onclick="applyVoucher(this)">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
@@ -174,6 +218,10 @@
                                                     </span>
                                                     <small class="text-muted">
                                                         Min order: {{ number_format($voucher->min_order_value) }} VND
+                                                        @if (!empty($voucher->max_discount) && $voucher->max_discount > 0)
+                                                            <br>
+                                                            Max discount: {{ number_format($voucher->max_discount) }} VND
+                                                        @endif
                                                     </small>
                                                 </div>
                                             </div>
@@ -680,15 +728,18 @@
             currentVoucher = {
                 id: element.dataset.voucherId,
                 code: element.querySelector('.card-title').textContent,
-                // Sửa lại: phân biệt percent và fixed
                 type: element.dataset.discountType, // 'percent' hoặc 'fixed'
                 value: parseFloat(element.dataset.discountValue),
-                minOrder: minOrder
+                minOrder: minOrder,
+                maxDiscount: parseFloat(element.dataset.maxDiscount) || 0 // lấy max_discount
             };
 
             // Tính toán giảm giá
             if (currentVoucher.type === 'percent') {
                 discountAmount = subtotal * (currentVoucher.value / 100);
+                if (currentVoucher.maxDiscount > 0) {
+                    discountAmount = Math.min(discountAmount, currentVoucher.maxDiscount);
+                }
             } else {
                 discountAmount = Math.min(currentVoucher.value, subtotal);
             }
@@ -698,7 +749,11 @@
 
             let discountText = '';
             if (currentVoucher.type === 'percent') {
-                discountText = `${currentVoucher.value}% off (${discountAmount.toLocaleString()} VND)`;
+                discountText = `${currentVoucher.value}% off (${discountAmount.toLocaleString()} VND`;
+                if (currentVoucher.maxDiscount > 0) {
+                    discountText += `, max ${currentVoucher.maxDiscount.toLocaleString()} VND`;
+                }
+                discountText += ')';
             } else {
                 discountText = `${discountAmount.toLocaleString()} VND off`;
             }
@@ -756,34 +811,75 @@
             }
         }
 
+        // Lấy danh sách sản phẩm trong cart để kiểm tra giá (chỉ dùng variant_id và base_price)
+        function getCartItemsForPriceCheck() {
+            const items = [];
+            @foreach ($carts as $cart)
+                items.push({
+                    variant_id: {{ $cart->variant_id }},
+                    base_price: {{ $cart->variant ? $cart->variant->price : 0 }}
+                });
+            @endforeach
+            return items;
+        }
+
+        // Kiểm tra giá trước khi submit order/momo
+        async function checkPricesBeforeSubmit(e, submitCallback) {
+            e.preventDefault();
+            try {
+                const response = await fetch('{{ route('cart.check-prices') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        items: getCartItemsForPriceCheck()
+                    })
+                });
+                const data = await response.json();
+                if (data.changed && data.changed.length > 0) {
+                    let html = '<ul style="text-align:left">';
+                    data.changed.forEach(item => {
+                        html += `<li><b>${item.name}</b>: Giá cũ <span style="color:#888">${item.old_price.toLocaleString()} VND</span> &rarr; Giá mới <span style="color:#e74c3c">${item.new_price.toLocaleString()} VND</span></li>`;
+                    });
+                    html += '</ul>';
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Giá sản phẩm đã thay đổi!',
+                        html: 'Một số sản phẩm đã thay đổi giá:<br>' + html + '<br>Vui lòng kiểm tra lại giỏ hàng.',
+                        confirmButtonText: 'OK',
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                    return false;
+                } else {
+                    // Không có thay đổi giá, tiếp tục submit
+                    submitCallback();
+                }
+            } catch (err) {
+                Swal.fire('Lỗi', 'Không thể kiểm tra giá sản phẩm. Vui lòng thử lại!', 'error');
+            }
+        }
+
+        // Hook vào nút Place Order và MOMO
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.delete-cart-form').forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    const cartId = this.dataset.cartId;
-                    if (confirm('Are you sure you want to remove this product?')) {
-                        fetch(this.action, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                },
-                                body: JSON.stringify({
-                                    cart_id: cartId
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    document.querySelector(`tr[data-cart-id="${cartId}"]`)
-                                        .remove();
-                                    updateCartTotal();
-                                } else {
-                                    alert(data.message);
-                                }
-                            })
-                            .catch(error => console.error('Error:', error));
-                    }
+                    Swal.fire({
+                        title: 'Bạn có chắc muốn xóa sản phẩm này?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Xóa',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
                 });
             });
 
@@ -793,6 +889,23 @@
                     total += parseFloat(el.dataset.itemTotal);
                 });
                 document.getElementById('cart-total').textContent = total.toLocaleString() + ' VND';
+            }
+
+            // --- Các logic kiểm tra giá trước khi đặt hàng ---
+            // Place Order
+            const orderForm = document.getElementById('order-form');
+            if (orderForm) {
+                orderForm.addEventListener('submit', function(e) {
+                    checkPricesBeforeSubmit(e, () => orderForm.submit());
+                });
+            }
+
+            // Thanh toán MOMO
+            const momoForm = document.getElementById('momo-form');
+            if (momoForm) {
+                momoForm.addEventListener('submit', function(e) {
+                    checkPricesBeforeSubmit(e, () => momoForm.submit());
+                });
             }
         });
     </script>

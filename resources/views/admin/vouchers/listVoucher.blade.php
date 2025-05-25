@@ -17,6 +17,7 @@
                                 <th>Discount Type</th>
                                 <th>Discount Value</th>
                                 <th>Min Order Value</th>
+                                <th>Max Value</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Active</th>
@@ -34,6 +35,9 @@
                                     </td>
                                     <td>
                                         {{ $voucher->min_order_value !== null ? number_format($voucher->min_order_value) . ' VND' : '-' }}
+                                    </td>
+                                    <td>
+                                        {{ $voucher->max_discount !== null ? number_format($voucher->max_discount) . ' VND' : '-' }}
                                     </td>
                                     <td>{{ $voucher->start_date }}</td>
                                     <td>{{ $voucher->end_date }}</td>

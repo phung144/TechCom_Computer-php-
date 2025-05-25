@@ -216,11 +216,13 @@
                         <div class="d-inline">
                             @auth
                                 <!-- Form mua ngay cho user đã đăng nhập -->
-                                <form action="{{ route('orderNow.index') }}" method="GET" id="order-now-form">
+                                <form action="{{ route('cart.add') }}" method="POST" id="order-now-form">
+                                    @csrf
                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                                     <input type="hidden" name="variant_id" id="buy-now-variant-id"
                                         value="{{ $variants->first()->id }}">
                                     <input type="hidden" name="quantity" id="buy-now-quantity" value="1">
+                                    <input type="hidden" name="orderNow" value="1">
                                     <button type="submit" class="btn btn-success transition-3d-hover mb-2">
                                         <i class="ec ec-credit-card mr-2 font-size-20"></i> Order Now
                                     </button>

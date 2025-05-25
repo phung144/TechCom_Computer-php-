@@ -49,6 +49,10 @@
                         <label>Min Order Value</label>
                         <input type="number" name="min_order_value" class="form-control" min="0" value="{{ old('min_order_value', $voucher->min_order_value) }}">
                     </div>
+                    <div class="form-group">
+                        <label>Max Discount</label>
+                        <input type="number" name="max_discount" class="form-control" min="0" value="{{ old('max_discount', $voucher->max_discount) }}">
+                    </div>
                     <button type="submit" class="btn btn-primary">Update Voucher</button>
                 </form>
             </div>
