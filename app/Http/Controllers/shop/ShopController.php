@@ -63,7 +63,7 @@ class ShopController extends Controller
 
 public function search(Request $request)
 {
-    $query = $request->input('query');
+    $query = $request->input('query');// Lấy chuỗi tìm kiếm từ request
 //
     $products = Product::with('variants')
     //
@@ -107,7 +107,7 @@ public function getProductsByCategory($id)
 private function prepareProductPrice($product)
 {
     $cheapestVariant = $product->getCheapestVariant();
-
+//if
     if ($cheapestVariant) {
         $product->display_price = $cheapestVariant->price;
         $product->cheapest_variant = $cheapestVariant;
