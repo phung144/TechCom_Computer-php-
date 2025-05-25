@@ -67,7 +67,7 @@ public function search(Request $request)
 //
     $products = Product::with('variants')
     //
-        ->where('name', 'like', "%$query%")
+        ->where('name', 'like', "%$query%")// Tìm kiếm tên sản phẩm có chứa $query
         ->paginate(12);
 //
     foreach ($products as $product) {
