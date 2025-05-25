@@ -12,6 +12,7 @@ class ShopController extends Controller
     public function index(Request $request)
     {
         // Lấy các sản phẩm với thông tin về variants
+        //
         $products = Product::with('variants')->paginate(12);
 
         // Xử lý giá cho từng sản phẩm
