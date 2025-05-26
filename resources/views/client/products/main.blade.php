@@ -598,6 +598,180 @@
                 </div>
             </div>
 
+
+            {{-- List Product Sale --}}
+<div>
+    <div>
+        <div class="mb-6">
+            <!-- Nav Classic -->
+            <div class="position-relative bg-white text-center z-index-2">
+                <ul class="nav nav-classic nav-tab justify-content-center" id="pills-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link js-animation-link active" id="pills-sale-tab" data-toggle="pill" href="#pills-sale" role="tab" aria-controls="pills-sale" aria-selected="true">
+                            <div class="d-flex justify-content-between border-bottom border-color-1 flex-md-nowrap flex-wrap border-sm-bottom-0">
+                                <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">List Product of Category</h3>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade pt-2 show active" id="pills-sale" role="tabpanel" aria-labelledby="pills-sale-tab">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            @foreach($categoryProducts as $product)
+                                @php
+                                    $cheapestVariant = $product->getCheapestVariant();
+                                    $originalPrice = $cheapestVariant ? $cheapestVariant->price : 0;
+                                    $discountType = $product->discount_type;
+                                    $discountValue = $product->discount_value;
+                                    if ($discountType === 'percentage') {
+                                        $finalPrice = $originalPrice * (1 - $discountValue / 100);
+                                    } elseif ($discountType === 'fixed') {
+                                        $finalPrice = max(0, $originalPrice - $discountValue);
+                                    } else {
+                                        $finalPrice = $originalPrice;
+                                    }
+                                @endphp
+                                <div class="swiper-slide">
+                                    <div class="product-item">
+                                        <div class="product-item__outer h-100 w-100">
+                                            <div class="product-item__inner px-xl-4 p-3">
+                                                <div class="product-item__body pb-xl-2">
+                                                    {{-- Discount Badge --}}
+                                                    @if($discountValue > 0)
+                                                        <div class="discount-badge position-absolute top-0 left-0 bg-danger text-white px-2 py-1">
+                                                            @if($discountType === 'percentage')
+                                                                Giảm {{ intval($discountValue) }}%
+                                                            @else
+                                                                Giảm {{ number_format($discountValue, 0) }} VND
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                    <div class="mb-2">
+                                                        <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="d-block text-center">
+                                                            <img class="img-fluid" src="{{ asset(Storage::url($product->image)) }}" alt="{{ $product->name }}">
+                                                        </a>
+                                                    </div>
+                                                    <h5 class="mb-1 product-item__title">
+                                                        <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="text-blue font-weight-bold">{{ $product->name }}</a>
+                                                    </h5>
+                                                    <div class="prodcut-price-sale">
+                                                        @if($discountValue > 0)
+                                                            <span class="original-price">
+                                                                {{ number_format($originalPrice, 0) }} VND
+                                                            </span>
+                                                        @endif
+                                                        <span class="final-price">
+                                                            {{ number_format($finalPrice, 0) }} VND
+                                                        </span>
+                                                    </div>
+                                                    <!-- Add to Cart Button and Sales Count -->
+                                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                                        <span class="text-gray-6 font-size-13">Sold: {{ $product->sales ?? 0 }}</span>
+                                                        <div class="d-none d-xl-block prodcut-add-cart">
+                                                            <form action="{{ route('wishlist.add') }}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                                <input type="hidden" name="quantity" value="1">
+                                                                <button type="submit" class="btn-add-cart btn-danger transition-3d-hover"
+                                                                        style="border: none; outline: none; background: transparent; padding: 0;">
+                                                                    <i class="ec ec-favorites" style="font-size: 20px; color: #ff3a3a;"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Css List Product Sale --}}
+        <style>
+            .swiper-container {
+                width: 100%;
+                max-width: 1200px; /* Giới hạn chiều rộng */
+                margin: 0 auto; /* Căn giữa */
+                overflow: hidden; /* Ẩn phần tràn ra */
+            }
+
+            .swiper-wrapper {
+                display: flex;
+                align-items: center; /* Căn giữa các sản phẩm */
+            }
+
+            .swiper-slide {
+                display: flex;
+                justify-content: center;
+                max-width: 200px; /* Giới hạn kích thước sản phẩm */
+            }
+
+            /* Style for price in List Product Sale */
+            .prodcut-price-sale {
+                display: flex;
+                flex-direction: column; /* Stack prices vertically */
+                align-items: flex-start; /* Align prices to the left */
+            }
+
+            .prodcut-price-sale .final-price {
+                color: #dc3545; /* Red color for discounted price */
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .prodcut-price-sale .original-price {
+                color: #6c757d; /* Gray color for original price */
+                font-size: 14px;
+                text-decoration: line-through;
+                margin-top: 4px; /* Add spacing between prices */
+            }
+            </style>
+
+    {{-- End Css for Best Selling Products --}}
+    </div>
+    {{-- JS List Product Sale --}}
+    <div>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var swiper = new Swiper('.swiper-container', {
+                slidesPerView: 6,  // Hiển thị 6 sản phẩm cùng lúc
+                spaceBetween: 10,  // Khoảng cách giữa các sản phẩm
+                loop: true,  // Cho phép chạy vô hạn
+                autoplay: {
+                    delay: 2000,  // Tự động chạy sau mỗi 2 giây
+                    disableOnInteraction: false // Không dừng khi người dùng tương tác
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev'
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true
+                },
+                breakpoints: {
+                    1024: { slidesPerView: 6 },
+                    768: { slidesPerView: 4 },
+                    480: { slidesPerView: 2 }
+                }
+            });
+        });
+    </script>
+    </div>
+
+</div>
+{{-- End List Product Sale --}}
+
             <!-- CSS Styles -->
             <style>
                 /* General Styles */

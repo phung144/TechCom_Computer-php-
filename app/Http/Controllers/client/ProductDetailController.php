@@ -35,6 +35,12 @@ class ProductDetailController extends Controller
             ->take(12)
             ->get();
 
+        // Lấy các sản phẩm cùng danh mục (trừ sản phẩm hiện tại)
+        $categoryProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(12)
+            ->get();
+
             $comments = Comment::with(['user', 'replies.user'])
             ->where('product_id', $id)
             ->whereNull('parent_id')
@@ -46,8 +52,17 @@ class ProductDetailController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
-        // Truyền dữ liệu qua view
-        return view('client.products.main', compact('product', 'relatedProducts', 'discountedPrice', 'originalPrice', 'variants', 'comments', 'feedbacks'));
+        // Truyền thêm $categoryProducts sang view
+        return view('client.products.main', compact(
+            'product',
+            'relatedProducts',
+            'discountedPrice',
+            'originalPrice',
+            'variants',
+            'comments',
+            'feedbacks',
+            'categoryProducts' // thêm biến này
+        ));
     }
 
     public function comment(Request $request) {
