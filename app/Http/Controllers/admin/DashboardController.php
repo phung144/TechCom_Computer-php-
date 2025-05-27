@@ -42,7 +42,7 @@ class DashboardController extends Controller
         }
 
         $orderCount = Order::count();
-        $totalOrderValue = Order::whereIn('status', ["completed","rated"])->sum('total');
+        $totalOrderValue = Order::whereIn('status', ["completed","rated",'pending', 'shipping', 'processing', 'canceled'])->sum('total');
         $sumTotal = Order::whereIn('status', ['completed', 'rated'])->sum('total');
         $orderCountCompleted = Order::whereIn('status', ['completed', 'rated'])->count();
 

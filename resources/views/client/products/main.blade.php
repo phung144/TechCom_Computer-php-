@@ -57,7 +57,7 @@
                                 <small class="fas fa-star"></small>
                                 <small class="far fa-star text-muted"></small>
                             </div>
-                            <span class="text-secondary font-size-13">(3 customer reviews)</span>
+                            <span class="text-secondary font-size-13">({{ $feedbacks->total() }} customer reviews)</span>
                         </div>
                         <div class="ml-md-3 text-gray-9 font-size-14">Availability:
                             <span class="text-green font-weight-bold"
@@ -109,12 +109,15 @@
                                 $variantOriginalPrice = $variant->price;
                                 $variantDiscountedPrice = $variantOriginalPrice * (1 - $product->discount_value / 100);
                                 $variantShowDiscount = $product->discount_value > 0;
+                                $isOutOfStock = $variant->quantity == 0;
                             @endphp
 
-                            <div class="variant-box {{ $loop->first ? 'selected' : '' }}"
+                            <div class="variant-box {{ $loop->first ? 'selected' : '' }}{{ $isOutOfStock ? ' out-of-stock' : '' }}"
                                 data-variant-id="{{ $variant->id }}" data-variant-price="{{ $variant->price }}"
                                 data-variant-quantity="{{ $variant->quantity }}"
-                                data-discount-percent="{{ $product->discount_value }}">
+                                data-discount-percent="{{ $product->discount_value }}"
+                                @if($isOutOfStock) style="pointer-events: none; opacity: 0.5; position: relative;" @endif
+                            >
 
                                 <div class="variant-specs">
                                     @foreach ($variant->options as $option)
@@ -133,6 +136,12 @@
                                         <del class="original-price">{{ number_format($variantOriginalPrice) }} VND</del>
                                     @endif
                                 </div>
+                                @if($isOutOfStock)
+                                    <div class="out-of-stock-label"
+                                        style="position: absolute; top: 8px; right: 8px; background: #dc3545; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 13px;">
+                                        Hết hàng
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -277,41 +286,7 @@
             <div class="feedback-section mt-5">
                 <h2 class="mb-4 font-weight-bold text-dark">Customer Reviews</h2>
 
-                <!-- Review Summary -->
-                <div class="review-summary mb-5 p-4 bg-light rounded-lg">
-                    <div class="row align-items-center">
-                        <div class="col-md-3 text-center mb-3 mb-md-0">
-                            <div class="display-4 font-weight-bold text-primary">4.8</div>
-                            <div class="rating-stars mb-2">
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star-half-alt text-warning"></i>
-                            </div>
-                            <small class="text-muted">Based on {{ $feedbacks->total() }} reviews</small>
-                        </div>
-                        <div class="col-md-9">
-                            <div class="rating-bars">
-                                @for ($i = 5; $i >= 1; $i--)
-                                    <div class="rating-bar-item d-flex align-items-center mb-2">
-                                        <div class="text-nowrap mr-2">
-                                            <span class="font-weight-bold">{{ $i }}</span>
-                                            <i class="fas fa-star text-warning ml-1"></i>
-                                        </div>
-                                        <div class="progress flex-grow-1" style="height: 8px;">
-                                            <div class="progress-bar bg-warning" style="width: {{ rand(70, 100) }}%">
-                                            </div>
-                                        </div>
-                                        <div class="ml-2 text-muted" style="min-width: 30px;">
-                                            {{ rand(10, 50) }}%
-                                        </div>
-                                    </div>
-                                @endfor
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Feedback List -->
                 <div class="feedback-list">
@@ -365,15 +340,6 @@
                                                 </a>
                                             </div>
                                         @endif
-
-                                        <div class="feedback-actions mt-3 pt-2 border-top">
-                                            <button class="btn btn-sm btn-outline-secondary mr-2">
-                                                <i class="far fa-thumbs-up mr-1"></i> Helpful ({{ rand(0, 20) }})
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-secondary">
-                                                <i class="far fa-comment mr-1"></i> Reply
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -445,17 +411,7 @@
                 <div class="comment-list">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="mb-0 font-weight-bold">{{ $comments->total() }} Comments</h5>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                data-toggle="dropdown">
-                                <i class="fas fa-sort mr-1"></i> Sort by
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Newest first</a>
-                                <a class="dropdown-item" href="#">Oldest first</a>
-                                <a class="dropdown-item" href="#">Most liked</a>
-                            </div>
-                        </div>
+
                     </div>
 
                     @forelse ($comments as $comment)

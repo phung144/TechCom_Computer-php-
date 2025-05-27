@@ -138,7 +138,6 @@
                                         <tr>
                                             <th>Product</th>
                                             <th class="text-end">Sold</th>
-                                            <th class="text-end">Revenue</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -153,12 +152,10 @@
                                                     </div>
                                                     <div>
                                                         <h6 class="mb-0">{{ Str::limit($product->name, 20) }}</h6>
-                                                        <small class="text-muted">SKU: {{ $product->sku ?? 'N/A' }}</small>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="text-end">{{ $product->sold }}</td>
-                                            <td class="text-end text-success">{{ number_format($product->revenue) }}đ</td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -174,7 +171,7 @@
                 </div>
             </div>
 
-            <!-- Additional Stats Row -->
+            {{-- <!-- Additional Stats Row -->
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <div class="card h-100">
@@ -257,7 +254,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <style>

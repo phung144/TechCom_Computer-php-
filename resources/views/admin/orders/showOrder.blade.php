@@ -126,6 +126,17 @@
                                                     {{ htmlspecialchars($order->cancel_reason, ENT_QUOTES, 'UTF-8', false) }})
                                                 </span>
                                             @endif
+                                            {{-- Hiển thị trạng thái thanh toán --}}
+                                            <span class="ml-2">
+                                                <span class="badge
+                                                    @if($order->payment_status === 'paid') badge-success
+                                                    @elseif($order->payment_status === 'unpaid') badge-warning
+                                                    @else badge-secondary
+                                                    @endif
+                                                ">
+                                                    {{ ucfirst($order->payment_status) }}
+                                                </span>
+                                            </span>
                                         </span>
                                     </div>
 

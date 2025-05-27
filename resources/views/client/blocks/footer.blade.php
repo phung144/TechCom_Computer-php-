@@ -7,26 +7,9 @@
                     <div class="row align-items-center">
                         <div class="col-auto flex-horizontal-center">
                             <i class="ec ec-newsletter font-size-40"></i>
-                            <h2 class="font-size-20 mb-0 ml-3">Sign up to Newsletter</h2>
-                        </div>
-                        <div class="col my-4 my-md-0">
-                            <h5 class="font-size-15 ml-4 mb-0">...and receive <strong>$20 coupon for first shopping.</strong></h5>
+                            <h2 class="font-size-20 mb-0 ml-3">Sign up and shop today to receive great deals</h2>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-5">
-                    <!-- Subscribe Form -->
-                    <form class="js-validate js-form-message">
-                        <label class="sr-only" for="subscribeSrEmail">Email address</label>
-                        <div class="input-group input-group-pill">
-                            <input type="email" class="form-control border-0 height-40" name="email" id="subscribeSrEmail" placeholder="Email address" aria-label="Email address" aria-describedby="subscribeButton" required
-                            data-msg="Please enter a valid email address.">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-dark btn-sm-wide height-40 py-2" id="subscribeButton">Sign Up</button>
-                            </div>
-                        </div>
-                    </form>
-                    <!-- End Subscribe Form -->
                 </div>
             </div>
         </div>
@@ -87,15 +70,9 @@
                             </div>
                             <div class="col pl-3">
                                 <div class="font-size-13 font-weight-light">Got questions? Call us 24/7!</div>
-                                <a href="tel:+80080018588" class="font-size-20 text-gray-90">(800) 8001-8588, </a><a href="tel:+0600874548" class="font-size-20 text-gray-90">(0600) 874 548</a>
+                                <a href="tel:+80080018588" class="font-size-20 text-gray-90">0386373687</a><a href="tel:+0600874548" class="font-size-20 text-gray-90"></a>
                             </div>
                         </div>
-                    </div>
-                    <div class="mb-4">
-                        <h6 class="mb-1 font-weight-bold">Contact info</h6>
-                        <address class="">
-                            17 Princess Road, London, Greater London NW1 8JR, UK
-                        </address>
                     </div>
                     <div class="my-4 my-md-4">
                         <ul class="list-inline mb-0 opacity-7">
@@ -131,10 +108,7 @@
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Laptops & Computers</a></li>
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Cameras & Photography</a></li>
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Smart Phones & Tablets</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Video Games & Consoles</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">TV & Audio</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Gadgets</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Car Electronic & GPS</a></li>
+
                             </ul>
                             <!-- End List Group -->
                         </div>
@@ -145,8 +119,7 @@
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Printers & Ink</a></li>
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Software</a></li>
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Office Supplies</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Computer Components</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/product-categories-5-column-sidebar.html">Accesories</a></li>
+
                             </ul>
                             <!-- End List Group -->
                         </div>
@@ -158,10 +131,7 @@
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/my-account.html">My Account</a></li>
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/track-your-order.html">Order Tracking</a></li>
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/wishlist.html">Wish List</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="terms-and-conditions.html">Customer Service</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="terms-and-conditions.html">Returns / Exchange</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="faq.html">FAQs</a></li>
-                                <li><a class="list-group-item list-group-item-action" href="terms-and-conditions.html">Product Support</a></li>
+
                             </ul>
                             <!-- End List Group -->
                         </div>

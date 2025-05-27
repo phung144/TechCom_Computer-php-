@@ -129,15 +129,31 @@ class CartController extends Controller
     $changed = [];
     foreach ($request->items as $item) {
         if (empty($item['variant_id'])) continue;
-        $variant = \App\Models\ProductVariant::with('product')->find($item['variant_id']);
+        $variant = ProductVariant::with('product')->find($item['variant_id']);
         $basePriceDb = $variant ? $variant->price : 0;
         $oldPrice = floatval($item['base_price']);
+        // Kiểm tra thay đổi giá
         if ($basePriceDb != $oldPrice) {
             $changed[] = [
+                'type' => 'price',
                 'name' => $variant && $variant->product ? $variant->product->name : 'Sản phẩm',
                 'old_price' => $oldPrice,
                 'new_price' => $basePriceDb
             ];
+        }
+        // Kiểm tra tồn kho
+        if ($variant && isset($item['quantity'])) {
+            $quantityDb = $variant->quantity;
+            $requestedQty = intval($item['quantity']);
+            if ($quantityDb < $requestedQty) {
+                $changed[] = [
+                    'type' => 'quantity',
+                    'name' => $variant->product ? $variant->product->name : 'Sản phẩm',
+                    'variant' => $variant->variant ?? '',
+                    'available' => $quantityDb,
+                    'requested' => $requestedQty
+                ];
+            }
         }
     }
     return response()->json(['changed' => $changed]);

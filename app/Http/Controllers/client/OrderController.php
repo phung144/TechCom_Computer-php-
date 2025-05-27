@@ -83,7 +83,11 @@ class OrderController extends Controller
                 }
             }
 
-            $subtotal = floatval($request->input('total', 0));
+            $subtotal = $carts->sum(function($cart) {
+                // Đây là một closure (hàm ẩn danh)
+                // ...logic...
+                return $cart->price * $cart->quantity;
+            });
             $totalAfterDiscount = floatval($request->input('total_after_discount', 0));
 
             $order = Order::create([
@@ -179,6 +183,20 @@ class OrderController extends Controller
 
         // Lưu lý do hủy đơn hàng
         $cancelReason = $request->input('cancel_reason');
+
+        // Hoàn lại số lượng sản phẩm/biến thể
+        foreach ($order->orderDetails as $detail) {
+            if ($detail->variant_id) {
+                // Nếu có variant thì hoàn lại cho ProductVariant
+                ProductVariant::where('id', $detail->variant_id)
+                    ->increment('quantity', $detail->quantity);
+            } else {
+                // Nếu không có variant thì hoàn lại cho Product
+                Product::where('id', $detail->product_id)
+                    ->increment('quantity', $detail->quantity);
+            }
+        }
+
         $order->update([
             'status' => 'canceled',
             'cancel_reason' => $cancelReason // Đảm bảo đúng tên trường là cancel_reason

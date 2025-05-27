@@ -84,7 +84,7 @@
                                             <form class="delete-cart-form" action="{{ route('cart.delete', $cart->id) }}"
                                                 method="POST" data-cart-id="{{ $cart->id }}">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle">
+                                                <button type="button" class="btn btn-sm btn-outline-danger rounded-circle delete-cart-btn">
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </form>
@@ -308,11 +308,6 @@
                                             <input type="text" id="phone" name="phone" class="form-control"
                                                 placeholder="+1 (062) 109-9222">
                                         </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="notes" class="form-label">Order Notes (Optional)</label>
-                                        <textarea id="notes" name="notes" class="form-control" rows="3"
-                                            placeholder="Special instructions for your order..."></textarea>
                                     </div>
                                 </div>
                                 <input type="hidden" name="discount_amount" id="discount-amount" value="0">
@@ -817,7 +812,8 @@
             @foreach ($carts as $cart)
                 items.push({
                     variant_id: {{ $cart->variant_id }},
-                    base_price: {{ $cart->variant ? $cart->variant->price : 0 }}
+                    base_price: {{ $cart->variant ? $cart->variant->price : 0 }},
+                    quantity: {{ $cart->quantity }}
                 });
             @endforeach
             return items;
@@ -841,20 +837,24 @@
                 if (data.changed && data.changed.length > 0) {
                     let html = '<ul style="text-align:left">';
                     data.changed.forEach(item => {
-                        html += `<li><b>${item.name}</b>: Giá cũ <span style="color:#888">${item.old_price.toLocaleString()} VND</span> &rarr; Giá mới <span style="color:#e74c3c">${item.new_price.toLocaleString()} VND</span></li>`;
+                        if (item.type === 'price') {
+                            html += `<li><b>${item.name}</b>: Giá cũ <span style="color:#888">${item.old_price.toLocaleString()} VND</span> &rarr; Giá mới <span style="color:#e74c3c">${item.new_price.toLocaleString()} VND</span></li>`;
+                        } else if (item.type === 'quantity') {
+                            html += `<li><b>${item.name}${item.variant ? ' (' + item.variant + ')' : ''}</b>: Chỉ còn <span style="color:#e74c3c">${item.available}</span> sản phẩm, bạn đã chọn <span style="color:#888">${item.requested}</span></li>`;
+                        }
                     });
                     html += '</ul>';
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Giá sản phẩm đã thay đổi!',
-                        html: 'Một số sản phẩm đã thay đổi giá:<br>' + html + '<br>Vui lòng kiểm tra lại giỏ hàng.',
+                        title: 'Có thay đổi trong giỏ hàng!',
+                        html: html + '<br>Vui lòng kiểm tra lại giỏ hàng.',
                         confirmButtonText: 'OK',
                     }).then(() => {
                         window.location.reload();
                     });
                     return false;
                 } else {
-                    // Không có thay đổi giá, tiếp tục submit
+                    // Không có thay đổi giá hoặc thiếu hàng, tiếp tục submit
                     submitCallback();
                 }
             } catch (err) {
@@ -864,9 +864,11 @@
 
         // Hook vào nút Place Order và MOMO
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.delete-cart-form').forEach(form => {
-                form.addEventListener('submit', function(e) {
+            // Sửa lại logic xóa sản phẩm trong cart
+            document.querySelectorAll('.delete-cart-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
                     e.preventDefault();
+                    const form = btn.closest('form');
                     Swal.fire({
                         title: 'Bạn có chắc muốn xóa sản phẩm này?',
                         icon: 'warning',

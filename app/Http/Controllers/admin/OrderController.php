@@ -109,6 +109,12 @@ class OrderController extends Controller
     if ($newStatus === 'canceled') {
         $order->cancel_reason = $request->cancel_reason;
     }
+
+    // Nếu chuyển sang completed hoặc rated thì payment_status = paid
+    if ($newStatus === 'completed' || $newStatus === 'rated') {
+        $order->payment_status = 'paid';
+    }
+
     $order->save();
 
     if ($newStatus === 'completed') {

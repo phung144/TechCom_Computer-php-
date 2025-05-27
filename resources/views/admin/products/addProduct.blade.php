@@ -46,7 +46,7 @@
                         <!-- Phần biến thể sản phẩm -->
                         <div class="card mt-4 mb-4">
                             <div class="card-header bg-light">
-                                <h4>Product Variant</h4>
+                                <h4>Basic Product</h4>
                                 <small class="text-muted">Thêm cấu hình sản phẩm (CPU, RAM, Ổ cứng...)</small>
                             </div>
                             <div class="card-body">
@@ -76,7 +76,7 @@
                             </div>
                         </div>
 
-                        <!-- Giá và số lượng mặc định -->
+                        {{-- <!-- Giá và số lượng mặc định -->
                         <div id="base-price-section" class="{{ old('variants') ? 'd-none' : '' }}">
                             <div class="form-group">
                                 <label for="price">Base Price (VND)</label>
@@ -95,7 +95,7 @@
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
-                        </div>
+                        </div> --}}
 
                         <!-- Phần ảnh sản phẩm -->
                         <div class="form-group">

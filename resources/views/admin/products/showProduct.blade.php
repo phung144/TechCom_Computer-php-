@@ -28,14 +28,14 @@
                             <th>Category</th>
                             <td>{{ $product->category->name ?? 'N/A' }}</td>
                         </tr>
-                        <tr>
+                        {{-- <tr>
                             <th>Price</th>
                             <td>{{ number_format($product->price) }} VND</td>
                         </tr>
                         <tr>
                             <th>Quantity</th>
                             <td>{{ $product->quantity }}</td>
-                        </tr>
+                        </tr> --}}
                     </table>
 
                     <!-- Biến thể sản phẩm -->

@@ -110,6 +110,13 @@
                     </a>
                 </li>
 
+                <li>
+                    <a class="sidenav-item-link" href="{{route('admin.vouchers.index')}}">
+                        <i class="mdi mdi-tag-multiple"></i>
+                        <span class="nav-text">Voucher</span></b>
+                    </a>
+                </li>
+
 
 
 
