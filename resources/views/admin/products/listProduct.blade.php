@@ -17,7 +17,7 @@
                                 <th>Tên sản phẩm</th>
                                 <th>Mô tả</th>
                                 <th>Danh mục</th>
-                                <th>Số lượng</th>
+                                <th>Đã bán</th>
                                 <th>Giảm giá</th>
                                 <th>Bắt đầu giảm giá</th>
                                 <th>Kết thúc giảm giá</th>
