@@ -77,7 +77,7 @@
         <h2 class="mb-4 text-center fw-bold" style="color: #2c3e50; position: relative;">
             <span
                 style="background: linear-gradient(135deg, #3498db, #8e44ad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                🛍️ Your Order History
+                🛍️ Lịch sử đặt hàng
             </span>
             <div
                 style="height: 3px; background: linear-gradient(90deg, #3498db, #8e44ad); width: 100px; margin: 10px auto;">
@@ -90,9 +90,9 @@
                     <div class="empty-icon mb-3" style="font-size: 3rem; color: #95a5a6;">
                         <i class="fas fa-box-open"></i>
                     </div>
-                    <h4 class="mb-3" style="color: #7f8c8d;">Your order list is empty</h4>
+                    <h4 class="mb-3" style="color: #7f8c8d;">Danh sách đơn hàng của bạn đang trống.</h4>
                     <a href="{{ route('products.index') }}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
-                        <i class="fas fa-shopping-bag me-2"></i> Start Shopping Now
+                        <i class="fas fa-shopping-bag me-2"></i> Bắt đầu mua sắm ngay bây giờ
                     </a>
                 </div>
             @else
@@ -105,7 +105,7 @@
                             <div class="order-header p-4" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <span class="order-id fw-bold fs-5" style="color: #2c3e50;">ORDER
+                                        <span class="order-id fw-bold fs-5" style="color: #2c3e50;">ĐẶT HÀNG
                                             #{{ $order->id }}</span>
                                         <span class="ms-3 order-date" style="color: #7f8c8d;">
                                             <i class="far fa-calendar-alt me-1"></i>
@@ -173,7 +173,7 @@
 
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="product-price" style="font-size: 1.1rem;">
-                                                    <span class="text-muted me-2">Unit Price:</span>
+                                                    <span class="text-muted me-2">Đơn giá:</span>
                                                     <span class="fw-bold"
                                                         style="color: #e74c3c;">${{ number_format($detail->price, 2) }}</span>
                                                 </div>
@@ -196,7 +196,7 @@
                                                     <i class="fas fa-map-marker-alt"></i>
                                                 </div>
                                                 <div>
-                                                    <h6 class="mb-0 fw-bold ml-3" style="color: #2c3e50;">Shipping Address</h6>
+                                                    <h6 class="mb-0 fw-bold ml-3" style="color: #2c3e50;">Địa chỉ giao hàng</h6>
                                                     <p class="mb-0 ml-3" style="color: #7f8c8d;">{{ $order->address }}</p>
                                                 </div>
                                             </div>
@@ -206,7 +206,7 @@
                                                     <i class="fas fa-phone"></i>
                                                 </div>
                                                 <div>
-                                                    <h6 class="mb-0 fw-bold ml-3" style="color: #2c3e50;">Contact Number</h6>
+                                                    <h6 class="mb-0 fw-bold ml-3" style="color: #2c3e50;">Số điện thoại</h6>
                                                     <p class="mb-0 ml-3" style="color: #7f8c8d;">{{ $order->phone }}</p>
                                                 </div>
                                             </div>
@@ -215,15 +215,15 @@
                                     <div class="col-md-6 d-flex flex-column align-items-md-end">
                                         <div class="order-summary mb-3 text-end">
                                             <div class="d-flex justify-content-between mb-1">
-                                                <span class="me-3" style="color: #7f8c8d;">Subtotal:</span>
+                                                <span class="me-3" style="color: #7f8c8d;">Tổng phụ:</span>
                                                 <span>{{ number_format($order->total) }} VND</span>
                                             </div>
                                             <div class="d-flex justify-content-between mb-1">
-                                                <span class="me-3" style="color: #7f8c8d;">Shipping:</span>
+                                                <span class="me-3" style="color: #7f8c8d;">Vận chuyển:</span>
                                                 <span>Free</span>
                                             </div>
                                             <div class="d-flex justify-content-between fw-bold fs-4 mt-2">
-                                                <span class="me-3" style="color: #2c3e50;">Total:</span>
+                                                <span class="me-3" style="color: #2c3e50;">Tổng cộng:</span>
                                                 <span style="color: #27ae60;">{{ number_format($order->total) }} VND</span>
                                             </div>
                                         </div>
@@ -233,7 +233,7 @@
                                                     <button type="button"
                                                         class="btn btn-outline-danger rounded-pill px-4 py-2 shadow-sm"
                                                         onclick="styledCancelOrder({{ $order->id }})">
-                                                        <i class="fas fa-times-circle me-1"></i> Cancel Order
+                                                        <i class="fas fa-times-circle me-1"></i> Hủy đơn hàng
                                                     </button>
                                                 @endif
 
@@ -250,7 +250,7 @@
                                                 <a href="{{ route('orders.show', $order->id) }}"
                                                     class="btn btn-primary rounded-pill px-4 shadow-sm"
                                                     style="background: linear-gradient(135deg, #3498db, #8e44ad); border: none;">
-                                                    <i class="fas fa-eye me-1"></i> View Details
+                                                    <i class="fas fa-eye me-1"></i>Chi tiết
                                                 </a>
                                             </div>
                                         </div>
@@ -268,7 +268,8 @@
                 </div>
                 <h3 class="mb-4" style="color: #7f8c8d;">Access Your Order History</h3>
                 <p class="mb-4" style="color: #95a5a6; max-width: 500px; margin: 0 auto;">
-                    Sign in to view your orders, track shipments, and manage your purchases.
+                 
+Đăng nhập để xem đơn hàng, theo dõi lô hàng và quản lý giao dịch mua của bạn.
                 </p>
                 <a href="{{ route('login') }}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm"
                     style="background: linear-gradient(135deg, #3498db, #8e44ad); border: none;">
