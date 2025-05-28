@@ -5,7 +5,7 @@
             <li class="mb-3">
                 <div
                     class="font-weight-bold text-uppercase font-size-16 pb-2 border-bottom border-primary border-width-2 d-inline-block">
-                    Product Categories
+                   Danh mục sản phẩm
                 </div>
             </li>
 
@@ -53,7 +53,7 @@
     <!-- On Sales Products -->
     <div class="mb-8">
         <div class="border-bottom border-color-1 mb-5">
-            <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">On Sales Products</h3>
+            <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Về sản phẩm đang giảm giá</h3>
         </div>
         <ul class="list-unstyled">
             @foreach ($onSaleProducts as $product)

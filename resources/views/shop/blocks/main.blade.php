@@ -89,7 +89,7 @@
                 data-unfold-animation-in="fadeInLeft"
                 data-unfold-animation-out="fadeOutLeft"
                 data-unfold-duration="500">
-                <i class="fas fa-sliders-h"></i> <span class="ml-1">Filters</span>
+                <i class="fas fa-sliders-h"></i> <span class="ml-1">Bộ lọc</span>
             </a>
             <!-- End Account Sidebar Toggle Button -->
         </div>
