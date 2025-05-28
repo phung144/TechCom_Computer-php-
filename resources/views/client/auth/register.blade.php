@@ -35,7 +35,7 @@
                 </form>
             </div>
             <div class="card-footer text-center">
-                <small>Already have an account? <a href="{{ route('login') }}" class="text-primary"> Đăng nhập ở đây </a></small>
+                <small>Bạn đã có tài khoản chưa?<a href="{{ route('login') }}" class="text-primary"> Đăng nhập ở đây </a></small>
             </div>
         </div>
     </div>
