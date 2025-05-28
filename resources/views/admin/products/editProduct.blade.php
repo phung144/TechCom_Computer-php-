@@ -40,42 +40,20 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Description</label>
+                        <label for="description">Description <span class="text-danger">*</span></label>
                         <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror"
-                                  rows="4">{{ old('description', $products->description) }}</textarea>
+                                  rows="4" required>{{ old('description', $products->description) }}</textarea>
                         @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="price">Price ($) <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">$</span>
-                                </div>
-                                <input type="number" name="price" id="price" class="form-control @error('price') is-invalid @enderror"
-                                       step="0.01" min="0" value="{{ old('price', $products->price) }}" >
-                            </div>
-                            @error('price')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
 
                         <div class="form-group col-md-4">
-                            <label for="quantity">Quantity <span class="text-danger">*</span></label>
-                            <input type="number" name="quantity" id="quantity" class="form-control @error('quantity') is-invalid @enderror"
-                                   min="0" value="{{ old('quantity', $products->quantity) }}">
-                            @error('quantity')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label for="sales">Sales</label>
+                            <label for="sales">Sales <span class="text-danger">*</span></label>
                             <input type="number" name="sales" id="sales" class="form-control @error('sales') is-invalid @enderror"
-                                   min="0" value="{{ old('sales', $products->sales) }}">
+                                   min="0" value="{{ old('sales', $products->sales) }}" required>
                             @error('sales')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -83,9 +61,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="image">Product Image</label>
+                        <label for="image">Product Image <span class="text-danger">*</span></label>
                         <div class="custom-file">
-                            <input type="file" name="image" id="image" class="custom-file-input @error('image') is-invalid @enderror">
+                            <input type="file" name="image" id="image" class="custom-file-input @error('image') is-invalid @enderror" {{ $products->image ? '' : 'required' }}>
                             <label class="custom-file-label" for="image">Choose file</label>
                         </div>
                         @error('image')
@@ -94,10 +72,6 @@
                         @if($products->image)
                             <div class="mt-2">
                                 <img src="{{ asset('storage/' . $products->image) }}" alt="Current Product Image" class="img-thumbnail" width="150">
-                                <div class="form-check mt-2">
-                                    <input type="checkbox" name="remove_image" id="remove_image" class="form-check-input">
-                                    <label for="remove_image" class="form-check-label text-danger">Remove current image</label>
-                                </div>
                             </div>
                         @endif
                     </div>

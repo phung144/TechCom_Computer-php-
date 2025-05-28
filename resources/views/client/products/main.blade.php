@@ -77,9 +77,20 @@
                         @php
                             $firstVariant = $variants->first();
                             $originalPrice = $firstVariant->price;
-                            $discountPercent = $product->discount_value;
-                            $discountedPrice = $originalPrice * (1 - $discountPercent / 100);
-                            $showDiscount = $discountPercent > 0;
+                            $discountType = $product->discount_type;
+                            $discountValue = $product->discount_value;
+                            $isDiscount = isset($isDiscountActive) && $isDiscountActive && $discountValue > 0;
+                            if ($isDiscount) {
+                                if ($discountType === 'percentage') {
+                                    $discountedPrice = $originalPrice * (1 - $discountValue / 100);
+                                } elseif ($discountType === 'fixed') {
+                                    $discountedPrice = max(0, $originalPrice - $discountValue);
+                                } else {
+                                    $discountedPrice = $originalPrice;
+                                }
+                            } else {
+                                $discountedPrice = $originalPrice;
+                            }
                         @endphp
 
                         <div class="mb-4">
@@ -89,13 +100,19 @@
                                     <span id="variant-price">{{ number_format($discountedPrice) }}</span> VND
                                 </span>
 
-                                <!-- Giá cũ và % giảm giá (chỉ hiện khi có discount) -->
+                                <!-- Giá cũ và % giảm giá (chỉ hiện khi có discount và trong thời gian giảm giá) -->
                                 <div id="original-price-container"
-                                    @if (!$showDiscount) style="display:none;" @endif>
+                                    @if (!$isDiscount) style="display:none;" @endif>
                                     <del class="font-size-16 text-gray-6"
                                         id="original-price">{{ number_format($originalPrice) }} VND</del>
                                     <span class="badge badge-danger ml-2"
-                                        id="discount-percent">-{{ $discountPercent }}%</span>
+                                        id="discount-percent">
+                                        @if($discountType === 'percentage')
+                                            -{{ $discountValue }}%
+                                        @elseif($discountType === 'fixed')
+                                            -{{ number_format($discountValue, 0) }} VND
+                                        @endif
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -107,15 +124,27 @@
                         @foreach ($variants as $variant)
                             @php
                                 $variantOriginalPrice = $variant->price;
-                                $variantDiscountedPrice = $variantOriginalPrice * (1 - $product->discount_value / 100);
-                                $variantShowDiscount = $product->discount_value > 0;
+                                $isVariantDiscount = isset($isDiscountActive) && $isDiscountActive && $discountValue > 0;
+                                if ($isVariantDiscount) {
+                                    if ($discountType === 'percentage') {
+                                        $variantDiscountedPrice = $variantOriginalPrice * (1 - $discountValue / 100);
+                                    } elseif ($discountType === 'fixed') {
+                                        $variantDiscountedPrice = max(0, $variantOriginalPrice - $discountValue);
+                                    } else {
+                                        $variantDiscountedPrice = $variantOriginalPrice;
+                                    }
+                                } else {
+                                    $variantDiscountedPrice = $variantOriginalPrice;
+                                }
+                                $variantShowDiscount = $isVariantDiscount;
                                 $isOutOfStock = $variant->quantity == 0;
                             @endphp
 
                             <div class="variant-box {{ $loop->first ? 'selected' : '' }}{{ $isOutOfStock ? ' out-of-stock' : '' }}"
                                 data-variant-id="{{ $variant->id }}" data-variant-price="{{ $variant->price }}"
                                 data-variant-quantity="{{ $variant->quantity }}"
-                                data-discount-percent="{{ $product->discount_value }}"
+                                data-discount-percent="{{ (isset($isDiscountActive) && $isDiscountActive && $discountType === 'percentage') ? $discountValue : 0 }}"
+                                data-discount-fixed="{{ (isset($isDiscountActive) && $isDiscountActive && $discountType === 'fixed') ? $discountValue : 0 }}"
                                 @if($isOutOfStock) style="pointer-events: none; opacity: 0.5; position: relative;" @endif
                             >
 
@@ -418,121 +447,108 @@
                         <div class="comment-item card mb-3 border-0 shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex">
-                                    <!-- Comment Content -->
+                                    <!-- Avatar -->
+                                    <div class="flex-shrink-0 mr-3">
+                                        @if ($comment->user && $comment->user->image)
+                                            <img src="{{ asset('storage/' . $comment->user->image) }}"
+                                                alt="Avatar" class="rounded-circle" width="50" height="50">
+                                        @else
+                                            <img src="{{ asset('images/default-avatar.png') }}"
+                                                alt="Avatar" class="rounded-circle" width="50" height="50">
+                                        @endif
+                                    </div>
+                                    <!-- Nội dung bình luận chính -->
                                     <div class="flex-grow-1">
-                                        @if ($comment->replies && $comment->replies->count() > 0)
-                                            <div class="replies mt-3 pt-3 border-top">
-                                                    <div class="reply-item d-flex mb-3">
-                                                        <div class="flex-shrink-0 mr-3">
-
-                                                            @if ($comment->user->image)
-                                                                <img src="{{ asset('storage/' . $comment->user->image) }}"
-                                                                    alt="Avatar" class="rounded-circle" width="50"
-                                                                    height="50">
-                                                            @else
-                                                                <img src="{{ asset('images/default-avatar.png') }}"
-                                                                    alt="Avatar" class="rounded-circle" width="50"
-                                                                    height="50">
-                                                            @endif
-                                                        </div>
-                                                        <!-- Nội dung bình luận -->
-                                                        <div class="flex-grow-1">
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-2">
-                                                                <div>
-                                                                    <h5 class="mb-0 font-weight-bold">
-                                                                        {{ $comment->user->name }}</h5>
-                                                                    <small class="text-muted">
-                                                                        <i
-                                                                            class="far fa-clock mr-1"></i>{{ $comment->created_at->diffForHumans() }}
-                                                                    </small>
-                                                                </div>
-                                                                @if (Auth::check() && Auth::id() == $comment->user_id)
-                                                                    <div class="dropdown">
-                                                                        <button class="btn btn-sm btn-text dropdown-toggle"
-                                                                            type="button" data-toggle="dropdown">
-                                                                            <i class="fas fa-ellipsis-h"></i>
-                                                                        </button>
-                                                                        {{-- <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editCommentModal-{{ $reply->id }}">Sửa</a>
-                                                    <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); document.getElementById('delete-comment-{{ $reply->id }}').submit();">Xóa</a>
-                                                    <form id="delete-comment-{{ $reply->id }}" action="{{ route('comment.delete', $reply->id) }}" method="POST" style="display: none;">
-                                                        @csrf @method('DELETE')
-                                                    </form>
-                                                </div> --}}
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                            <div class="comment-content mb-2">
-                                                                {{ $comment->comment }}
-                                                            </div>
-                                                            <div class="comment-actions d-flex align-items-center">
-                                                                <button class="btn btn-text btn-sm mr-3 like-btn"
-                                                                    data-comment-id="{{ $comment->id }}">
-                                                                    <i class="far fa-thumbs-up mr-1"></i>
-                                                                    <span>{{ $comment->likes_count ?? 0 }}</span>
-                                                                </button>
-                                                                <button class="btn btn-text btn-sm reply-btn"
-                                                                    data-comment-id="{{ $comment->id }}">
-                                                                    <i class="far fa-comment-dots mr-1"></i> Phản hồi
-                                                                </button>
-                                                            </div>
-                                                            <!-- Form rep comment (ẩn, hiện khi bấm Phản hồi) -->
-                                                            <div class="reply-form mt-2"
-                                                                id="reply-form-{{ $comment->id }}"
-                                                                style="display: none;">
-                                                                @if (Auth::check())
-                                                                    <form
-                                                                        action="{{ route('comments.reply.client', $comment->id) }}"
-                                                                        method="POST">
-                                                                        @csrf
-                                                                        <input type="hidden" name="product_id"
-                                                                            value="{{ $product->id }}">
-                                                                        <input type="hidden" name="parent_id"
-                                                                            value="{{ $comment->id }}">
-                                                                        <div class="form-group mb-2">
-                                                                            <textarea name="comment" class="form-control shadow-sm" rows="2" placeholder="Viết phản hồi..."
-                                                                                style="border-radius: 20px;"></textarea>
-                                                                        </div>
-                                                                        <div class="text-right">
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary btn-sm px-3 py-1"
-                                                                                style="border-radius: 20px; background-color: #a49e20; border: none;">
-                                                                                <i class="fas fa-paper-plane mr-1"></i>Gửi
-                                                                                phản hồi
-                                                                            </button>
-                                                                        </div>
-                                                                    </form>
-                                                                @else
-                                                                    <div
-                                                                        class="alert alert-light border mb-2 d-flex align-items-center">
-                                                                        <i
-                                                                            class="fas fa-info-circle mr-2 text-warning"></i>
-                                                                        <span>Vui lòng <a href="{{ route('login') }}"
-                                                                                class="font-weight-bold text-primary">đăng
-                                                                                nhập</a> để phản hồi.</span>
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                            <!-- Hiển thị rep comment -->
-                                                            @if ($comment->replies && $comment->replies->count())
-                                                                <div class="ml-5 mt-3">
-                                                                    @foreach ($comment->replies as $reply)
-                                                                        <div
-                                                                            class="comment-reply mb-2 p-2 bg-light rounded">
-                                                                            <div class="d-flex align-items-center mb-1">
-                                                                                <strong
-                                                                                    class="mr-2 text-primary">{{ $reply->user->name ?? 'Admin' }}</strong>
-                                                                                <small
-                                                                                    class="text-muted">{{ $reply->created_at->diffForHumans() }}</small>
-                                                                            </div>
-                                                                            <div>{{ $reply->comment }}</div>
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                            @endif
-                                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                <h5 class="mb-0 font-weight-bold">
+                                                    {{ $comment->user->name }}</h5>
+                                                <small class="text-muted">
+                                                    <i class="far fa-clock mr-1"></i>{{ $comment->created_at->diffForHumans() }}
+                                                </small>
+                                            </div>
+                                            @if (Auth::check() && Auth::id() == $comment->user_id)
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-text dropdown-toggle"
+                                                        type="button" data-toggle="dropdown">
+                                                        <i class="fas fa-ellipsis-h"></i>
+                                                    </button>
+                                                    {{-- <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editCommentModal-{{ $reply->id }}">Sửa</a>
+                                                        <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); document.getElementById('delete-comment-{{ $reply->id }}').submit();">Xóa</a>
+                                                        <form id="delete-comment-{{ $reply->id }}" action="{{ route('comment.delete', $reply->id) }}" method="POST" style="display: none;">
+                                                            @csrf @method('DELETE')
+                                                        </form>
+                                                    </div> --}}
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="comment-content mb-2">
+                                            {{ $comment->comment }}
+                                        </div>
+                                        <div class="comment-actions d-flex align-items-center">
+                                            <button class="btn btn-text btn-sm mr-3 like-btn"
+                                                data-comment-id="{{ $comment->id }}">
+                                                <i class="far fa-thumbs-up mr-1"></i>
+                                                <span>{{ $comment->likes_count ?? 0 }}</span>
+                                            </button>
+                                            <button class="btn btn-text btn-sm reply-btn"
+                                                data-comment-id="{{ $comment->id }}">
+                                                <i class="far fa-comment-dots mr-1"></i> Phản hồi
+                                            </button>
+                                        </div>
+                                        <!-- Form rep comment (ẩn, hiện khi bấm Phản hồi) -->
+                                        <div class="reply-form mt-2"
+                                            id="reply-form-{{ $comment->id }}"
+                                            style="display: none;">
+                                            @if (Auth::check())
+                                                <form
+                                                    action="{{ route('comments.reply.client', $comment->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id"
+                                                        value="{{ $product->id }}">
+                                                    <input type="hidden" name="parent_id"
+                                                        value="{{ $comment->id }}">
+                                                    <div class="form-group mb-2">
+                                                        <textarea name="comment" class="form-control shadow-sm" rows="2" placeholder="Viết phản hồi..."
+                                                            style="border-radius: 20px;"></textarea>
                                                     </div>
+                                                    <div class="text-right">
+                                                        <button type="submit"
+                                                            class="btn btn-primary btn-sm px-3 py-1"
+                                                            style="border-radius: 20px; background-color: #a49e20; border: none;">
+                                                            <i class="fas fa-paper-plane mr-1"></i>Gửi
+                                                            phản hồi
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            @else
+                                                <div
+                                                    class="alert alert-light border mb-2 d-flex align-items-center">
+                                                    <i
+                                                        class="fas fa-info-circle mr-2 text-warning"></i>
+                                                    <span>Vui lòng <a href="{{ route('login') }}"
+                                                            class="font-weight-bold text-primary">đăng
+                                                            nhập</a> để phản hồi.</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <!-- Hiển thị rep comment -->
+                                        @if ($comment->replies && $comment->replies->count())
+                                            <div class="ml-5 mt-3">
+                                                @foreach ($comment->replies as $reply)
+                                                    <div
+                                                        class="comment-reply mb-2 p-2 bg-light rounded">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <strong
+                                                                class="mr-2 text-primary">{{ $reply->user->name ?? 'Admin' }}</strong>
+                                                            <small
+                                                                class="text-muted">{{ $reply->created_at->diffForHumans() }}</small>
+                                                        </div>
+                                                        <div>{{ $reply->comment }}</div>
+                                                    </div>
+                                                @endforeach
                                             </div>
                                         @endif
                                     </div>

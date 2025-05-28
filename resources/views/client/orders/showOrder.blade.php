@@ -119,14 +119,6 @@
                         -${{ number_format(($order->total - ($order->total_after_discount ?? $order->total)), 2) }}
                     </span>
                 </div>
-                <div class="payment-row">
-                    <span>Shipping</span>
-                    <span>Free</span>
-                </div>
-                <div class="payment-row">
-                    <span>Tax</span>
-                    <span>$0.00</span>
-                </div>
                 <div class="payment-row total-row">
                     <span>Total after discount</span>
                     <span>
@@ -179,7 +171,7 @@
 
     .order-detail-container {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0 auto;9704 0000 0000 0018
     background: white;
     border-radius: 12px;
     padding: 30px;

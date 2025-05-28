@@ -22,7 +22,7 @@
 
                         <div class="form-group">
                             <label for="description">Description</label>
-                            <textarea name="description" id="description" class="form-control" rows="4">{{ old('description') }}</textarea>
+                            <textarea name="description" id="description" class="form-control" rows="4" required>{{ old('description') }}</textarea>
                             @error('description')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
@@ -30,7 +30,7 @@
 
                         <div class="form-group">
                             <label for="category">Category</label>
-                            <select name="category_id" id="category" class="form-control">
+                            <select name="category_id" id="category" class="form-control" required>
                                 <option value="">Select Category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -54,7 +54,7 @@
                                     @foreach($variants as $variant)
                                         <div class="col-md-3">
                                             <label>{{ $variant->name }}</label>
-                                            <select name="variant[{{ strtolower($variant->name) }}]" class="form-control">
+                                            <select name="variant[{{ strtolower($variant->name) }}]" class="form-control" required>
                                                 <option value="">Select {{ $variant->name }}</option>
                                                 @foreach($variant->options as $option)
                                                     <option value="{{ $option->id }}">{{ $option->value }}</option>
@@ -100,7 +100,7 @@
                         <!-- Phần ảnh sản phẩm -->
                         <div class="form-group">
                             <label for="image">Product Image</label>
-                            <input type="file" name="image" id="image" class="form-control-file">
+                            <input type="file" name="image" id="image" class="form-control-file" required>
                             @error('image')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
@@ -108,7 +108,7 @@
 
                         <div class="form-group">
                             <label for="photos">Product Images</label>
-                            <input type="file" name="photos[]" id="photos" class="form-control-file" multiple>
+                            <input type="file" name="photos[]" id="photos" class="form-control-file" multiple required>
                             @error('photos')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror

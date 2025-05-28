@@ -17,8 +17,6 @@
                                 <th>Product Name</th>
                                 <th>Description</th>
                                 <th>Category</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
                                 <th>Sales</th>
                                 <th>Discount</th>
                                 <th>Discount Start</th>
@@ -36,8 +34,6 @@
                                     <td>{{ Str::limit($product->name, 50, '...')}}</td>
                                     <td>{{ Str::limit($product->description, 50, '...') ?? 'No description available' }}</td>
                                     <td>{{ $product->category->name ?? 'N/A' }}</td>
-                                    <td>{{ number_format($product->price) }} VND</td>
-                                    <td>{{ $product->quantity }}</td>
                                     <td>{{ $product->sales }}</td>
                                     <td>
                                         @if ($product->discount_type && $product->discount_value)

@@ -56,23 +56,11 @@
             <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">On Sales Products</h3>
         </div>
         <ul class="list-unstyled">
-            @php
-                $onSaleProducts = \App\Models\Product::where('discount_value', '>', 0)
-                    ->orderByDesc('discount_value')
-                    ->take(5)
-                    ->get();
-                // Tính giá thấp nhất của biến thể
-                $originalPrice = $product->variants->min('price'); // Lấy giá thấp nhất từ các biến thể
-                $finalPrice = $originalPrice;
-
-                // Kiểm tra nếu có giảm giá
-                if ($product->discount_type === 'percentage') {
-                    $finalPrice = $originalPrice - ($originalPrice * $product->discount_value) / 100;
-                } elseif ($product->discount_type === 'fixed') {
-                    $finalPrice = $originalPrice - $product->discount_value;
-                }
-            @endphp
             @foreach ($onSaleProducts as $product)
+                @php
+                    $originalPrice = $product->display_price ?? 0;
+                    $finalPrice = $product->final_price ?? $originalPrice;
+                @endphp
                 <li class="mb-4 product-item-hover">
                     <div class="row">
                         <div class="col-auto">
@@ -87,14 +75,11 @@
                                 <a href="{{ route('product.detail', $product->id) }}"
                                     class="text-dark hover-primary">{{ $product->name }}</a>
                             </h3>
-
                             <div class="font-weight-bold">
                                 @if ($finalPrice < $originalPrice)
-                                    <del
-                                        class="font-size-11 text-gray-9 d-block">${{ number_format($originalPrice, 2) }}</del>
+                                    <del class="font-size-11 text-gray-9 d-block">{{ number_format($originalPrice, 0) }} VND</del>
                                 @endif
-                                <ins
-                                    class="font-size-15 text-red text-decoration-none d-block hover-red">${{ number_format($finalPrice, 2) }}</ins>
+                                <ins class="font-size-15 text-red text-decoration-none d-block hover-red">{{ number_format($finalPrice, 0) }} VND</ins>
                             </div>
                         </div>
                     </div>
@@ -111,20 +96,11 @@
             <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Best Selling Products</h3>
         </div>
         <ul class="list-unstyled">
-            @php
-                $topSalesProducts = \App\Models\Product::orderByDesc('sales')->take(5)->get();
-                // Lấy giá thấp nhất của biến thể
-                $originalPrice = $product->variants->min('price'); // Lấy giá thấp nhất từ các biến thể
-                $finalPrice = $originalPrice;
-
-                // Kiểm tra nếu có giảm giá
-                if ($product->discount_type === 'percentage') {
-                    $finalPrice = $originalPrice - ($originalPrice * $product->discount_value) / 100;
-                } elseif ($product->discount_type === 'fixed') {
-                    $finalPrice = $originalPrice - $product->discount_value;
-                }
-            @endphp
             @foreach ($topSalesProducts as $product)
+                @php
+                    $originalPrice = $product->display_price ?? 0;
+                    $finalPrice = $product->final_price ?? $originalPrice;
+                @endphp
                 <li class="mb-4 product-item-hover">
                     <div class="row">
                         <div class="col-auto">
@@ -140,15 +116,11 @@
                                     {{ $product->name }}
                                 </a>
                             </h3>
-
                             <div class="font-weight-bold">
                                 @if ($finalPrice < $originalPrice)
-                                    <del
-                                        class="font-size-11 text-gray-9 d-block">${{ number_format($originalPrice, 2) }}</del>
+                                    <del class="font-size-11 text-gray-9 d-block">{{ number_format($originalPrice, 0) }} VND</del>
                                 @endif
-                                <ins class="font-size-15 text-red text-decoration-none d-block hover-red">
-                                    ${{ number_format($finalPrice, 2) }}
-                                </ins>
+                                <ins class="font-size-15 text-red text-decoration-none d-block hover-red">{{ number_format($finalPrice, 0) }} VND</ins>
                             </div>
                         </div>
                     </div>

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Product; // Import the Product model
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;// Import the Category model
+use Carbon\Carbon;
 
 class ProductDetailController extends Controller
 {
@@ -22,11 +23,32 @@ class ProductDetailController extends Controller
         $product = Product::with(['variants.options', 'category'])->findOrFail($id);
         $variants = $product->variants;
 
-        // Tính giá sau discount
-        $originalPrice = $product->price;
-        $discountedPrice = $product->discount > 0
-        ? $originalPrice * (1 - $product->discount/100)
-        : $originalPrice;
+        // Kiểm tra thời gian giảm giá (sử dụng đúng tên trường discount_start, discount_end)
+        $now = Carbon::now();
+        $isDiscountActive = false;
+        if (
+            $product->discount_value > 0 &&
+            $product->discount_start &&
+            $product->discount_end
+        ) {
+            $start = $product->discount_start instanceof Carbon ? $product->discount_start : Carbon::parse($product->discount_start);
+            $end = $product->discount_end instanceof Carbon ? $product->discount_end : Carbon::parse($product->discount_end)->endOfDay();
+            $isDiscountActive = $now->between($start, $end);
+        }
+
+        // Tính giá sau discount (chỉ khi đang trong thời gian giảm giá)
+        $originalPrice = $product->price ?? ($variants->first()->price ?? 0);
+        if ($isDiscountActive) {
+            if ($product->discount_type === 'percentage') {
+                $discountedPrice = $originalPrice * (1 - $product->discount_value / 100);
+            } elseif ($product->discount_type === 'fixed') {
+                $discountedPrice = max(0, $originalPrice - $product->discount_value);
+            } else {
+                $discountedPrice = $originalPrice;
+            }
+        } else {
+            $discountedPrice = $originalPrice;
+        }
         $variants = $product->variants; // Lấy các biến thể từ bảng product_variants
 
         // Lấy 12 sản phẩm bán chạy cùng danh mục
@@ -61,7 +83,8 @@ class ProductDetailController extends Controller
             'variants',
             'comments',
             'feedbacks',
-            'categoryProducts' // thêm biến này
+            'categoryProducts',
+            'isDiscountActive' // truyền biến này sang view
         ));
     }
 

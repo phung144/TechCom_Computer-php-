@@ -126,16 +126,35 @@ class ProductController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
+            'description' => 'required|string',
+            'sales' => 'required|integer|min:0',
             'quantity' => 'nullable|integer|min:0',
-            'sales' => 'nullable|integer|min:0',
-            'description' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
             'discount_type' => 'nullable|in:percentage,fixed',
             'discount_value' => 'nullable|numeric|min:0',
+            'image' => ($products->image ? 'nullable' : 'required') . '|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+
+        // Handle main image upload or removal
+        if ($request->has('remove_image')) {
+            // Remove current image
+            if ($products->image) {
+                Storage::disk('public')->delete($products->image);
+            }
+            $validatedData['image'] = null;
+        } elseif ($request->hasFile('image')) {
+            // Replace with new image
+            if ($products->image) {
+                Storage::disk('public')->delete($products->image);
+            }
+            $validatedData['image'] = $request->file('image')->store('products', 'public');
+        } else {
+            // Keep current image
+            unset($validatedData['image']);
+        }
 
         // Handle new photos upload
         $photos = $products->photos ?? [];

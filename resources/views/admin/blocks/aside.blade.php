@@ -79,17 +79,6 @@
 
 
                 <li>
-                    <a class="sidenav-item-link" href="{{ route('admin.carts.index') }}">
-                        <i class="mdi mdi-cart"></i>
-                        <span class="nav-text">Cart</span>
-                    </a>
-                </li>
-
-
-
-
-
-                <li>
                     <a class="sidenav-item-link" href="{{ route('admin.orders.index') }}">
                         <i class="mdi mdi-receipt"></i>
                         <span class="nav-text">Order</span>
@@ -98,7 +87,7 @@
 
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.comments.index') }}">
-                        <i class="mdi mdi-receipt"></i>
+                        <i class="mdi mdi-comment"></i>
                         <span class="nav-text">Comment</span>
                     </a>
                 </li>
@@ -112,7 +101,7 @@
 
                 <li>
                     <a class="sidenav-item-link" href="{{route('admin.vouchers.index')}}">
-                        <i class="mdi mdi-tag-multiple"></i>
+                        <i class="mdi mdi-ticket"></i>
                         <span class="nav-text">Voucher</span></b>
                     </a>
                 </li>

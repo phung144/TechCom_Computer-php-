@@ -245,7 +245,7 @@
                     <nav class="js-mega-menu navbar navbar-expand-md u-header__navbar u-header__navbar--wide u-header__navbar--no-space">
                         <!-- Navigation -->
                         <div id="navBar" class="collapse navbar-collapse u-header__navbar-collapse">
-                            <ul class="navbar-nav u-header__navbar-nav">
+                            <ul class="navbar-nav u-header__navbar-nav justify-content-center">
                                 <!-- Home -->
                                 <li class="nav-item hs-has-mega-menu u-header__nav-item"
                                     data-event="hover"
@@ -265,38 +265,6 @@
 
                                     <!-- End TV & Audio - Mega Menu -->
                                 </li>
-                                <!-- End Blog -->
-
-                                <!-- Laptops & Desktops -->
-                                <li class="nav-item hs-has-mega-menu u-header__nav-item"
-                                    data-event="hover"
-                                    data-animation-in="slideInUp"
-                                    data-animation-out="fadeOut">
-                                    <a id="laptopsdesktopsMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="javascript:;" aria-haspopup="true" aria-expanded="false">Laptops & Desktops</a>
-
-                                </li>
-                                <!-- End Laptops & Desktops -->
-
-                                <!-- Gadgets -->
-                                <li class="nav-item hs-has-mega-menu u-header__nav-item"
-                                    data-event="hover"
-                                    data-animation-in="slideInUp"
-                                    data-animation-out="fadeOut">
-                                    <a id="GadgetsMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="javascript:;" aria-haspopup="true" aria-expanded="false">Gadgets</a>
-
-                                </li>
-                                <!-- End Gadgets -->
-
-                                <!-- GPS & Car -->
-                                <li class="nav-item hs-has-mega-menu u-header__nav-item"
-                                    data-event="hover"
-                                    data-animation-in="slideInUp"
-                                    data-animation-out="fadeOut">
-                                    <a id="GPSCarMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="javascript:;" aria-haspopup="true" aria-expanded="false">GPS & Car</a>
-
-                                    <!-- End GPS & Car - Mega Menu -->
-                                </li>
-                                <!-- End GPS & Car -->
                             </ul>
                         </div>
                         <!-- End Navigation -->

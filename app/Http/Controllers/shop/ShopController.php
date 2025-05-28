@@ -24,33 +24,25 @@ class ShopController extends Controller
         $categories = Category::all();
 
         // Thêm 4 sản phẩm đang sale để đổ vào sidebar
-        $onSaleProducts = Product::where('discount_value', '>', 0)
+        $onSaleProducts = Product::with('variants')
+            ->where('discount_value', '>', 0)
             ->orderByDesc('discount_value')
             ->take(5)
             ->get();
 
-        $topSalesProducts = Product::orderByDesc('sales')->take(5)->get();
+        $topSalesProducts = Product::with('variants')
+            ->orderByDesc('sales')
+            ->take(5)
+            ->get();
 
         // Xử lý giá cho các sản phẩm đang sale
         foreach ($onSaleProducts as $product) {
-            $originalPrice = $product->price;
-
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $originalPrice - ($originalPrice * $product->discount_value / 100);
-            } else {
-                $product->final_price = $originalPrice - $product->discount_value;
-            }
+            $this->prepareProductPrice($product);
         }
 
         // Xử lý giá cho các sản phẩm top bán chạy
         foreach ($topSalesProducts as $product) {
-            $originalPrice = $product->price;
-
-            if ($product->discount_type === 'percentage') {
-                $product->final_price = $originalPrice - ($originalPrice * $product->discount_value / 100);
-            } else {
-                $product->final_price = $originalPrice - $product->discount_value;
-            }
+            $this->prepareProductPrice($product);
         }
 
         // Trả về view với các biến cần thiết
@@ -107,23 +99,35 @@ public function getProductsByCategory($id)
 private function prepareProductPrice($product)
 {
     $cheapestVariant = $product->getCheapestVariant();
-//if
+    $now = now();
+    $isDiscountActive = $product->discount_value > 0
+        && (is_null($product->discount_start) || $product->discount_start <= $now)
+        && (is_null($product->discount_end) || $product->discount_end >= $now);
+
     if ($cheapestVariant) {
         $product->display_price = $cheapestVariant->price;
         $product->cheapest_variant = $cheapestVariant;
 
-        if ($product->discount_type === 'percentage') {
-            $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+        if ($isDiscountActive) {
+            if ($product->discount_type === 'percentage') {
+                $product->final_price = $cheapestVariant->price - ($cheapestVariant->price * ($product->discount_value / 100));
+            } else {
+                $product->final_price = $cheapestVariant->price - $product->discount_value;
+            }
         } else {
-            $product->final_price = $cheapestVariant->price - $product->discount_value;
+            $product->final_price = $cheapestVariant->price;
         }
     } else {
         $product->display_price = $product->price;
 
-        if ($product->discount_type === 'percentage') {
-            $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+        if ($isDiscountActive) {
+            if ($product->discount_type === 'percentage') {
+                $product->final_price = $product->price - ($product->price * ($product->discount_value / 100));
+            } else {
+                $product->final_price = $product->price - $product->discount_value;
+            }
         } else {
-            $product->final_price = $product->price - $product->discount_value;
+            $product->final_price = $product->price;
         }
     }
 }

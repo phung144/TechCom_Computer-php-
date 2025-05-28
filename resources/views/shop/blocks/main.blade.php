@@ -165,12 +165,12 @@
                                             <img class="img-fluid product-image" src="{{ asset(Storage::url($product->image)) }}" alt="{{ $product->name }}" style="transition: transform 0.3s;">
                                         </a>
                                     </div>
-                                    @if($product->discount_value > 0)
+                                    @if($product->final_price < $product->display_price)
                                         <div class="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 py-1 z-10">
                                             @if($product->discount_type === 'percentage')
                                                 Giảm {{ intval($product->discount_value) }}%
                                             @else
-                                                Giảm {{ number_format($product->discount_value, 0) }}.000 VND
+                                                Giảm {{ number_format($product->discount_value, 0) }} VND
                                             @endif
                                         </div>
                                     @endif
@@ -190,7 +190,7 @@
                                         <span class="text-danger font-size-16 font-weight-bold">
                                             {{ number_format($product->final_price, 0) }} VND
                                         </span>
-                                        @if($product->discount_value > 0)
+                                        @if($product->final_price < $product->display_price)
                                             <span class="text-gray-500 text-decoration-line-through font-size-14 ml-2">
                                                 {{ number_format($product->display_price, 0) }} VND
                                             </span>
