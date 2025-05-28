@@ -5,7 +5,7 @@
     <div class="col-12">
         <div class="card card-default shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">Edit Product</h2>
+                <h2 class="mb-0">Sửa sản phẩm</h2>
             </div>
             <div class="card-body">
                 <form action="{{ route('admin.products.update', $products->id) }}" method="POST" enctype="multipart/form-data" class="product-form">
@@ -14,7 +14,7 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="name">Product Name <span class="text-danger">*</span></label>
+                            <label for="name">Tên sản phẩm <span class="text-danger">*</span></label>
                             <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror"
                                    value="{{ old('name', $products->name) }}" required>
                             @error('name')
@@ -23,7 +23,7 @@
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="category">Category <span class="text-danger">*</span></label>
+                            <label for="category">Danh mục <span class="text-danger">*</span></label>
                             <select name="category_id" id="category" class="form-control @error('category_id') is-invalid @enderror" required>
                                 <option value="">Select Category</option>
                                 @foreach ($categories as $category)
@@ -40,7 +40,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Description <span class="text-danger">*</span></label>
+                        <label for="description">Mô tả <span class="text-danger">*</span></label>
                         <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror"
                                   rows="4" required>{{ old('description', $products->description) }}</textarea>
                         @error('description')
@@ -51,7 +51,7 @@
                     <div class="form-row">
 
                         <div class="form-group col-md-4">
-                            <label for="sales">Sales <span class="text-danger">*</span></label>
+                            <label for="sales">Đã bán <span class="text-danger">*</span></label>
                             <input type="number" name="sales" id="sales" class="form-control @error('sales') is-invalid @enderror"
                                    min="0" value="{{ old('sales', $products->sales) }}" required>
                             @error('sales')
@@ -61,7 +61,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="image">Product Image <span class="text-danger">*</span></label>
+                        <label for="image">Hình ảnh sản phẩm <span class="text-danger">*</span></label>
                         <div class="custom-file">
                             <input type="file" name="image" id="image" class="custom-file-input @error('image') is-invalid @enderror" {{ $products->image ? '' : 'required' }}>
                             <label class="custom-file-label" for="image">Choose file</label>
@@ -77,7 +77,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="photos">Product Images</label>
+                        <label for="photos">Hình ảnh mô tả</label>
                         <input type="file" name="photos[]" id="photos" class="form-control-file" multiple>
                         @error('photos')
                             <small class="text-danger">{{ $message }}</small>
@@ -94,7 +94,7 @@
                                         <img src="{{ asset('storage/' . $photo) }}" alt="Product Image" class="img-thumbnail" width="150">
                                         <div class="form-check mt-2">
                                             <input type="checkbox" name="remove_photos[]" value="{{ $photo }}" class="form-check-input">
-                                            <label class="form-check-label text-danger">Remove</label>
+                                            <label class="form-check-label text-danger">Xóa</label>
                                         </div>
                                     </div>
                                 @endforeach
@@ -104,19 +104,19 @@
 
                     <div class="card mb-4">
                         <div class="card-header bg-light">
-                            <h5 class="mb-0">Discount Settings</h5>
+                            <h5 class="mb-0">Cài đặt giảm giá</h5>
                         </div>
                         <div class="card-body">
                             <div class="form-row">
                                 <div class="form-group col-md-4">
-                                    <label for="discount_type">Discount Type</label>
+                                    <label for="discount_type">Loại giảm giá</label>
                                     <select name="discount_type" id="discount_type" class="form-control @error('discount_type') is-invalid @enderror">
                                         <option value="">None</option>
                                         <option value="percentage" {{ old('discount_type', $products->discount_type) == 'percentage' ? 'selected' : '' }}>
-                                            Percentage
+                                            Tỷ lệ phần trăm
                                         </option>
                                         <option value="fixed" {{ old('discount_type', $products->discount_type) == 'fixed' ? 'selected' : '' }}>
-                                            Fixed Amount
+                                            Số tiền cố định
                                         </option>
                                     </select>
                                     @error('discount_type')
@@ -125,7 +125,7 @@
                                 </div>
 
                                 <div class="form-group col-md-4">
-                                    <label for="discount_value">Discount Value</label>
+                                    <label for="discount_value">Giá trị chiết khấu</label>
                                     <input type="number" name="discount_value" id="discount_value" class="form-control @error('discount_value') is-invalid @enderror"
                                            step="0.01" min="0" value="{{ old('discount_value', $products->discount_value) }}">
                                     @error('discount_value')
@@ -136,7 +136,7 @@
 
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="discount_start">Discount Start Date</label>
+                                    <label for="discount_start">Ngày bắt đầu giảm giá</label>
                                     <input type="date" name="discount_start" id="discount_start" class="form-control @error('discount_start') is-invalid @enderror"
                                            value="{{ old('discount_start', $products->discount_start ? $products->discount_start->format('Y-m-d') : '') }}">
                                     @error('discount_start')
@@ -145,7 +145,7 @@
                                 </div>
 
                                 <div class="form-group col-md-6">
-                                    <label for="discount_end">Discount End Date</label>
+                                    <label for="discount_end">Ngày kết thúc giảm giá</label>
                                     <input type="date" name="discount_end" id="discount_end" class="form-control @error('discount_end') is-invalid @enderror"
                                            value="{{ old('discount_end', $products->discount_end ? $products->discount_end->format('Y-m-d') : '') }}">
                                     @error('discount_end')
@@ -158,10 +158,10 @@
 
                     <div class="form-group text-right">
                         <button type="submit" class="btn btn-primary px-4">
-                            <i class="mdi mdi-content-save mr-1"></i> Update Product
+                            <i class="mdi mdi-content-save mr-1"></i> Cập nhật sản phẩm
                         </button>
                         <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary ml-2">
-                            <i class="mdi mdi-arrow-left mr-1"></i> Cancel
+                            <i class="mdi mdi-arrow-left mr-1"></i> Hủy
                         </a>
                     </div>
                 </form>
