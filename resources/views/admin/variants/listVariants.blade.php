@@ -5,16 +5,16 @@
         <div class="col-12">
             <div class="card card-default">
                 <div class="card-header">
-                    <h2>Variants List</h2>
-                    <a href="{{ route('admin.variants.create') }}" class="btn btn-primary">Add Variant</a>
+                    <h2>Danh sách biến thể</h2>
+                    <a href="{{ route('admin.variants.create') }}" class="btn btn-primary">Thêm biến thể</a>
                 </div>
                 <div class="card-body">
                     <table id="productsTable" class="table table-hover table-product" style="width:100%">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Name</th>
-                                <th>Actions</th>
+                                <th>Tên</th>
+                                <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,13 +32,13 @@
                                                 <!-- Nút Detail -->
                                                 <a href="{{ route('admin.variants.show', $variant->id) }}"
                                                    class="dropdown-item">
-                                                   <i class="mdi mdi-eye-outline mr-2"></i> Detail
+                                                   <i class="mdi mdi-eye-outline mr-2"></i> Chi tiết
                                                 </a>
 
                                                 <!-- Nút Edit -->
                                                 <a href="{{ route('admin.variants.edit', $variant->id) }}"
                                                    class="dropdown-item">
-                                                   <i class="mdi mdi-pencil-outline mr-2"></i> Edit
+                                                   <i class="mdi mdi-pencil-outline mr-2"></i> Sửa
                                                 </a>
 
                                                 <!-- Phân cách -->
@@ -50,7 +50,7 @@
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger"
                                                             onclick="return confirm('Are you sure to delete this variant?')">
-                                                        <i class="mdi mdi-delete-outline mr-2"></i> Delete
+                                                        <i class="mdi mdi-delete-outline mr-2"></i> Xóa
                                                     </button>
                                                 </form>
                                             </div>

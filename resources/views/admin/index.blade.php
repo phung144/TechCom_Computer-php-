@@ -4,9 +4,9 @@
         <div class="content">
             <!-- Dashboard Header -->
             <div class="page-header">
-                <h1 class="page-title">Dashboard Overview</h1>
+                <h1 class="page-title">BẢNG TỔNG QUAN</h1>
                 <div class="breadcrumb">
-                    <span class="me-1">Last updated:</span>
+                    <span class="me-1">Lần cuối cập nhật </span>
                     <span class="text-muted">{{ now()->format('F j, Y, g:i a') }}</span>
                 </div>
             </div>
@@ -18,10 +18,10 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                    <h6 class="card-title mb-1">TOTAL ORDERS</h6>
+                                    <h6 class="card-title mb-1">TỔNG ĐƠN HÀNG</h6>
                                     <h2 class="mb-0">{{ number_format($totalOrderValue) }}đ</h2>
                                     <div class="mt-2">
-                                        <span class="badge bg-light text-dark">{{ $orderCount }} orders</span>
+                                        <span class="badge bg-light text-dark">{{ $orderCount }} đơn hàng</span>
                                     </div>
                                 </div>
                                 <div class="card-icon bg-primary">
@@ -38,10 +38,10 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                    <h6 class="card-title mb-1">COMPLETED ORDERS</h6>
+                                    <h6 class="card-title mb-1">ĐƠN HÀNG HOÀN THÀNH </h6>
                                     <h2 class="mb-0">{{ number_format($sumTotal) }}đ</h2>
                                     <div class="mt-2">
-                                        <span class="badge bg-light text-dark">{{ $orderCountCompleted }} orders</span>
+                                        <span class="badge bg-light text-dark">{{ $orderCountCompleted }} đơn hàng</span>
                                         <span class="text-success ms-2"><i class="mdi mdi-arrow-up"></i> 100%</span>
                                     </div>
                                 </div>
@@ -59,10 +59,10 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                    <h6 class="card-title mb-1">PENDING ORDERS</h6>
+                                    <h6 class="card-title mb-1">ĐƠN HÀNG ĐANG CHỜ XỬ LÝ</h6>
                                     <h2 class="mb-0">{{ number_format($totalIncompleteValue) }}đ</h2>
                                     <div class="mt-2">
-                                        <span class="badge bg-light text-dark">{{ $orderCountIncomplete }} orders</span>
+                                        <span class="badge bg-light text-dark">{{ $orderCountIncomplete }} đơn hàng</span>
                                         <span class="text-danger ms-2"><i class="mdi mdi-arrow-down"></i> 0%</span>
                                     </div>
                                 </div>
@@ -80,13 +80,13 @@
                 <div class="col-xl-8 mb-4">
                     <div class="card h-100">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Revenue Analytics</h5>
+                            <h5 class="mb-0">Phân tích doanh thu</h5>
                             <form method="get" class="d-flex align-items-center">
                                 <label class="me-2 mb-0">Filter:</label>
                                 <select name="filter" onchange="this.form.submit()" class="form-select form-select-sm w-auto">
-                                    <option value="day" {{ $filter == 'day' ? 'selected' : '' }}>Daily</option>
-                                    <option value="week" {{ $filter == 'week' ? 'selected' : '' }}>Weekly</option>
-                                    <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Monthly</option>
+                                    <option value="day" {{ $filter == 'day' ? 'selected' : '' }}>Hàng ngày</option>
+                                    <option value="week" {{ $filter == 'week' ? 'selected' : '' }}>Hàng tuần</option>
+                                    <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Hàng tháng</option>
                                 </select>
                             </form>
                         </div>
@@ -110,7 +110,7 @@
                                     </p>
                                 </div>
                                 <div class="col-4">
-                                    <h6 class="mb-0">Growth</h6>
+                                    <h6 class="mb-0">Sự phát triển</h6>
                                     <p class="{{ ($revenues->last()->total ?? 0) > ($revenues->slice(-2, 1)->first()->total ?? 0) ? 'text-success' : 'text-danger' }} fw-bold mb-0">
                                         @php
                                             $current = $revenues->last()->total ?? 0;
@@ -129,15 +129,15 @@
                 <div class="col-xl-4 mb-4">
                     <div class="card h-100">
                         <div class="card-header">
-                            <h5 class="mb-0">Top Selling Products</h5>
+                            <h5 class="mb-0">Sản phẩm bán chạy nhất</h5>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-hover mb-0">
                                     <thead class="bg-light">
                                         <tr>
-                                            <th>Product</th>
-                                            <th class="text-end">Sold</th>
+                                            <th>Sản phẩm</th>
+                                            <th class="text-end">Đã bán</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -164,7 +164,7 @@
                         </div>
                         <div class="card-footer bg-light text-center">
                             <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-outline-primary">
-                                View All Products <i class="mdi mdi-chevron-right"></i>
+                            Xem tất cả sản phẩm <i class="mdi mdi-chevron-right"></i>
                             </a>
                         </div>
                     </div>

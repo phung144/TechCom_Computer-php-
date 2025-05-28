@@ -5,7 +5,7 @@
 
     <!-- Nút quay lại -->
     <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary btn-sm mb-3">
-        <i class="fas fa-arrow-left"></i> Back
+        <i class="fas fa-arrow-left"></i> Quay lại
     </a>
 
     <!-- Thông báo thành công -->

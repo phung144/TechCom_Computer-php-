@@ -5,27 +5,27 @@
         <div class="col-12">
             <div class="card card-default">
                 <div class="card-header">
-                    <h2>Product Details</h2>
-                    <a href="{{ route('admin.products.index') }}" class="btn btn-primary">Back to List</a>
+                    <h2>Chi tiết sản phẩm</h2>
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-primary">Quay lại</a>
                 </div>
                 <div class="card-body">
                     <!-- Thông tin sản phẩm -->
-                    <h4>Product Information</h4>
+                    <h4>Thông tin sản phẩm</h4>
                     <table class="table table-bordered">
                         <tr>
-                            <th>Image</th>
+                            <th>Hình ảnh</th>
                             <td><img src="{{ asset('storage/' . $product->image) }}" alt="Product Image" width="100"></td>
                         </tr>
                         <tr>
-                            <th>Name</th>
+                            <th>Tên</th>
                             <td>{{ $product->name }}</td>
                         </tr>
                         <tr>
-                            <th>Description</th>
+                            <th>Mô tả</th>
                             <td>{{ $product->description ?? 'No description available' }}</td>
                         </tr>
                         <tr>
-                            <th>Category</th>
+                            <th>Danh mục</th>
                             <td>{{ $product->category->name ?? 'N/A' }}</td>
                         </tr>
                         {{-- <tr>
@@ -41,9 +41,8 @@
                     <!-- Biến thể sản phẩm -->
 
                     <div class="card-header">
-                        <h2>Product Variants</h2>
-                        <a href="{{ route('admin.products.variants.create', $product->id) }}" class="btn btn-primary">Add
-                            Variant Option</a>
+                        <h2>Biến thể sản phẩm</h2>
+                        <a href="{{ route('admin.products.variants.create', $product->id) }}" class="btn btn-primary">Thêm tùy chọn biến thể</a>
                     </div>
 
                     <div class="card card-default mt-3">
@@ -52,10 +51,10 @@
                                 <table class="table table-hover table-product" style="width: 100%;">
                                     <thead>
                                         <tr>
-                                            <th>Combination Code</th>
-                                            <th>Price</th>
-                                            <th>Quantity</th>
-                                            <th>Actions</th>
+                                            <th>Cấu hình</th>
+                                            <th>Giá</th>
+                                            <th>Số lượng</th>
+                                            <th>Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -66,9 +65,9 @@
                                                 <td class="quantity-cell">{{ $variant->quantity }}</td>
                                                 <td>
                                                     <button class="btn btn-sm btn-primary edit-variant"
-                                                        data-id="{{ $variant->id }}">Edit</button>
+                                                        data-id="{{ $variant->id }}">Sửa</button>
                                                     <button class="btn btn-sm btn-danger delete-variant"
-                                                        data-id="{{ $variant->id }}">Delete</button>
+                                                        data-id="{{ $variant->id }}">Xóa</button>
                                                 </td>
                                             </tr>
                                             <!-- Edit Form (hidden by default) -->
@@ -80,7 +79,7 @@
                                                         <div class="row">
                                                             <div class="col-md-4">
                                                                 <div class="form-group">
-                                                                    <label>Price (VND)</label>
+                                                                    <label>Giá (VND)</label>
                                                                     <input type="number" name="price"
                                                                         class="form-control" value="{{ $variant->price }}"
                                                                         required>
@@ -88,7 +87,7 @@
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <div class="form-group">
-                                                                    <label>Quantity</label>
+                                                                    <label>Số lượng</label>
                                                                     <input type="number" name="quantity"
                                                                         class="form-control"
                                                                         value="{{ $variant->quantity }}" required>
@@ -97,10 +96,10 @@
                                                             <div class="col-md-4 d-flex align-items-end">
                                                                 <div class="form-group">
                                                                     <button type="submit"
-                                                                        class="btn btn-success">Save</button>
+                                                                        class="btn btn-success">Lưu</button>
                                                                     <button type="button"
                                                                         class="btn btn-secondary cancel-edit"
-                                                                        data-id="{{ $variant->id }}">Cancel</button>
+                                                                        data-id="{{ $variant->id }}">Hủy</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -111,7 +110,7 @@
                                     </tbody>
                                 </table>
                             @else
-                                <p class="text-muted">No variants available for this product.</p>
+                                <p class="text-muted">Không có biến thể nào có sẵn cho sản phẩm này.</p>
                             @endif
                         </div>
                     </div>

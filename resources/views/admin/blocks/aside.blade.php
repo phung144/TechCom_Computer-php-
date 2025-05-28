@@ -37,7 +37,7 @@
 
 
                 <li class="section-title">
-                    Apps
+                   
                 </li>
 
 
@@ -47,19 +47,19 @@
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.home') }}">
                         <i class="mdi mdi-cube"></i>
-                        <span class="nav-text">Dashboard</span>
+                        <span class="nav-text">Bảng điều khiển</span>
                     </a>
                 </li>
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.users.index') }}">
                           <i class="mdi mdi-account"></i>
-                        <span class="nav-text">User</span>
+                        <span class="nav-text">Người dùng</span>
                     </a>
                 </li>
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.products.index') }}">
                         <i class="mdi mdi-cube"></i>
-                        <span class="nav-text">Product</span>
+                        <span class="nav-text">Sản phẩm</span>
                     </a>
                 </li>
 
@@ -70,7 +70,7 @@
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.categories.index') }}">
                         <i class="mdi mdi-cube-outline"></i>
-                        <span class="nav-text">Category</span>
+                        <span class="nav-text">Danh mục</span>
                     </a>
                 </li>
 
@@ -81,28 +81,28 @@
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.orders.index') }}">
                         <i class="mdi mdi-receipt"></i>
-                        <span class="nav-text">Order</span>
+                        <span class="nav-text">Đặt hàng</span>
                     </a>
                 </li>
 
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.comments.index') }}">
                         <i class="mdi mdi-comment"></i>
-                        <span class="nav-text">Comment</span>
+                        <span class="nav-text">Bình luận</span>
                     </a>
                 </li>
 
                 <li>
                     <a class="sidenav-item-link" href="{{route('admin.variants.index')}}">
                         <i class="mdi mdi-tag-multiple"></i>
-                        <span class="nav-text">Variant</span></b>
+                        <span class="nav-text">Biến thể</span></b>
                     </a>
                 </li>
 
                 <li>
                     <a class="sidenav-item-link" href="{{route('admin.vouchers.index')}}">
                         <i class="mdi mdi-ticket"></i>
-                        <span class="nav-text">Voucher</span></b>
+                        <span class="nav-text">Mã giảm giá</span></b>
                     </a>
                 </li>
 
