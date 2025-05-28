@@ -5,7 +5,7 @@
             <span class="sr-only">Toggle navigation</span>
         </button>
 
-        <span class="page-title">dashboard</span>
+        <span class="page-title">Bảng điều khiển</span>
 
         <div class="navbar-right ">
 
@@ -14,7 +14,7 @@
                 <form action="index.html" method="get">
                     <div class="input-group input-group-sm" id="input-group-search">
                         <input type="text" autocomplete="off" name="query" id="search-input" class="form-control"
-                            placeholder="Search..." />
+                            placeholder="Tìm kiếm..." />
                         <div class="input-group-append">
                             <button class="btn" type="button">/</button>
                         </div>
@@ -57,11 +57,11 @@
                         <header>
                             <div class="nav nav-underline" id="nav-tab" role="tablist">
                                 <a class="nav-item nav-link active" id="all-tabs" data-toggle="tab" href="#all"
-                                    role="tab" aria-controls="nav-home" aria-selected="true">All (5)</a>
+                                    role="tab" aria-controls="nav-home" aria-selected="true">Tất cả (5)</a>
                                 <a class="nav-item nav-link" id="message-tab" data-toggle="tab" href="#message"
-                                    role="tab" aria-controls="nav-profile" aria-selected="false">Msgs (4)</a>
+                                    role="tab" aria-controls="nav-profile" aria-selected="false">Tin nhắn (4)</a>
                                 <a class="nav-item nav-link" id="other-tab" data-toggle="tab" href="#other"
-                                    role="tab" aria-controls="nav-contact" aria-selected="false">Others (3)</a>
+                                    role="tab" aria-controls="nav-contact" aria-selected="false">Khác (3)</a>
                             </div>
                         </header>
 
