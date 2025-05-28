@@ -27,14 +27,14 @@
                 <div class="col-md-6">
                     <h1 class="h4 mb-0">
                         <i class="fas fa-shopping-cart text-primary me-2"></i>
-                        Quick Order Checkout
+                        Thanh toán nhanh chóng
                     </h1>
                 </div>
                 <div class="col-md-6">
                     <nav aria-label="breadcrumb" class="justify-content-end">
                         <ol class="breadcrumb mb-0 bg-transparent justify-content-end">
-                            <li class="breadcrumb-item"><a href="{{ route('client-home') }}" class="text-decoration-none">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Order Now</li>
+                            <li class="breadcrumb-item"><a href="{{ route('client-home') }}" class="text-decoration-none">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Đặt hàng ngay bây giờ</li>
                         </ol>
                     </nav>
                 </div>
@@ -54,7 +54,7 @@
                                 Item in your order
                             </h5>
                             <a href="{{ route('client-home') }}" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-arrow-left me-1"></i> Continue Shopping
+                                <i class="fas fa-arrow-left me-1"></i>Tiếp tục mua sắm
                             </a>
                         </div>
                     </div>
@@ -63,12 +63,12 @@
                             <table class="table table-hover mb-0">
                                 <thead class="bg-light">
                                     <tr>
-                                        <th class="text-center" style="width: 100px;">Image</th>
-                                        <th style="min-width: 200px;">Product</th>
+                                        <th class="text-center" style="width: 100px;">Ảnh</th>
+                                        <th style="min-width: 200px;">Sản phẩm</th>
                                         <th>Variant</th>
-                                        <th class="text-center" style="width: 120px;">Price</th>
-                                        <th class="text-center" style="width: 120px;">Quantity</th>
-                                        <th class="text-center" style="width: 120px;">Total</th>
+                                        <th class="text-center" style="width: 120px;">Giá</th>
+                                        <th class="text-center" style="width: 120px;">Số lượng</th>
+                                        <th class="text-center" style="width: 120px;">Tổng cộng</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -92,7 +92,7 @@
                                                     <span class="badge bg-light text-dark border">{{ $variant->combination_code }}</span>
                                                 </div>
                                             @else
-                                                <span class="text-muted">No variant selected</span>
+                                                <span class="text-muted">Chưa chọn biến thể nào.</span>
                                             @endif
                                         </td>
                                         <td class="text-center">
@@ -125,7 +125,7 @@
                                 </tbody>
                                 <tfoot class="table-group-divider">
                                     <tr>
-                                        <th colspan="5" class="text-end">Subtotal:</th>
+                                        <th colspan="5" class="text-end">Tổng phụ:</th>
                                         <td class="text-center">
                                             @if(isset($product))
                                                 @php
@@ -151,7 +151,7 @@
                     <div class="card-header bg-white border-0 py-3">
                         <h5 class="mb-0">
                             <i class="fas fa-user-circle text-primary me-2"></i>
-                            Billing Information
+                          Thông tin thanh toán
                         </h5>
                     </div>
                     <div class="card-body">
@@ -162,7 +162,7 @@
                         ]) }}" method="POST">
                             @csrf
                             <div class="mb-3">
-                                <label for="full_name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <label for="full_name" class="form-label">Họ và tên <span class="text-danger">*</span></label>
                                 <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Your name" required>
                             </div>
                             <div class="mb-3">
@@ -170,24 +170,24 @@
                                 <input type="email" id="email" name="email" class="form-control" placeholder="your@email.com" required>
                             </div>
                             <div class="mb-3">
-                                <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                                <label for="address" class="form-label">Địa chỉ <span class="text-danger">*</span></label>
                                 <input type="text" id="address" name="address" class="form-control" placeholder="Your address" required>
                             </div>
                             <div class="mb-3">
-                                <label for="phone" class="form-label">Phone</label>
+                                <label for="phone" class="form-label">Số điện thoại</label>
                                 <input type="text" id="phone" name="phone" class="form-control" placeholder="Your phone number">
                             </div>
                             <div class="mb-4">
-                                <label for="notes" class="form-label">Order Notes</label>
+                                <label for="notes" class="form-label">Ghi chú đơn hàngs</label>
                                 <textarea id="notes" name="notes" class="form-control" rows="2" placeholder="Special instructions..."></textarea>
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-lg w-100 py-3 mb-3">
-                                <i class="fas fa-shopping-bag me-2"></i> Place Order Now
+                                <i class="fas fa-shopping-bag me-2"></i>Đặt hàng ngay bây giờ
                             </button>
 
                             <div class="text-center">
-                                <small class="text-muted">By placing your order, you agree to our <a href="#" class="text-decoration-none">Terms of Service</a></small>
+                                <small class="text-muted">Bằng cách đặt hàng, bạn đồng ý với Điều khoản & Điều kiện của chúng tôi. <a href="#" class="text-decoration-none">Terms of Service</a></small>
                             </div>
                         </form>
                     </div>

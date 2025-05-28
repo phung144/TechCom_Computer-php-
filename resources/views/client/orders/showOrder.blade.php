@@ -160,7 +160,7 @@ Tổng phụ</span>
                 @method('DELETE')
                 <button type="submit" class="btn btn-outline-danger ms-2"
                         onclick="return confirm('Are you sure you want to permanently delete this order?')">
-                    <i class="fas fa-trash-alt me-2"></i> Delete Order
+                    <i class="fas fa-trash-alt me-2"></i> Xóa Đơn Hàng
                 </button>
             </form>
             @endif
