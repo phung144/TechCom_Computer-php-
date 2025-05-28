@@ -79,14 +79,14 @@
                         <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
                     </div>
                     <div class="form-group">
-                        <label for="password" class="font-weight-bold">Password:</label>
+                        <label for="password" class="font-weight-bold">Mật khẩu:</label>
                         <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
                 </form>
             </div>
             <div class="card-footer text-center">
-                <small>Don't have an account? <a href="{{ route('register') }}" class="text-primary">Register here</a></small>
+                <small>Chưa có tài khoản?<a href="{{ route('register') }}" class="text-primary">Register here</a></small>
             </div>
         </div>
     </div>

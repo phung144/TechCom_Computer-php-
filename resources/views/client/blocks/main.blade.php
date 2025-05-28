@@ -515,7 +515,7 @@
     <div class="container">
         <div class="mb-6 position-relative">
             <div class="d-flex justify-content-between border-bottom border-color-1 flex-md-nowrap flex-wrap border-sm-bottom-0">
-                <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">Best Selling Products</h3>
+                <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">Sản phẩm bán chạy nhất</h3>
             </div>
             <div class="row">
                 @foreach($topSalesProducts as $product)
