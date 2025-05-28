@@ -9,7 +9,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-3 flex-nowrap flex-xl-wrap overflow-auto overflow-xl-visible">
                         <li class="breadcrumb-item"><a href="{{ route('client-home') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+                        <li class="breadcrumb-item active" aria-current="page">Danh sách yêu thích</li>
                     </ol>
                 </nav>
             </div>
@@ -19,8 +19,8 @@
 
     <div class="container">
         <div class="mb-5 text-center">
-            <h1 class="display-5">Your Wishlist</h1>
-            <p class="text-muted">{{ $wishlists->count() }} products you love</p>
+            <h1 class="display-5">Danh sách mong muốn của bạn</h1>
+            <p class="text-muted">{{ $wishlists->count() }}Sản phẩm yêu thích</p>
         </div>
 
         @if($wishlists->isEmpty())
@@ -28,8 +28,8 @@
                 <div class="mb-4">
                     <i class="far fa-heart fa-4x text-muted"></i>
                 </div>
-                <h4 class="mb-3">Your wishlist is empty</h4>
-                <a href="{{ route('client-home') }}" class="btn btn-primary">Continue Shopping</a>
+                <h4 class="mb-3">Danh sách mong muốn của bạn đang trống</h4>
+                <a href="{{ route('client-home') }}" class="btn btn-primary">Tiếp tục mua sắm</a>
             </div>
         @else
             <!-- Wishlist Table -->
@@ -38,11 +38,11 @@
                     <table class="table table-hover">
                         <thead class="bg-light">
                             <tr>
-                                <th class="text-center" style="width: 80px;">Remove</th>
-                                <th class="text-center" style="width: 100px;">Image</th>
-                                <th>Product</th>
-                                <th class="text-right">Price</th>
-                                <th class="text-center">Action</th>
+                                <th class="text-center" style="width: 80px;">Xoá</th>
+                                <th class="text-center" style="width: 100px;">Ảnh</th>
+                                <th>Sản Phẩm</th>
+                                <th class="text-right">Giá</th>
+                                <th class="text-center">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
