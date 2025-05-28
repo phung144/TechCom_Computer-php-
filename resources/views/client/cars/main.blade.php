@@ -28,9 +28,9 @@
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item"><a href="{{ route('client-home') }}"
-                                        class="text-decoration-none text-primary"><i class="fas fa-home me-1"></i> Home</a>
+                                        class="text-decoration-none text-primary"><i class="fas fa-home me-1"></i> Trang chủ</a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+                                <li class="breadcrumb-item active" aria-current="page">Giỏ hàng</li>
                             </ol>
                         </nav>
                     </div>
@@ -43,8 +43,8 @@
 
         <div class="container py-5">
             <div class="text-center mb-5">
-                <h1 class="display-5 fw-bold text-gradient-primary">Your Shopping Cart</h1>
-                <p class="lead text-muted">Review your items before checkout</p>
+                <h1 class="display-5 fw-bold text-gradient-primary">Giỏ hàng của bạn</h1>
+                <p class="lead text-muted">Xem lại các mặt hàng của bạn trước khi thanh toán.</p>
                 <div class="divider mx-auto"></div>
             </div>
 
@@ -55,13 +55,13 @@
                         <table class="table table-hover mb-0">
                             <thead class="bg-light-primary">
                                 <tr>
-                                    <th class="text-center" style="width: 80px;">Remove</th>
-                                    <th class="text-center" style="width: 100px;">Image</th>
+                                    <th class="text-center" style="width: 80px;">Xoá</th>
+                                    <th class="text-center" style="width: 100px;">Ảnh</th>
                                     <th>Product</th>
                                     <th>Variant</th>
-                                    <th class="text-center" style="width: 120px;">Price</th>
-                                    <th class="text-center" style="width: 150px;">Quantity</th>
-                                    <th class="text-center" style="width: 120px;">Total</th>
+                                    <th class="text-center" style="width: 120px;">Giá</th>
+                                    <th class="text-center" style="width: 150px;">Số lượng</th>
+                                    <th class="text-center" style="width: 120px;">Tổng cộng</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -108,7 +108,7 @@
                                                     @endforeach
                                                 </div>
                                             @else
-                                                <span class="text-muted">No variant</span>
+                                                <span class="text-muted">Không có biến thể.</span>
                                             @endif
                                         </td>
                                         <td class="text-center">
@@ -152,7 +152,7 @@
                             </tbody>
                             <tfoot class="table-group-divider">
                                 <tr>
-                                    <th colspan="6" class="text-end">Subtotal:</th>
+                                    <th colspan="6" class="text-end">Tổng phụ:</th>
                                     @php
                                         $total = $carts->sum(function ($cart) {
                                             $isVariant = $cart->variant ? true : false;
@@ -185,9 +185,9 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h3 class="h4 mb-0 text-gradient-primary">
-                            <i class="fas fa-tag me-2"></i>Available Vouchers
+                            <i class="fas fa-tag me-2"></i>Phiếu giảm giá có sẵn
                         </h3>
-                        <small class="text-muted">Select a voucher to apply discount</small>
+                        <small class="text-muted">Chọn một phiếu giảm giá để áp dụng giảm giá.</small>
                     </div>
 
                     <div class="row g-3">
@@ -248,11 +248,11 @@
                         <div class="alert alert-success d-flex justify-content-between align-items-center mb-0">
                             <div>
                                 <i class="fas fa-check-circle me-2"></i>
-                                <strong id="selected-voucher-code"></strong> applied:
+                                <strong id="selected-voucher-code"></strong> đã áp dụng:
                                 <span id="selected-voucher-discount"></span>
                             </div>
                             <button onclick="removeVoucher()" class="btn btn-sm btn-outline-danger">
-                                <i class="fas fa-times"></i> Remove
+                                <i class="fas fa-times"></i> Xoá
                             </button>
                         </div>
                     </div>
@@ -267,15 +267,15 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h3 class="h4 mb-0 text-gradient-primary">
-                                    <i class="fas fa-address-card me-2"></i>Billing Details
+                                    <i class="fas fa-address-card me-2"></i>Chi tiết thanh toán
                                 </h3>
-                                <small class="text-muted">All fields marked with * are required</small>
+                                <small class="text-muted">Tất cả các trường được đánh dấu bằng * là bắt buộc.</small>
                             </div>
                             <form id="order-form" action="{{ route('order.store') }}" method="POST">
                                 @csrf
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label for="full_name" class="form-label">Full Name <span
+                                        <label for="full_name" class="form-label">Họ và tên <span
                                                 class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -284,7 +284,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="address" class="form-label">Address <span
+                                        <label for="address" class="form-label">Địa chỉ <span
                                                 class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
@@ -293,7 +293,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="email" class="form-label">Email Address <span
+                                        <label for="email" class="form-label">Địa chỉ email <span
                                                 class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-envelope"></i></span>
@@ -302,7 +302,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="phone" class="form-label">Phone</label>
+                                        <label for="phone" class="form-label">Số điện thoại</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                             <input type="text" id="phone" name="phone" class="form-control"
@@ -325,7 +325,7 @@
                     <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
                         <div class="card-body">
                             <h3 class="h4 mb-4 text-gradient-primary">
-                                <i class="fas fa-receipt me-2"></i>Order Summary
+                                <i class="fas fa-receipt me-2"></i>Tóm tắt đơn hàng
                             </h3>
 
                             <ul class="list-group list-group-flush mb-4">
@@ -335,15 +335,15 @@
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center d-none"
                                     id="discount-row">
-                                    <span id="discount-label">Discount</span>
+                                    <span id="discount-label">Giảm giá</span>
                                     <strong class="text-danger" id="discount-value"></strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
                                     <span>Shipping</span>
-                                    <span class="badge bg-success">FREE</span>
+                                    <span class="badge bg-success">MIỄN PHÍ</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center fw-bold fs-5">
-                                    <span>Total</span>
+                                    <span>Tổng cộng</span>
                                     {{-- Giá trị này sẽ được cập nhật bằng JS khi chọn voucher --}}
                                     <span class="text-primary" id="cart-total">
                                         {{ number_format($subtotal, 0) }} VND
@@ -352,7 +352,7 @@
                             </ul>
 
                             <button type="submit" form="order-form" class="btn btn-primary btn-lg w-100 py-3">
-                                <i class="fas fa-shopping-bag me-2"></i> Place Order
+                                <i class="fas fa-shopping-bag me-2"></i> Đặt hàng
                             </button>
 
                             <div class="mt-3 text-center">
