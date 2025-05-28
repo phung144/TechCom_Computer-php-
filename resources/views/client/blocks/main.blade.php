@@ -133,7 +133,7 @@
     <div class="container">
         <!-- List Product Title -->
         <div class="d-flex justify-content-between border-bottom border-color-1 flex-md-nowrap flex-wrap border-sm-bottom-0">
-            <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">List Products</h3>
+            <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">Danh sách sản phẩm</h3>
         </div>
         <!-- End List Product Title -->
 
@@ -360,7 +360,7 @@
                     <li class="nav-item">
                         <a class="nav-link js-animation-link active" id="pills-sale-tab" data-toggle="pill" href="#pills-sale" role="tab" aria-controls="pills-sale" aria-selected="true">
                             <div class="d-flex justify-content-between border-bottom border-color-1 flex-md-nowrap flex-wrap border-sm-bottom-0">
-                                <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">On Sale</h3>
+                                <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">Đang giảm giá</h3>
                             </div>
                         </a>
                     </li>

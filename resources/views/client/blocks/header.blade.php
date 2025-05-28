@@ -128,7 +128,7 @@
                     <!-- Search Bar -->
                     <div class="col d-none d-xl-block">
                         <form class="js-focus-state" method="GET" action="{{ route('home.search') }}">
-                            <label class="sr-only" for="searchproduct">Search</label>
+                            <label class="sr-only" for="searchproduct">Tìm kiếm</label>
                             <div class="input-group">
                                 <input type="text" class="form-control py-2 pl-5 font-size-15 border-right-0 height-40 border-width-2 rounded-left-pill border-primary" name="query" id="searchproduct-item" placeholder="Search for Products" aria-label="Search for Products" aria-describedby="searchProduct1" required>
                                 <div class="input-group-append">
@@ -251,7 +251,7 @@
                                     data-animation-in="slideInUp"
                                     data-animation-out="fadeOut"
                                     data-position="left">
-                                    <a id="homeMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="{{route('client-home')}}" aria-haspopup="true" aria-expanded="false">Home</a>
+                                    <a id="homeMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="{{route('client-home')}}" aria-haspopup="true" aria-expanded="false">Trang chủ</a>
                                 </li>
                                 <!-- End Home -->
 
@@ -260,7 +260,7 @@
                                     data-event="hover"
                                     data-animation-in="slideInUp"
                                     data-animation-out="fadeOut">
-                                    <a id="TVMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="{{route('shop-home')}}" aria-haspopup="true" aria-expanded="false">Shop</a>
+                                    <a id="TVMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="{{route('shop-home')}}" aria-haspopup="true" aria-expanded="false">Cửa hàng</a>
 
                                     <!-- End TV & Audio - Mega Menu -->
                                 </li>
