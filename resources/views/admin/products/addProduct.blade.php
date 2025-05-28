@@ -5,7 +5,7 @@
         <div class="col-12">
             <div class="card card-default">
                 <div class="card-header">
-                    <h2>Add Product</h2>
+                    <h2>Thêm sản phẩm</h2>
                 </div>
                 <div class="card-body">
                     <form id="add-product-form" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
@@ -13,7 +13,7 @@
 
                         <!-- Phần thông tin cơ bản -->
                         <div class="form-group">
-                            <label for="name">Product Name</label>
+                            <label for="name">Tên sản phẩm</label>
                             <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
                             @error('name')
                                 <small class="text-danger">{{ $message }}</small>
@@ -21,7 +21,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="description">Description</label>
+                            <label for="description">Mô tả</label>
                             <textarea name="description" id="description" class="form-control" rows="4" required>{{ old('description') }}</textarea>
                             @error('description')
                                 <small class="text-danger">{{ $message }}</small>
@@ -29,9 +29,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="category">Category</label>
+                            <label for="category">Danh mục</label>
                             <select name="category_id" id="category" class="form-control" required>
-                                <option value="">Select Category</option>
+                                <option value="">Chọn danh mục</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
@@ -46,7 +46,7 @@
                         <!-- Phần biến thể sản phẩm -->
                         <div class="card mt-4 mb-4">
                             <div class="card-header bg-light">
-                                <h4>Basic Product</h4>
+                                <h4>Cấu hình cơ bản</h4>
                                 <small class="text-muted">Thêm cấu hình sản phẩm (CPU, RAM, Ổ cứng...)</small>
                             </div>
                             <div class="card-body">
@@ -65,11 +65,11 @@
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-md-4">
-                                        <label>Price</label>
+                                        <label>Giá</label>
                                         <input type="number" name="variant[price]" class="form-control" step="0.01" required>
                                     </div>
                                     <div class="col-md-4">
-                                        <label>Quantity</label>
+                                        <label>Số lượng</label>
                                         <input type="number" name="variant[quantity]" class="form-control" required>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@
 
                         <!-- Phần ảnh sản phẩm -->
                         <div class="form-group">
-                            <label for="image">Product Image</label>
+                            <label for="image">Hình ảnh sản phẩm</label>
                             <input type="file" name="image" id="image" class="form-control-file" required>
                             @error('image')
                                 <small class="text-danger">{{ $message }}</small>
@@ -107,7 +107,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="photos">Product Images</label>
+                            <label for="photos">Hình ảnh nhiều sản phẩm</label>
                             <input type="file" name="photos[]" id="photos" class="form-control-file" multiple required>
                             @error('photos')
                                 <small class="text-danger">{{ $message }}</small>
@@ -122,17 +122,17 @@
                         <!-- Phần giảm giá (Discount) -->
                         <div class="card mt-4 mb-4 border">
                             <div class="card-header bg-light">
-                                <h4 class="mb-0">Discount Settings</h4>
+                                <h4 class="mb-0">Cài đặt giảm giá</h4>
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="discount_type">Discount Type</label>
+                                            <label for="discount_type">Loại giảm giá</label>
                                             <select name="discount_type" id="discount_type" class="form-control">
-                                                <option value="">None</option>
-                                                <option value="percentage" {{ old('discount_type') == 'percentage' ? 'selected' : '' }}>Percentage</option>
-                                                <option value="fixed" {{ old('discount_type') == 'fixed' ? 'selected' : '' }}>Fixed Amount</option>
+                                                <option value="">Không</option>
+                                                <option value="percentage" {{ old('discount_type') == 'percentage' ? 'selected' : '' }}>Tỷ lệ phần trăm</option>
+                                                <option value="fixed" {{ old('discount_type') == 'fixed' ? 'selected' : '' }}>Số tiền cố định</option>
                                             </select>
                                             @error('discount_type')
                                                 <small class="text-danger">{{ $message }}</small>
@@ -141,7 +141,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="discount_value">Discount Value</label>
+                                            <label for="discount_value">Giá trị chiết khấu</label>
                                             <input type="number" name="discount_value" id="discount_value"
                                                    class="form-control" value="{{ old('discount_value') }}" step="0.01" min="0">
                                             @error('discount_value')
@@ -151,7 +151,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="sales">Sales Count</label>
+                                            <label for="sales">Số lượng bán hàng</label>
                                             <input type="number" name="sales" id="sales"
                                                    class="form-control" value="{{ old('sales', 0) }}" min="0">
                                             @error('sales')
@@ -164,7 +164,7 @@
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="discount_start">Discount Start Date</label>
+                                            <label for="discount_start">Ngày bắt đầu giảm giá</label>
                                             <input type="date" name="discount_start" id="discount_start"
                                                    class="form-control" value="{{ old('discount_start') }}">
                                             @error('discount_start')
@@ -174,7 +174,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="discount_end">Discount End Date</label>
+                                            <label for="discount_end">Ngày kết thúc giảm giá</label>
                                             <input type="date" name="discount_end" id="discount_end"
                                                    class="form-control" value="{{ old('discount_end') }}">
                                             @error('discount_end')
@@ -186,7 +186,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Add Product</button>
+                        <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
                     </form>
                 </div>
             </div>

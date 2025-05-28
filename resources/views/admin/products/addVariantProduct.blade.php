@@ -3,7 +3,7 @@
 @section('main')
     <div class="card mt-4 mb-4">
         <div class="card-header bg-light">
-            <h4>Add Product Variant</h4>
+            <h4>Cấu hình cơ bản</h4>
             <small class="text-muted">Thêm cấu hình sản phẩm (CPU, RAM, SSD...)</small>
         </div>
 
@@ -26,18 +26,18 @@
 
                 <div class="row mt-3">
                     <div class="col-md-4">
-                        <label>Price</label>
+                        <label>Giá</label>
                         <input type="number" name="variant[price]" class="form-control" step="0.01" required>
                     </div>
                     <div class="col-md-4">
-                        <label>Quantity</label>
+                        <label>Số lượng</label>
                         <input type="number" name="variant[quantity]" class="form-control" required>
                     </div>
                 </div>
 
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">Add Variant</button>
-                    <a href="{{ route('admin.products.show', $product->id) }}" class="btn btn-secondary">Back</a>
+                    <button type="submit" class="btn btn-primary">Thêm biến thể</button>
+                    <a href="{{ route('admin.products.show', $product->id) }}" class="btn btn-secondary">Quay lại</a>
                 </div>
             </div>
         </form>

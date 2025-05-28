@@ -17,7 +17,7 @@
                                 <th>Tên sản phẩm</th>
                                 <th>Mô tả</th>
                                 <th>Danh mục</th>
-                                <th></th>
+                                <th>Số lượng</th>
                                 <th>Giảm giá</th>
                                 <th>Bắt đầu giảm giá</th>
                                 <th>Kết thúc giảm giá</th>
@@ -65,7 +65,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger"
-                                                            onclick="return confirm('Are you sure you want to delete this product?')">
+                                                            onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
                                                         <i class="mdi mdi-delete-outline mr-2"></i> Xóa
                                                     </button>
                                                 </form>
