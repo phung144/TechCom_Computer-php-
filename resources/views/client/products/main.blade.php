@@ -209,13 +209,13 @@
                                 <input type="hidden" name="quantity" id="quantity-input" value="1">
 
                                 <button type="submit" class="btn btn-primary-dark transition-3d-hover">
-                                    <i class="ec ec-add-to-cart mr-2 font-size-20"></i> Add to Cart
+                                    <i class="ec ec-add-to-cart mr-2 font-size-20"></i> Thêm vào giỏ hàng
                                 </button>
                             </form>
                         @else
                             <!-- Nút xử lý bằng SweetAlert khi chưa đăng nhập -->
                             <button onclick="handleAddToCart()" class="btn btn-primary-dark transition-3d-hover mr-2 mb-2">
-                                <i class="ec ec-add-to-cart mr-2 font-size-20"></i> Add to Cart
+                                <i class="ec ec-add-to-cart mr-2 font-size-20"></i> Thêm vào giỏ hàng
                             </button>
                         @endauth
 
@@ -226,7 +226,7 @@
                                     html: `
                                             <div class="text-center py-3">
                                                 <i class="fas fa-shopping-bag fa-3x text-primary mb-3"></i>
-                                                <p class="mb-2">Sign in to complete your purchase</p>
+                                                <p class="mb-2">Đăng nhập để hoàn tất giao dịch của bạn.</p>
                                                 <small class="text-muted">Enjoy faster checkout and order tracking</small>
                                             </div>
                                         `,
@@ -262,13 +262,13 @@
                                     <input type="hidden" name="quantity" id="buy-now-quantity" value="1">
                                     <input type="hidden" name="orderNow" value="1">
                                     <button type="submit" class="btn btn-success transition-3d-hover mb-2">
-                                        <i class="ec ec-credit-card mr-2 font-size-20"></i> Order Now
+                                        <i class="ec ec-credit-card mr-2 font-size-20"></i> Đặt hàng ngay
                                     </button>
                                 </form>
                             @else
                                 <!-- Nút cho user chưa đăng nhập -->
                                 <button onclick="handleOrderNow()" class="btn btn-success transition-3d-hover mb-2">
-                                    <i class="ec ec-credit-card mr-2 font-size-20"></i> Order Now
+                                    <i class="ec ec-credit-card mr-2 font-size-20"></i> Đặt hàng ngay
                                 </button>
                             @endauth
                         </div>
@@ -283,13 +283,13 @@
                                     html: `
                                     <div class="text-center py-3">
                                         <i class="fas fa-shopping-bag fa-3x text-primary mb-3"></i>
-                                        <p class="mb-2">Sign in to complete your purchase</p>
+                                        <p class="mb-2">Đăng nhập để hoàn tất giao dịch của bạn.</p>
                                         <small class="text-muted">Enjoy faster checkout and order tracking</small>
                                     </div>
                                 `,
                                     showCancelButton: true,
-                                    confirmButtonText: '<i class="fas fa-sign-in-alt mr-2"></i> Login Now',
-                                    cancelButtonText: 'Continue Shopping',
+                                    confirmButtonText: '<i class="fas fa-sign-in-alt mr-2"></i> Đăng nhập ngay',
+                                    cancelButtonText: 'Tiếp tục mua sắm',
                                     buttonsStyling: false,
                                     customClass: {
                                         confirmButton: 'btn btn-primary px-4 py-2 mx-2',
@@ -313,7 +313,7 @@
 
             <!-- Feedback Section -->
             <div class="feedback-section mt-5">
-                <h2 class="mb-4 font-weight-bold text-dark">Customer Reviews</h2>
+                <h2 class="mb-4 font-weight-bold text-dark">Đánh giá của khách hàng</h2>
 
 
 
@@ -384,7 +384,7 @@
 
             <!-- Comment Section -->
             <div class="comment-section mt-5">
-                <h2 class="mb-4 font-weight-bold text-dark">Product Discussions</h2>
+                <h2 class="mb-4 font-weight-bold text-dark">Thảo luận về sản phẩm</h2>
 
                 <!-- Comment Form -->
                 @auth
@@ -420,7 +420,7 @@
                                                 </label>
                                             </div>
                                             <button type="submit" class="btn btn-primary px-4">
-                                                <i class="fas fa-paper-plane mr-2"></i> Post Comment
+                                                <i class="fas fa-paper-plane mr-2"></i> Đăng bình luận
                                             </button>
                                         </div>
                                     </form>
@@ -431,15 +431,14 @@
                 @else
                     <div class="alert alert-light d-flex align-items-center mb-4">
                         <i class="fas fa-info-circle text-primary mr-2"></i>
-                        <span>Please <a href="{{ route('login') }}" class="font-weight-bold">sign in</a> to post your
-                            comment.</span>
+                        <span>Please <a href="{{ route('login') }}" class="font-weight-bold">sign in</a> Đăng bình luận của bạn.</span>
                     </div>
                 @endauth
 
                 <!-- Comment List -->
                 <div class="comment-list">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="mb-0 font-weight-bold">{{ $comments->total() }} Comments</h5>
+                        <h5 class="mb-0 font-weight-bold">{{ $comments->total() }} Bình luận</h5>
 
                     </div>
 
@@ -558,8 +557,8 @@
                     @empty
                         <div class="empty-state text-center py-5">
                             <i class="far fa-comments fa-3x text-muted mb-3"></i>
-                            <h5 class="text-muted">No comments yet</h5>
-                            <p class="text-muted">Be the first to share what you think!</p>
+                            <h5 class="text-muted">Chưa có bình luận nào</h5>
+                            <p class="text-muted">Hãy là người đầu tiên chia sẻ suy nghĩ của bạn!</p>
                         </div>
                     @endforelse
 
@@ -581,7 +580,7 @@
                     <li class="nav-item">
                         <a class="nav-link js-animation-link active" id="pills-sale-tab" data-toggle="pill" href="#pills-sale" role="tab" aria-controls="pills-sale" aria-selected="true">
                             <div class="d-flex justify-content-between border-bottom border-color-1 flex-md-nowrap flex-wrap border-sm-bottom-0">
-                                <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">List Product of Category</h3>
+                                <h3 class="section-title section-title__full mb-0 pb-2 font-size-22">Danh sách sản phẩm của danh mục</h3>
                             </div>
                         </a>
                     </li>

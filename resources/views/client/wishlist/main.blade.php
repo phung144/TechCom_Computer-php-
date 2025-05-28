@@ -95,7 +95,7 @@
                                 </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('product.detail', $wishlist->product->id) }}" class="btn btn-sm btn-primary">
-                                        View Product
+                                       Xem sản phẩm
                                     </a>
                                 </td>
                             </tr>
