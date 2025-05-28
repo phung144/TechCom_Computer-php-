@@ -86,7 +86,7 @@
                 </form>
             </div>
             <div class="card-footer text-center">
-                <small>Chưa có tài khoản?<a href="{{ route('register') }}" class="text-primary">Register here</a></small>
+                <small>Chưa có tài khoản?<a href="{{ route('register') }}" class="text-primary">Đăng ký tại đây</a></small>
             </div>
         </div>
     </div>
