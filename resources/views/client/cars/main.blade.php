@@ -356,7 +356,7 @@
                             </button>
 
                             <div class="mt-3 text-center">
-                                <small class="text-muted">By placing your order, you agree to our <a href="#">Terms
+                                <small class="text-muted">Bằng cách đặt hàng, bạn đồng ý với điều khoản của chúng tôi <a href="#">Terms
                                         of Service</a></small>
                             </div>
 

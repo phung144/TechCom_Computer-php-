@@ -7,7 +7,7 @@
                     <div class="row align-items-center">
                         <div class="col-auto flex-horizontal-center">
                             <i class="ec ec-newsletter font-size-40"></i>
-                            <h2 class="font-size-20 mb-0 ml-3">Sign up and shop today to receive great deals</h2>
+                            <h2 class="font-size-20 mb-0 ml-3">Đăng ký và mua sắm hôm nay để nhận những ưu đãi tuyệt vời</h2>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                                 <i class="ec ec-support text-primary font-size-56"></i>
                             </div>
                             <div class="col pl-3">
-                                <div class="font-size-13 font-weight-light">Got questions? Call us 24/7!</div>
+                                <div class="font-size-13 font-weight-light">Có câu hỏi? Gọi cho chúng tôi 24/7!</div>
                                 <a href="tel:+80080018588" class="font-size-20 text-gray-90">0386373687</a><a href="tel:+0600874548" class="font-size-20 text-gray-90"></a>
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                         </div>
 
                         <div class="col-12 col-md mb-4 mb-md-0">
-                            <h6 class="mb-3 font-weight-bold">Customer Care</h6>
+                            <h6 class="mb-3 font-weight-bold">Chăm sóc khách hàng</h6>
                             <!-- List Group -->
                             <ul class="list-group list-group-flush list-group-borderless mb-0 list-group-transparent">
                                 <li><a class="list-group-item list-group-item-action" href="https://transvelo.github.io/electro-html/2.0/html/shop/my-account.html">My Account</a></li>
