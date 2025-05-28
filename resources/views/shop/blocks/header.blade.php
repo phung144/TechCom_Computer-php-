@@ -28,7 +28,7 @@
 
                                     @if(auth()->user()->role === 'admin')  {{-- Kiểm tra role admin --}}
                                         <a href="{{ route('admin.home') }}" class="btn btn-link p-0 m-0 align-baseline text-primary ml-2">
-                                            Admin Dashboard
+                                          Bảng điều khiển quản trị
                                         </a>
                                     @endif
 
@@ -252,7 +252,7 @@
                                     data-animation-in="slideInUp"
                                     data-animation-out="fadeOut"
                                     data-position="left">
-                                    <a id="homeMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="{{route('client-home')}}" aria-haspopup="true" aria-expanded="false">Home</a>
+                                    <a id="homeMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="{{route('client-home')}}" aria-haspopup="true" aria-expanded="false">Trang chủ</a>
                                 </li>
                                 <!-- End Home -->
 
@@ -261,7 +261,7 @@
                                     data-event="hover"
                                     data-animation-in="slideInUp"
                                     data-animation-out="fadeOut">
-                                    <a id="TVMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="{{route('shop-home')}}" aria-haspopup="true" aria-expanded="false">Shop</a>
+                                    <a id="TVMegaMenu" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="{{route('shop-home')}}" aria-haspopup="true" aria-expanded="false">Cửa hàng</a>
 
                                     <!-- End TV & Audio - Mega Menu -->
                                 </li>

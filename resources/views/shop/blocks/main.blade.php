@@ -71,7 +71,7 @@
     <!-- Shop-control-bar Title -->
     {{-- <div class="flex-center-between mb-3">
         <h3 class="font-size-25 mb-0">Shop</h3>
-        <p class="font-size-14 text-gray-90 mb-0">Showing 1–25 of 56 results</p>
+        <p class="font-size-14 text-gray-90 mb-0">Hiển thị 1–25 trong số 56 kết quả</p>
     </div>
     <!-- End shop-control-bar Title -->
     <!-- Shop-control-bar -->
