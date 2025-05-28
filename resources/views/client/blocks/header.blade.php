@@ -5,7 +5,7 @@
             <div class="container">
                 <div class="d-flex align-items-center">
                     <div class="topbar-left">
-                        <a href="#" class="text-gray-110 font-size-13 u-header-topbar__nav-link">Welcome to TechCom Computer Store</a>
+                        <a href="#" class="text-gray-110 font-size-13 u-header-topbar__nav-link">Chào mừng bạn đến với Cửa hàng Máy tính TechCom</a>
                     </div>
                     <div class="topbar-right ml-auto">
                         <ul class="list-inline mb-0">
@@ -28,19 +28,19 @@
 
                                     @if(auth()->user()->role === 'admin')  {{-- Kiểm tra role admin --}}
                                         <a href="{{ route('admin.home') }}" class="btn btn-link p-0 m-0 align-baseline text-primary ml-2">
-                                            Admin Dashboard
+                                            Bảng điều khiển quản trị
                                         </a>
                                     @endif
 
                                     <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                                         @csrf
-                                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline text-primary">Logout</button>
+                                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline text-primary">Đăng xuất</button>
                                     </form>
                                 @else
                                     <i class="ec ec-user mr-1"></i>
-                                    <a href="{{ route('register') }}">Register</a>
+                                    <a href="{{ route('register') }}">Đăng ký</a>
                                     <span class="text-gray-50">or</span>
-                                    <a href="{{ route('login') }}">Login</a>
+                                    <a href="{{ route('login') }}">Đăng nhập</a>
                                 @endif
                                 </a>
                                 <!-- End Account Sidebar Toggle Button -->
