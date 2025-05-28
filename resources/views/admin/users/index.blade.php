@@ -18,7 +18,7 @@
     <div class="card-header">
         <div class="row justify-content-between align-items-center">
             <div class="col-12 col-md-6 col-xl-5 d-flex align-items-center gap-3 flex-wrap">
-                <h5 class="fs-5 mb-0 text-nowrap py-2 py-xl-0">Customers</h5>
+                <h5 class="fs-5 mb-0 text-nowrap py-2 py-xl-0">Khách hàng</h5>
                 <form action="{{ route('admin.users.index') }}" method="GET" class="w-100 w-md-auto">
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..."

@@ -6,22 +6,22 @@
         <div class="col-12">
             <div class="card card-default">
                 <div class="card-header">
-                    <h2>Products List</h2>
-                    <a href="{{ route('admin.products.create') }}" class="btn btn-primary">Add Product</a>
+                    <h2>Danh sách sản phẩm</h2>
+                    <a href="{{ route('admin.products.create') }}" class="btn btn-primary">Thêm sản phẩm</a>
                 </div>
                 <div class="card-body">
                     <table id="productsTable" class="table table-hover table-product" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Image</th>
-                                <th>Product Name</th>
-                                <th>Description</th>
-                                <th>Category</th>
-                                <th>Sales</th>
-                                <th>Discount</th>
-                                <th>Discount Start</th>
-                                <th>Discount End</th>
-                                <th>Action</th>
+                                <th>Hình ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Mô tả</th>
+                                <th>Danh mục</th>
+                                <th></th>
+                                <th>Giảm giá</th>
+                                <th>Bắt đầu giảm giá</th>
+                                <th>Kết thúc giảm giá</th>
+                                <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,11 +54,11 @@
                                             <div class="dropdown-menu dropdown-menu-right">
                                                 <a href="{{ route('admin.products.show', $product->id) }}"
                                                    class="dropdown-item">
-                                                   <i class="mdi mdi-eye-outline mr-2"></i> Detail
+                                                   <i class="mdi mdi-eye-outline mr-2"></i> Chi tiết
                                                 </a>
                                                 <a href="{{ route('admin.products.edit', $product->id) }}"
                                                    class="dropdown-item">
-                                                   <i class="mdi mdi-pencil-outline mr-2"></i> Edit
+                                                   <i class="mdi mdi-pencil-outline mr-2"></i> Sửa
                                                 </a>
                                                 <div class="dropdown-divider"></div>
                                                 <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST">
@@ -66,7 +66,7 @@
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger"
                                                             onclick="return confirm('Are you sure you want to delete this product?')">
-                                                        <i class="mdi mdi-delete-outline mr-2"></i> Delete
+                                                        <i class="mdi mdi-delete-outline mr-2"></i> Xóa
                                                     </button>
                                                 </form>
                                             </div>
