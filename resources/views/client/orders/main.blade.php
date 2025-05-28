@@ -273,7 +273,7 @@
                 </p>
                 <a href="{{ route('login') }}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm"
                     style="background: linear-gradient(135deg, #3498db, #8e44ad); border: none;">
-                    <i class="fas fa-sign-in-alt me-2"></i> Login Now
+                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập ngay
                 </a>
             </div>
         @endauth

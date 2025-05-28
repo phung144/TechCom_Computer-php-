@@ -9,7 +9,7 @@
     <div class="order-detail-container">
         <!-- Header -->
         <div class="order-header text-center mb-5">
-            <h1 class="order-title">Order Details</h1>
+            <h1 class="order-title">Chi tiết đặt hàng</h1>
             <div class="order-meta">
                 <span class="order-number">Order #{{ $order->id }}</span>
                 <span class="order-date">{{ $order->created_at->format('M d, Y - h:i A') }}</span>
@@ -42,7 +42,7 @@
 
         <!-- Order Summary -->
         <div class="order-summary-card mb-5">
-            <h3 class="section-title">Order Summary</h3>
+            <h3 class="section-title">Tóm tắt đơn hàng</h3>
 
             <div class="products-list">
                 @foreach($order->orderDetails as $detail)
@@ -79,11 +79,12 @@
 
         <!-- Shipping Information -->
         <div class="shipping-info-card mb-5">
-            <h3 class="section-title">Shipping Information</h3>
+            <h3 class="section-title">Thông tin vận chuyển</h3>
 
             <div class="info-grid">
                 <div class="info-item">
-                    <div class="info-label">Full Name</div>
+                    <div class="info-label">
+Tên đầy đủ</div>
                     <div class="info-value">{{ $order->full_name }}</div>
                 </div>
 
@@ -93,12 +94,13 @@
                 </div>
 
                 <div class="info-item">
-                    <div class="info-label">Phone</div>
+                    <div class="info-label">Số điện thoại</div>
                     <div class="info-value">{{ $order->phone }}</div>
                 </div>
 
                 <div class="info-item full-width">
-                    <div class="info-label">Address</div>
+                    <div class="info-label">
+Địa chỉ</div>
                     <div class="info-value">{{ $order->address }}</div>
                 </div>
             </div>
@@ -106,7 +108,7 @@
 
         <!-- Payment Summary -->
         <div class="payment-summary-card">
-            <h3 class="section-title">Payment Summary</h3>
+            <h3 class="section-title">Tóm tắt thanh toán</h3>
 
             <div class="payment-details">
                 <div class="payment-row">
@@ -114,26 +116,27 @@
                     <span>${{ number_format($order->total, 2) }}</span>
                 </div>
                 <div class="payment-row">
-                    <span>Discount</span>
+                    <span>
+Tổng phụ</span>
                     <span>
                         -${{ number_format(($order->total - ($order->total_after_discount ?? $order->total)), 2) }}
                     </span>
                 </div>
                 <div class="payment-row total-row">
-                    <span>Total after discount</span>
+                    <span>Tổng sau khi giảm giá</span>
                     <span>
                         ${{ number_format($order->total_after_discount ?? $order->total, 2) }}
                     </span>
                 </div>
                 <div class="payment-row method-row">
-                    <span>Payment Method</span>
+                    <span>Phương thức thanh toán</span>
                     <span class="payment-method">
                         <i class="fas fa-{{ $order->payment_method === 'credit_card' ? 'credit-card' : 'money-bill-wave' }} me-2"></i>
                         {{ ucwords(str_replace('_', ' ', $order->payment_method)) }}
                     </span>
                 </div>
                 <div class="payment-row">
-                    <span>Payment Status</span>
+                    <span>Trạng thái thanh toán</span>
                     <span>
                         @if($order->payment_status === 'paid')
                             <span class="badge bg-success">Đã thanh toán</span>
@@ -148,7 +151,7 @@
         <!-- Order Actions -->
         <div class="order-actions mt-5">
             <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-2"></i> Back to Orders
+                <i class="fas fa-arrow-left me-2"></i> Quay lại Đơn hàng
             </a>
 
             @if(in_array($order->status, ['completed', 'canceled']))
