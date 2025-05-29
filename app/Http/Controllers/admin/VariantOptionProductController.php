@@ -37,50 +37,52 @@ class VariantOptionProductController extends Controller
     {
         $product = Product::findOrFail($productId);
 
-    // Validate giá và số lượng
-    $validated = $request->validate([
-        'variant.price' => 'required|numeric|min:0',
-        'variant.quantity' => 'required|integer|min:0',
-    ]);
-
-    // Validate các tùy chọn biến thể
-    $variants = Variant::all();
-    foreach ($variants as $variant) {
-        $request->validate([
-            'variant.' . strtolower($variant->name) => 'required|exists:variant_options,id',
+        // Validate giá và số lượng
+        $validated = $request->validate([
+            'variant.price' => 'required|numeric|min:0',
+            'variant.quantity' => 'required|integer|min:0',
         ]);
-    }
 
-    // Tạo mã SKU từ các tùy chọn
-    $combinationCode = $this->generateSkuFromVariantData($product, $request->variant);
+        // Lấy tất cả variants
+        $variants = Variant::all();
 
-    // Kiểm tra trùng combination_code trong sản phẩm này
-    $exists = $product->variants()->where('combination_code', $combinationCode)->exists();
-    if ($exists) {
-        return back()->withErrors(['duplicate' => 'Biến thể với cấu hình này đã tồn tại.'])->withInput();
-    }
-
-    // Lưu biến thể
-    $variant = $product->variants()->create([
-        'price' => $validated['variant']['price'],
-        'quantity' => $validated['variant']['quantity'],
-        'combination_code' => $combinationCode,
-    ]);
-
-    // Gán variant_options
-    $optionIds = [];
-    foreach ($variants as $variantModel) {
-        $key = strtolower($variantModel->name);
-        if (isset($request->variant[$key])) {
-            $optionIds[] = $request->variant[$key];
+        // Lấy các optionIds hợp lệ (không rỗng)
+        $optionIds = [];
+        foreach ($variants as $variant) {
+            $key = strtolower($variant->name);
+            $optionId = $request->variant[$key] ?? null;
+            if (!empty($optionId)) {
+                // Kiểm tra tồn tại trong DB
+                $exists = \App\Models\VariantOption::where('id', $optionId)->where('variant_id', $variant->id)->exists();
+                if (!$exists) {
+                    return back()->withErrors(['invalid_option' => 'Tùy chọn không hợp lệ cho ' . $variant->name])->withInput();
+                }
+                $optionIds[$key] = $optionId;
+            }
         }
-    }
 
-    if (!empty($optionIds)) {
-        $variant->options()->attach($optionIds);
-    }
+        // Tạo mã SKU chỉ từ các giá trị được nhập
+        $combinationCode = $this->generateSkuFromVariantData($product, $optionIds);
 
-    return redirect()->route('admin.products.show', $product->id)->with('success', 'Variant added successfully!');
+        // Kiểm tra trùng combination_code trong sản phẩm này
+        $exists = $product->variants()->where('combination_code', $combinationCode)->exists();
+        if ($exists) {
+            return back()->withErrors(['duplicate' => 'Biến thể với cấu hình này đã tồn tại.'])->withInput();
+        }
+
+        // Lưu biến thể
+        $variant = $product->variants()->create([
+            'price' => $validated['variant']['price'],
+            'quantity' => $validated['variant']['quantity'],
+            'combination_code' => $combinationCode,
+        ]);
+
+        // Gán variant_options nếu có
+        if (!empty($optionIds)) {
+            $variant->options()->attach(array_values($optionIds));
+        }
+
+        return redirect()->route('admin.products.show', $product->id)->with('success', 'Variant added successfully!');
     }
 
     /**
@@ -137,22 +139,22 @@ class VariantOptionProductController extends Controller
         ]);
     }
 
-    private function generateSkuFromVariantData(Product $product, array $variantData): string
-{
-    $skuParts = [];
-    $variants = Variant::all();
+    private function generateSkuFromVariantData(Product $product, array $optionIds): string
+    {
+        $skuParts = [];
+        $variants = Variant::all();
 
-    foreach ($variants as $variant) {
-        $key = strtolower($variant->name);
-        if (isset($variantData[$key])) {
-            $option = VariantOption::find($variantData[$key]);
-            if ($option) {
-                $skuParts[] = strtoupper($variant->name) . '(' . $option->value . ')';
+        foreach ($variants as $variant) {
+            $key = strtolower($variant->name);
+            if (isset($optionIds[$key])) {
+                $option = VariantOption::find($optionIds[$key]);
+                if ($option) {
+                    $skuParts[] = strtoupper($variant->name) . '(' . $option->value . ')';
+                }
             }
         }
-    }
 
-    return implode('-', $skuParts); // Ví dụ: CPU(Core i5)-RAM(8GB)-SSD(256GB)
-}
+        return implode('-', $skuParts); // Ví dụ: CPU(Core i5)-RAM(8GB)-SSD(256GB)
+    }
 
 }

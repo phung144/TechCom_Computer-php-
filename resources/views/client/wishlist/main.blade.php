@@ -41,7 +41,6 @@
                                 <th class="text-center" style="width: 80px;">Xoá</th>
                                 <th class="text-center" style="width: 100px;">Ảnh</th>
                                 <th>Sản Phẩm</th>
-                                <th class="text-right">Giá</th>
                                 <th class="text-center">Thao tác</th>
                             </tr>
                         </thead>
@@ -79,19 +78,6 @@
                                             @endforeach
                                         </div>
                                     @endif
-                                </td>
-                                <td class="text-right align-middle">
-                                    <div class="product-price">
-                                        @if($wishlist->variant)
-                                            <span class="text-danger font-weight-bold">
-                                                {{ number_format($wishlist->variant->price) }} VND
-                                            </span>
-                                        @else
-                                            <span class="text-danger font-weight-bold">
-                                                {{ number_format($wishlist->product->price) }} VND
-                                            </span>
-                                        @endif
-                                    </div>
                                 </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('product.detail', $wishlist->product->id) }}" class="btn btn-sm btn-primary">

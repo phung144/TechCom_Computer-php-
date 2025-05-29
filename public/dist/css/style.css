@@ -13575,7 +13575,6 @@ label {
 }
 .sidebar .sidenav-item-link .nav-text {
   margin-right: auto;
-  text-transform: capitalize;
 }
 .sidebar .sidenav-item-link .badge {
   padding: 0.4em 0.6em;

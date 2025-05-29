@@ -117,4 +117,14 @@ class ProductDetailController extends Controller
         ]);
         return back();
     }
+    public function deleteComment($id)
+    {
+        $comment = \App\Models\Comment::findOrFail($id);
+        // Chỉ cho phép xóa nếu là chủ comment hoặc admin
+        if (auth()->id() === $comment->user_id) {
+            $comment->delete();
+            return back()->with('success', 'Xóa bình luận thành công!');
+        }
+        return back()->with('error', 'Bạn không có quyền xóa bình luận này!');
+    }
 }

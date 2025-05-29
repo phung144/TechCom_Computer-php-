@@ -4,9 +4,9 @@
         <div class="content">
             <!-- Dashboard Header -->
             <div class="page-header">
-                <h1 class="page-title">BẢNG TỔNG QUAN</h1>
+                <h1 class="page-title">Thống kê</h1>
                 <div class="breadcrumb">
-                    <span class="me-1">Lần cuối cập nhật </span>
+                    <span class="me-1">Lần cuối cập nhật: </span>
                     <span class="text-muted">{{ now()->format('F j, Y, g:i a') }}</span>
                 </div>
             </div>
@@ -82,11 +82,11 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Phân tích doanh thu</h5>
                             <form method="get" class="d-flex align-items-center">
-                                <label class="me-2 mb-0">Filter:</label>
+                                <label class="me-2 mb-0">Theo: </label>
                                 <select name="filter" onchange="this.form.submit()" class="form-select form-select-sm w-auto">
-                                    <option value="day" {{ $filter == 'day' ? 'selected' : '' }}>Hàng ngày</option>
-                                    <option value="week" {{ $filter == 'week' ? 'selected' : '' }}>Hàng tuần</option>
-                                    <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Hàng tháng</option>
+                                    <option value="day" {{ $filter == 'day' ? 'selected' : '' }}>Ngày</option>
+                                    <option value="week" {{ $filter == 'week' ? 'selected' : '' }}>Tuần</option>
+                                    <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Tháng</option>
                                 </select>
                             </form>
                         </div>
@@ -145,11 +145,7 @@
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <div class="avatar avatar-sm me-3">
-                                                        <span class="avatar-title bg-primary rounded-circle">
-                                                            {{ substr($product->name, 0, 1) }}
-                                                        </span>
-                                                    </div>
+
                                                     <div>
                                                         <h6 class="mb-0">{{ Str::limit($product->name, 20) }}</h6>
                                                     </div>
@@ -321,6 +317,32 @@
 
             .list-group-item:last-child {
                 border-bottom: 0;
+            }
+
+            /* Custom style for the filter select */
+            .form-select.form-select-sm.w-auto {
+                padding: 0.25rem 1.75rem 0.25rem 0.75rem;
+                border-radius: 6px;
+                border: 1px solid #ced4da;
+                background-color: #f8f9fa;
+                color: #2c3e50;
+                font-weight: 500;
+                box-shadow: 0 2px 6px rgba(44,62,80,0.04);
+                transition: border-color 0.2s, box-shadow 0.2s;
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' fill='gray' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4' stroke='gray' stroke-width='2' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 0.75rem center;
+                background-size: 16px 16px;
+            }
+            .form-select.form-select-sm.w-auto:focus {
+                border-color: #5bc0de;
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(91,192,222,0.15);
+                background-color: #fff;
+            }
+            .form-select.form-select-sm.w-auto option {
+                font-weight: 400;
             }
         </style>
 

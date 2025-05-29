@@ -55,20 +55,37 @@ class ShopController extends Controller
 
 public function search(Request $request)
 {
-    $query = $request->input('query');// Lấy chuỗi tìm kiếm từ request
-//
+    $query = $request->input('query');
     $products = Product::with('variants')
-    //
-        ->where('name', 'like', "%$query%")// Tìm kiếm tên sản phẩm có chứa $query
+        ->where('name', 'like', "%$query%")
         ->paginate(12);
-//
+
     foreach ($products as $product) {
         $this->prepareProductPrice($product);
     }
 
     $categories = Category::all();
 
-    return view('shop.blocks.main', compact('products', 'categories'));
+    // Lấy sản phẩm sale và bán chạy như trang index
+    $onSaleProducts = Product::with('variants')
+        ->where('discount_value', '>', 0)
+        ->orderByDesc('discount_value')
+        ->take(5)
+        ->get();
+
+    $topSalesProducts = Product::with('variants')
+        ->orderByDesc('sales')
+        ->take(5)
+        ->get();
+
+    foreach ($onSaleProducts as $product) {
+        $this->prepareProductPrice($product);
+    }
+    foreach ($topSalesProducts as $product) {
+        $this->prepareProductPrice($product);
+    }
+
+    return view('shop.blocks.main', compact('products', 'categories', 'onSaleProducts', 'topSalesProducts'));
 }
 //
 //
@@ -93,7 +110,26 @@ public function getProductsByCategory($id)
 
     $categories = Category::all();
 
-    return view('shop.blocks.main', compact('products', 'categories'));
+    // Lấy sản phẩm sale và bán chạy như trang index
+    $onSaleProducts = Product::with('variants')
+        ->where('discount_value', '>', 0)
+        ->orderByDesc('discount_value')
+        ->take(5)
+        ->get();
+
+    $topSalesProducts = Product::with('variants')
+        ->orderByDesc('sales')
+        ->take(5)
+        ->get();
+
+    foreach ($onSaleProducts as $product) {
+        $this->prepareProductPrice($product);
+    }
+    foreach ($topSalesProducts as $product) {
+        $this->prepareProductPrice($product);
+    }
+
+    return view('shop.blocks.main', compact('products', 'categories', 'onSaleProducts', 'topSalesProducts'));
 }
 
 private function prepareProductPrice($product)

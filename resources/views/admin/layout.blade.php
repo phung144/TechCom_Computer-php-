@@ -14,7 +14,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Mono - Responsive Admin & Dashboard Template</title>
+    <title>Trang quản lý TechCom</title>
 
     <!-- theme meta -->
     <meta name="theme-name" content="mono" />

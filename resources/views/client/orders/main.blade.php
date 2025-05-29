@@ -91,7 +91,7 @@
                         <i class="fas fa-box-open"></i>
                     </div>
                     <h4 class="mb-3" style="color: #7f8c8d;">Danh sách đơn hàng của bạn đang trống.</h4>
-                    <a href="{{ route('products.index') }}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+                    <a href="{{ route('shop-home') }}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
                         <i class="fas fa-shopping-bag me-2"></i> Bắt đầu mua sắm ngay bây giờ
                     </a>
                 </div>
@@ -106,7 +106,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="order-id fw-bold fs-5" style="color: #2c3e50;">ĐẶT HÀNG
-                                            #{{ $order->id }}</span>
+                                            </span>
                                         <span class="ms-3 order-date" style="color: #7f8c8d;">
                                             <i class="far fa-calendar-alt me-1"></i>
                                             {{ $order->created_at->format('d M, Y - H:i') }}
@@ -268,7 +268,7 @@
                 </div>
                 <h3 class="mb-4" style="color: #7f8c8d;">Access Your Order History</h3>
                 <p class="mb-4" style="color: #95a5a6; max-width: 500px; margin: 0 auto;">
-                 
+
 Đăng nhập để xem đơn hàng, theo dõi lô hàng và quản lý giao dịch mua của bạn.
                 </p>
                 <a href="{{ route('login') }}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm"

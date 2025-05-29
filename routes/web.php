@@ -76,6 +76,9 @@ Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders
 Route::post('comment', [ProductDetailController::class,'comment'])->name('comment');
 Route::post('comments/{comment}/reply/client', [ProductDetailController::class, 'reply'])->name('comments.reply.client');
 
+// Thêm route xóa comment cho client
+Route::delete('/comment/{id}/delete', [ProductDetailController::class, 'deleteComment'])->name('comment.delete');
+
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

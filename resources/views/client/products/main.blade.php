@@ -384,7 +384,7 @@
 
             <!-- Comment Section -->
             <div class="comment-section mt-5">
-                <h2 class="mb-4 font-weight-bold text-dark">Thảo luận về sản phẩm</h2>
+                <h2 class="mb-4 font-weight-bold text-dark">Bình luận về sản phẩm</h2>
 
                 <!-- Comment Form -->
                 @auth
@@ -409,14 +409,13 @@
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                                         <div class="form-group mb-3">
-                                            <textarea name="comment" class="form-control" rows="3" placeholder="Share your thoughts about this product..."
+                                            <textarea name="comment" class="form-control" rows="3" placeholder="Nhập nội dung bình luận..."
                                                 style="border-radius: 12px;"></textarea>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="notify-replies">
                                                 <label class="form-check-label small text-muted" for="notify-replies">
-                                                    Notify me about replies
+                                                    Bình luận này sẽ ở dạng công khai
                                                 </label>
                                             </div>
                                             <button type="submit" class="btn btn-primary px-4">
@@ -466,35 +465,23 @@
                                                     <i class="far fa-clock mr-1"></i>{{ $comment->created_at->diffForHumans() }}
                                                 </small>
                                             </div>
-                                            @if (Auth::check() && Auth::id() == $comment->user_id)
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-text dropdown-toggle"
-                                                        type="button" data-toggle="dropdown">
-                                                        <i class="fas fa-ellipsis-h"></i>
-                                                    </button>
-                                                    {{-- <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editCommentModal-{{ $reply->id }}">Sửa</a>
-                                                        <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); document.getElementById('delete-comment-{{ $reply->id }}').submit();">Xóa</a>
-                                                        <form id="delete-comment-{{ $reply->id }}" action="{{ route('comment.delete', $reply->id) }}" method="POST" style="display: none;">
-                                                            @csrf @method('DELETE')
-                                                        </form>
-                                                    </div> --}}
-                                                </div>
-                                            @endif
                                         </div>
                                         <div class="comment-content mb-2">
                                             {{ $comment->comment }}
                                         </div>
                                         <div class="comment-actions d-flex align-items-center">
-                                            <button class="btn btn-text btn-sm mr-3 like-btn"
-                                                data-comment-id="{{ $comment->id }}">
-                                                <i class="far fa-thumbs-up mr-1"></i>
-                                                <span>{{ $comment->likes_count ?? 0 }}</span>
-                                            </button>
                                             <button class="btn btn-text btn-sm reply-btn"
                                                 data-comment-id="{{ $comment->id }}">
                                                 <i class="far fa-comment-dots mr-1"></i> Phản hồi
                                             </button>
+                                            @if (Auth::check() && Auth::id() == $comment->user_id)
+                                                <form id="delete-comment-{{ $comment->id }}" action="{{ route('comment.delete', $comment->id) }}" method="POST" style="display:inline; margin-left: 8px;">
+                                                    @csrf @method('DELETE')
+                                                    <button type="submit" class="btn btn-text btn-sm text-danger" style="background: none; border: none; padding: 0 10px;" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này?')">
+                                                        <i class="far fa-trash-alt mr-1"></i> Xóa
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
                                         <!-- Form rep comment (ẩn, hiện khi bấm Phản hồi) -->
                                         <div class="reply-form mt-2"

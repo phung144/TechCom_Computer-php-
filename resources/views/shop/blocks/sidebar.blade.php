@@ -53,7 +53,7 @@
     <!-- On Sales Products -->
     <div class="mb-8">
         <div class="border-bottom border-color-1 mb-5">
-            <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Về sản phẩm đang giảm giá</h3>
+            <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Sản phẩm đang giảm giá</h3>
         </div>
         <ul class="list-unstyled">
             @foreach ($onSaleProducts as $product)
@@ -93,7 +93,7 @@
     <!-- Best Selling Products -->
     <div class="mb-8">
         <div class="border-bottom border-color-1 mb-5">
-            <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Best Selling Products</h3>
+            <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">Sản phẩm bán chạy</h3>
         </div>
         <ul class="list-unstyled">
             @foreach ($topSalesProducts as $product)

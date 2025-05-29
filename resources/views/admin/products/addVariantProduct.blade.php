@@ -3,7 +3,7 @@
 @section('main')
     <div class="card mt-4 mb-4">
         <div class="card-header bg-light">
-            <h4>Cấu hình cơ bản</h4>
+            <h4>Cấu hình biến thể </h4>
             <small class="text-muted">Thêm cấu hình sản phẩm (CPU, RAM, SSD...)</small>
         </div>
 
@@ -14,7 +14,7 @@
                     @foreach($variants as $variant)
                         <div class="col-md-3">
                             <label>{{ $variant->name }}</label>
-                            <select name="variant[{{ strtolower($variant->name) }}]" class="form-control" required>
+                            <select name="variant[{{ strtolower($variant->name) }}]" class="form-control" >
                                 <option value="">Chọn {{ $variant->name }}</option>
                                 @foreach($variant->options as $option)
                                     <option value="{{ $option->id }}">{{ $option->value }}</option>

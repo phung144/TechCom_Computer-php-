@@ -79,6 +79,18 @@ class UserController extends Controller
             return redirect()->route('admin.users.index')->with('error', 'Không tìm thấy người dùng!');
         }
 
+        // Nếu chỉ gửi lên trường role (từ trang show)
+        if ($request->has('role') && $request->keys() === ['_token', '_method', 'role']) {
+            $validated = $request->validate([
+                'role' => 'required|in:user,admin',
+            ]);
+            $user->role = $validated['role'];
+            $user->save();
+
+            return redirect()->route('admin.users.show', $user->id)->with('success', 'Cập nhật vai trò thành công!');
+        }
+
+        // Nếu gửi đủ các trường (từ trang edit)
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,

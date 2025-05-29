@@ -64,6 +64,11 @@
     @if(session('info'))
         showInfoAlert('{{ session('info') }}');
     @endif
+
+    // Hiển thị lỗi validate đầu tiên nếu có
+    @if ($errors->any())
+        showErrorAlert("{{ $errors->first() }}");
+    @endif
 </script>
 <div class="row justify-content-center mt-5">
     <div class="col-md-6">
@@ -86,7 +91,7 @@
                 </form>
             </div>
             <div class="card-footer text-center">
-                <small>Chưa có tài khoản?<a href="{{ route('register') }}" class="text-primary">Đăng ký tại đây</a></small>
+                <small><a href="{{ route('register') }}" class="text-primary">Đăng ký tại đây</a></small>
             </div>
         </div>
     </div>

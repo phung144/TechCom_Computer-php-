@@ -22,85 +22,46 @@
     </div>
     @endif
 
-    <!-- Thông tin người dùng -->
+    <!-- Thông tin người dùng + Form cập nhật vai trò -->
     <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">
-                {{ $user->name }} (<a href="mailto:{{ $user->email }}">{{ $user->email }}</a>)
-            </h5>
-            <div>
-                <span class="badge {{ $user->role === 'admin' ? 'bg-danger' : 'bg-primary' }} text-white">
-                    {{ ucfirst($user->role) }}
-                </span>
-            </div>
-
-
-        </div>
-    </div>
-
-    <!-- Form chỉnh sửa -->
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Chỉnh sửa tài khoản</h5>
-            <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-warning btn-sm">Sửa</a>
-        </div>
-        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="card-body">
-            @csrf
-            @method('PUT')
-            <div class="row">
-                <!-- Thông tin tài khoản -->
-                <div class="col-md-6">
+        <div class="card-body">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
                     <h6 class="text-uppercase fw-bold mb-3">Thông tin tài khoản</h6>
                     <div class="mb-2">
                         <strong>ID:</strong> {{ $user->id }}
                     </div>
                     <div class="mb-2">
-                        <label for="name" class="form-label">Tên người dùng</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
-                            name="name" value="{{ old('name', $user->name) }}">
-                        @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <strong>Tên người dùng:</strong> {{ $user->name }}
                     </div>
                     <div class="mb-2">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                            name="email" value="{{ old('email', $user->email) }}">
-                        @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <strong>Email:</strong> <a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
                     </div>
-
-                    <div class="mb-2">
-                        <label for="password" class="form-label">Mật khẩu (nếu muốn thay đổi)</label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror"
-                            id="password" name="password">
-                        @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-                    <div class="mb-2">
-                        <label for="role" class="form-label">Vai trò</label>
-                        <select class="form-select @error('role') is-invalid @enderror" id="role" name="role">
-                            <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>User
-                            </option>
-                            <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin
-                            </option>
-                        </select>
-                        @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-                </div>
-
-                <!-- Thông tin thanh toán -->
-                <div class="col-md-6">
-                    <h6 class="text-uppercase fw-bold mb-3">Thông tin thanh toán</h6>
-                    <div class="mb-2">
-                        <strong>Email:</strong>
-                        <a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
-                    </div>
+                    <hr>
+                    <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="row align-items-end">
+                        @csrf
+                        @method('PUT')
+                        <div class="col-md-6 mb-3">
+                            <label for="role" class="form-label fw-semibold">
+                                <i class="fas fa-user-tag me-1"></i>Vai trò
+                            </label>
+                            <select class="form-select @error('role') is-invalid @enderror" id="role" name="role">
+                                <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>User
+                                </option>
+                                <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin
+                                </option>
+                            </select>
+                            @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6 mb-3 text-end">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save me-1"></i> Cập nhật vai trò
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-
-            <div class="text-end mt-4">
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save"></i> Cập nhật
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 @endsection

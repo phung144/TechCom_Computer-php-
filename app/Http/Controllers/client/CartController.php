@@ -38,6 +38,7 @@ class CartController extends Controller
     // Lấy tất cả voucher còn hiệu lực
     $vouchers = Voucher::where('start_date', '<=', now())
         ->where('end_date', '>=', now())
+        ->where('is_active', 1)
         ->orderBy('discount_value', 'desc')
         ->get();
 

@@ -12,6 +12,10 @@
                     <!-- Thông tin sản phẩm -->
                     <h4>Thông tin sản phẩm</h4>
                     <table class="table table-bordered">
+                        <colgroup>
+                            <col style="width: 220px;">
+                            <col>
+                        </colgroup>
                         <tr>
                             <th>Hình ảnh</th>
                             <td><img src="{{ asset('storage/' . $product->image) }}" alt="Product Image" width="100"></td>
@@ -27,6 +31,40 @@
                         <tr>
                             <th>Danh mục</th>
                             <td>{{ $product->category->name ?? 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Lượt bán</th>
+                            <td>{{ $product->sales ?? 0 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Bắt đầu giảm giá</th>
+                            <td>{{ $product->discount_start ? $product->discount_start->format('d/m/Y H:i') : 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Kết thúc giảm giá</th>
+                            <td>{{ $product->discount_end ? $product->discount_end->format('d/m/Y H:i') : 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Loại giảm giá</th>
+                            <td>
+                                @if($product->discount_type === 'percentage')
+                                    phần trăm
+                                @elseif($product->discount_type === 'amount')
+                                    VND
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Giá trị giảm giá</th>
+                            <td>
+                                @if($product->discount_type === 'percent')
+                                    {{ $product->discount_value }} phần trăm
+                                @else
+                                    {{ number_format($product->discount_value) }}
+                                @endif
+                            </td>
                         </tr>
                         {{-- <tr>
                             <th>Price</th>

@@ -3,8 +3,8 @@
         <!-- Aplication Brand -->
         <div class="app-brand">
             <a href="">
-                <img src="{{ asset('dist/assets/images/logo.png') }}" alt="Mono">
-                <span class="brand-name">MONO</span>
+                <img src="{{ asset('client/assets/logo.png') }}" height="70%" alt="Mono">
+                {{-- <span class="brand-name">TechCom</span> --}}
             </a>
         </div>
         <!-- begin sidebar scrollbar -->
@@ -37,7 +37,7 @@
 
 
                 <li class="section-title">
-                   
+
                 </li>
 
 
@@ -47,13 +47,13 @@
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.home') }}">
                         <i class="mdi mdi-cube"></i>
-                        <span class="nav-text">Bảng điều khiển</span>
+                        <span class="nav-text">Thống kê</span>
                     </a>
                 </li>
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.users.index') }}">
                           <i class="mdi mdi-account"></i>
-                        <span class="nav-text">Người dùng</span>
+                        <span class="nav-text">Tài khoản</span>
                     </a>
                 </li>
                 <li>
@@ -81,7 +81,7 @@
                 <li>
                     <a class="sidenav-item-link" href="{{ route('admin.orders.index') }}">
                         <i class="mdi mdi-receipt"></i>
-                        <span class="nav-text">Đặt hàng</span>
+                        <span class="nav-text">Đơn hàng</span>
                     </a>
                 </li>
 
@@ -103,6 +103,13 @@
                     <a class="sidenav-item-link" href="{{route('admin.vouchers.index')}}">
                         <i class="mdi mdi-ticket"></i>
                         <span class="nav-text">Mã giảm giá</span></b>
+                    </a>
+                </li>
+
+                <li>
+                    <a class="sidenav-item-link" href="{{route('admin.banners.index')}}">
+                        <i class="mdi mdi-image"></i>
+                        <span class="nav-text">Banner</span></b>
                     </a>
                 </li>
 

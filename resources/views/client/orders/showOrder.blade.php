@@ -11,7 +11,6 @@
         <div class="order-header text-center mb-5">
             <h1 class="order-title">Chi tiết đặt hàng</h1>
             <div class="order-meta">
-                <span class="order-number">Order #{{ $order->id }}</span>
                 <span class="order-date">{{ $order->created_at->format('M d, Y - h:i A') }}</span>
             </div>
         </div>
@@ -132,7 +131,11 @@ Tổng phụ</span>
                     <span>Phương thức thanh toán</span>
                     <span class="payment-method">
                         <i class="fas fa-{{ $order->payment_method === 'credit_card' ? 'credit-card' : 'money-bill-wave' }} me-2"></i>
-                        {{ ucwords(str_replace('_', ' ', $order->payment_method)) }}
+                        @if($order->payment_method === 'cash_on_delivery')
+                            Thanh toán khi nhận hàng
+                        @else
+                            MOMO
+                        @endif
                     </span>
                 </div>
                 <div class="payment-row">
